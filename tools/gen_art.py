@@ -1,7 +1,8 @@
 """Codex CLI의 이미지 생성 도구로 스프라이트 원본을 그린다 (Spriteflow 방식, plan.md 3-4).
 
     python tools/gen_art.py ref <캐릭터>             → art/ref/<캐릭터>.png   (기준 그림)
-    python tools/gen_art.py action <캐릭터> <동작>   → art/raw/<캐릭터>_<동작>.png (프레임 격자)
+    python tools/gen_art.py action <캐릭터> <동작>   → art/raw/<캐릭터>_<동작>.png (프레임 격자, 컷아웃으로 바꾼 뒤 안 씀)
+    python tools/gen_art.py prop <이름>              → art/ref/props/<이름>.png (효과·배경 정지 그림)
 
 - 프롬프트는 tools/art_prompts.json에서 읽는다.
 - 동작은 기준 그림을 `codex exec -i`로 함께 넣어 같은 캐릭터로 그리게 한다.
@@ -125,6 +126,22 @@ def main() -> None:
         if not ref.exists():
             sys.exit(f"기준 그림이 없습니다: {ref.relative_to(ROOT)} (먼저 ref {name})")
         run_codex(action_prompt(name, action), ROOT / "art" / "raw" / f"{name}_{action}.png", [ref], f"{name}_{action}")
+    elif len(args) == 2 and args[0] == "prop":
+        name = args[1]
+        prop = PROMPTS["props"][name]
+        style = ROOT / "art" / "ref" / "fox.png"
+        lines = [PROMPTS["style"]]
+        if not prop.get("opaque"):
+            lines.append(PROMPTS["background"])
+        lines += [
+            "The attached image is a character from the same game, given only as the art-style reference. Match its style, do not draw the fox.",
+            prop["prompt"],
+        ]
+        w, h = prop["size"]
+        # 최종 크기를 알려 주면 Codex가 그 크기로 줄여 저장해 원본 해상도를 잃는다 (WORKLOG 3-g). 줄이기는 prep_props.py가 한다.
+        lines.append("It will be shown small in the game, so keep shapes bold and readable. Save the image at full generated resolution; do not resize it."
+                     if max(w, h) < 512 else "Use a wide 16:9 landscape canvas (for example 1536x864). Save at full generated resolution.")
+        run_codex("\n".join(lines), ROOT / "art" / "ref" / "props" / f"{name}.png", [style], f"prop_{name}")
     else:
         sys.exit(__doc__)
 

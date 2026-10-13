@@ -12,25 +12,27 @@ abstract final class GameConfig {
   // ── 필드 (레인 × 칸) ──────────────────────────────
   static const int rows = 5;
   static const int cols = 9;
-  static const double cellWidth = 100;
-  static const double cellHeight = 110;
+  // 배경 그림(assets/images/fx/background.jpg)의 잔디밭에 맞춘 값 (WORKLOG 3-g).
+  // 잔디밭은 1280 × 720 기준 x 207~1055, y 110~646.
+  static const double cellWidth = 96;
+  static const double cellHeight = 108;
 
-  /// 필드 왼쪽 위 모서리. 왼쪽 140px은 둥지·통나무 열, 위쪽 110px은 HUD.
-  static const double fieldX = 140;
-  static const double fieldY = 110;
-  static const double fieldWidth = cols * cellWidth; // 900
-  static const double fieldHeight = rows * cellHeight; // 550
+  /// 필드 왼쪽 위 모서리. 왼쪽 200px은 둥지·통나무 열, 위쪽 108px은 HUD.
+  static const double fieldX = 200;
+  static const double fieldY = 108;
+  static const double fieldWidth = cols * cellWidth; // 864 → 오른쪽 끝 1064
+  static const double fieldHeight = rows * cellHeight; // 540 → 아래 끝 648
 
   // ── 필드 바깥 구역 ────────────────────────────────
   static const double hudHeight = fieldY;
 
-  /// 통나무가 놓이는 열 (x 60 ~ 140). 60보다 왼쪽은 둥지.
-  static const double logColumnX = 60;
+  /// 통나무가 놓이는 열 (x 120 ~ 200). 120보다 왼쪽은 둥지(굴 문).
+  static const double logColumnX = 120;
 
-  /// 몬스터가 나타나는 x. 필드 오른쪽 끝(1040)보다 바깥이다.
-  static const double spawnX = 1100;
+  /// 몬스터가 나타나는 x. 필드 오른쪽 끝(1064) 바깥 흙길.
+  static const double spawnX = 1120;
 
-  /// 아래쪽 웨이브 진행 바 영역 (y 660 ~ 720).
+  /// 아래쪽 웨이브 진행 바 영역 (y 648 ~ 720).
   static const double progressY = fieldY + fieldHeight;
 
   // ── 글자 ──────────────────────────────────────────

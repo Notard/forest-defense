@@ -69,5 +69,43 @@
         "prompt": "Defeat: wobble, dizzy swirl eyes, slowly tip over onto its side and lie still with the tail flopping down. No blood, cute and gentle."
       }
     }
+  },
+  "props": {
+    "_설명": "정지 그림 (효과·배경). python tools/gen_art.py prop <이름> → art/ref/props/<이름>.png. 게임에서 코드로 돌리기·크기·투명도를 바꿔 움직인다. size = assets/images/fx/에 저장할 크기 (prep_props.py). background.flatten_rows = 줄무늬를 지울 잔디 영역 [x0, x1, y0, y1] (비율). 원본 잔디에 줄무늬가 7개라 레인 5개와 안 맞아서 지우고 게임이 레인 체크무늬를 그린다 (WORKLOG 3-g).",
+    "acorn": {
+      "size": [
+        96,
+        96
+      ],
+      "prompt": "A single shiny cartoon acorn, the collectible currency of the game. Brown scaly cap with a tiny stem, glossy golden-brown nut with a bright highlight, slightly tilted, centered. A small soft sparkle star near the top. Readable at 48px."
+    },
+    "log": {
+      "size": [
+        128,
+        128
+      ],
+      "prompt": "A round wooden log seen exactly END-ON (we see the circular cut face, like a wheel): light wood face with clear concentric growth rings and a few radial cracks, a thick dark-brown bark rim all around, one small leaf sprouting from the bark. Perfectly round and centered so it can be rotated to look like rolling."
+    },
+    "smoke": {
+      "size": [
+        192,
+        160
+      ],
+      "prompt": "A cute cartoon smoke puff cloud for a defeat/explosion effect: a cluster of 5-6 round fluffy puffs, soft warm white-gray with light lavender shading, thick dark-brown outline, a few tiny round puffs around it, a couple of small yellow-white stars. Centered."
+    },
+    "background": {
+      "size": [
+        1280,
+        720
+      ],
+      "opaque": true,
+      "prompt": "Game background for a cozy cartoon forest lane-defense game, 16:9 landscape, flat front view like Plants vs. Zombies (no strong perspective). Same art style as the attached character (thick dark-brown outlines on big shapes, soft cel shading, bright warm palette). Layout, strictly:\n- TOP 15% of the height: a dense band of leafy tree canopy and branches across the whole width (game UI will be drawn over it).\n- LEFT 11% of the width, below the canopy: a cozy animal home: big tree trunk roots with a round burrow door, moss and small mushrooms.\n- CENTER (from 11% to 81% of the width, from 15% to 92% of the height): one open flat lawn of short bright grass with very gentle horizontal stripes, EMPTY - no flowers, rocks or objects on it, because a 9x5 grid of tiles is drawn on top by the game.\n- RIGHT 19% of the width: a winding dirt path coming out of darker, slightly mysterious woods, where monsters will enter.\n- BOTTOM 8%: a strip of mossy ground with roots and pebbles.\nNo characters, no text, no UI.",
+      "flatten_rows": [
+        0.16,
+        0.825,
+        0.15,
+        0.9
+      ]
+    }
   }
 }

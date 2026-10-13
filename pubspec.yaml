@@ -64,6 +64,15 @@ flutter:
   # 문구를 바꾸면 tools/subset_font.py로 다시 만든다.
   assets:
     - assets/fonts/OFL.txt
+    # 스프라이트 시트 + 메타데이터 (tools/build_sprites.sh), 효과·배경 (tools/prep_props.py)
+    - assets/images/fx/
+    - assets/images/fox/
+    - assets/images/squirrel/
+    - assets/images/turtle/
+    - assets/images/skunk/
+    - assets/images/slime/
+    - assets/images/slime_helmet/
+    - assets/images/wisp/
   fonts:
     - family: Gaegu
       fonts:

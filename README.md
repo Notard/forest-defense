@@ -3,7 +3,7 @@
 숲속 동물들이 레인을 따라 몰려오는 귀여운 슬라임·정령으로부터 숲을 지키는 2D 레인 디펜스 게임이에요.
 도토리를 모아 다람쥐·여우·거북이·스컨크를 칸에 배치하고, 몬스터가 왼쪽 둥지에 닿지 못하게 막아요.
 
-> **개발 중** — 지금은 3단계(아트와 애니메이션) 진행 중이에요. 여우 시범 애니메이션까지 만들었어요. 진행 상황은 [TODO.md](TODO.md)에서 볼 수 있어요.
+> **개발 중** — 3단계(아트와 애니메이션)에서 캐릭터 7종, 효과, 배경을 만들었어요. 다음은 4단계(자원과 유닛 배치)예요. 진행 상황은 [TODO.md](TODO.md)에서 볼 수 있어요.
 
 | | |
 |---|---|
@@ -11,9 +11,9 @@
 | 플랫폼 | Windows · 웹 · Android |
 | 공개 예정 | PWA(GitHub Pages) · Microsoft Store |
 
-![여우 애니메이션: 기본, 공격, 피격, 쓰러짐](preview/03_fox_all.gif)
+![확인 그림: 숲 배경 잔디밭 칸 위의 동물과 몬스터](preview/03_mockup.jpg)
 
-![미리보기: 5레인 × 9칸 필드와 손글씨 HUD 글자](preview/02-1_font.jpg)
+![여우 애니메이션: 기본, 공격, 피격, 쓰러짐](preview/03_fox_all.gif)
 
 ## 실행하기
 
@@ -49,12 +49,14 @@ lib/
     hud/                    HUD (지금은 자리 표시)
 test/                       좌표 변환·입력 경로·빠진 글자 테스트
 assets/images/<캐릭터>/      동작별 스프라이트 시트 + <캐릭터>.json
+assets/images/fx/           효과(도토리·통나무·연기·여우불·투구)와 배경
 assets/fonts/               Gaegu Bold (게임에 쓰는 글자만 남긴 78 KB) + OFL.txt
 tools/make_todo_html.py     TODO.md·WORKLOG.md → HTML
 tools/subset_font.py        폰트에서 게임에 쓰는 글자만 남기기
 tools/gen_art.py            Codex CLI로 캐릭터 기준 그림 그리기
 tools/rigs/<캐릭터>.json     컷아웃 리그: 부위 자르는 선, 기준점, 동작 키프레임
 tools/build_sprites.sh      기준 그림 → 부위 조각 → Blender 렌더 → 스프라이트 시트 → 미리보기
+tools/prep_props.py         효과·배경 정지 그림 정리 (배경 잔디 줄무늬 지우기 포함)
 art/ref/                    캐릭터 기준 그림
 preview/                    단계별 캡처 (preview.html에서 모아 봄)
 ```
