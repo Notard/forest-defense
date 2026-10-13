@@ -89,6 +89,10 @@ def main() -> None:
         rel = p.relative_to(WEB).as_posix()
         if rel in SKIP_FILES or rel.startswith(SKIP_DIRS) or rel.endswith(SKIP_SUFFIXES):
             continue
+        # 점으로 시작하는 파일(.last_build_id 등)은 GitHub Pages에 올라가지 않는다. 목록에 있으면 그 하나가 404가 나
+        # 설치(cache.addAll) 전체가 실패한다 (16단계, 공개 뒤 실제 사이트에서 찾음)
+        if any(part.startswith(".") for part in rel.split("/")):
+            continue
         files.append(rel)
         data = p.read_bytes()
         digest.update(rel.encode())
