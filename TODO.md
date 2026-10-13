@@ -4,7 +4,7 @@
 > 체크 후 `python tools/make_todo_html.py` 실행 → 진행률 갱신 + [todo.html](todo.html) 재생성.
 > 작업별 상세 결과: [WORKLOG.md](WORKLOG.md)
 
-**진행률: 18 / 77**
+**진행률: 24 / 83**
 
 ---
 
@@ -33,6 +33,14 @@
 - [x] 마우스 올림/탭 시 칸 강조
 - [x] 레터박스 확인 (16:9, 4:3, 19.5:9)
 - [x] 미리보기: 웹 빌드 캡처 → [preview.html](preview.html) ✅ 완료 기준
+
+## 2-1. 한글 폰트 (Gaegu Bold)
+- [x] 후보 3종(Noto Sans KR · Jua · Gaegu) 비교 페이지 [font_preview.html](font_preview.html), 라이선스 확인 (모두 OFL 1.1)
+- [x] Noto Sans KR(10.4 MB) 대신 Gaegu Bold 하나로 결정 (사용자)
+- [x] `tools/subset_font.py`: 게임 코드에 쓰인 글자 + 영문·숫자·기호만 남기기 → 2,893 KB → 78 KB
+- [x] `assets/fonts/`에 폰트와 `OFL.txt`, pubspec 등록, 문구는 `strings.dart`에 모음
+- [x] HUD 자리에 임시 글자(도토리 수, 웨이브)로 웹 빌드 표시 확인
+- [x] 빠진 글자 검사 테스트 `font_coverage_test.dart` (일부러 글자를 넣어 실패하는 것도 확인) ✅ 완료 기준
 
 ## 3. 아트 (Codex 생성)
 - [ ] `tools/gen_art.sh`: 공통 스타일 프롬프트 + 스프라이트별 프롬프트
@@ -122,3 +130,4 @@
 | 2026-10-13 | 1. 프로젝트 생성 | Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1 |
 | 2026-10-13 | 1-1. Git 저장소 | Public 저장소 Notard/forest-defense 생성, push |
 | 2026-10-13 | 2. 화면과 그리드 | 좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인 |
+| 2026-10-13 | 2-1. 한글 폰트 | Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13 |

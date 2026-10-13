@@ -33,6 +33,10 @@ abstract final class GameConfig {
   /// 아래쪽 웨이브 진행 바 영역 (y 660 ~ 720).
   static const double progressY = fieldY + fieldHeight;
 
+  // ── 글자 ──────────────────────────────────────────
+  /// 게임 전체 폰트. pubspec.yaml에 등록한 Gaegu Bold (게임에 쓰는 글자만 남긴 파일).
+  static const String fontFamily = 'Gaegu';
+
   // ── 색 ────────────────────────────────────────────
   /// 레터박스와 화면 바탕색 (어두운 숲색).
   static const Color backgroundColor = Color(0xFF1F3A1A);

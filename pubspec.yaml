@@ -60,6 +60,16 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # 폰트 원본은 Gaegu Bold (SIL OFL 1.1). 게임에 쓰는 글자만 남긴 파일이다.
+  # 문구를 바꾸면 tools/subset_font.py로 다시 만든다.
+  assets:
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: Gaegu
+      fonts:
+        - asset: assets/fonts/Gaegu-Bold.ttf
+          weight: 700
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

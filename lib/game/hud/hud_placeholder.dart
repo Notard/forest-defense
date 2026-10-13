@@ -1,8 +1,8 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
+import 'package:flutter/painting.dart';
 
 import '../config.dart';
+import '../strings.dart';
 
 /// HUD와 진행 바가 들어갈 자리. 크기와 위치만 잡아 둔다.
 ///
@@ -14,6 +14,37 @@ import '../config.dart';
 class HudPlaceholder extends PositionComponent {
   HudPlaceholder()
       : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 10);
+
+  static final _text = TextPaint(
+    style: const TextStyle(
+      fontFamily: GameConfig.fontFamily,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFFFFFFFF),
+    ),
+  );
+
+  @override
+  Future<void> onLoad() async {
+    // 폰트가 실제로 쓰이는지 보려고 넣은 임시 글자. 4·6단계에서 실제 값으로 바꾼다.
+    addAll([
+      TextComponent(
+        text: '150',
+        textRenderer: _sized(44),
+        anchor: Anchor.center,
+        position: Vector2(HudLayout.acornCounter.center.dx,
+            HudLayout.acornCounter.center.dy),
+      ),
+      TextComponent(
+        text: Strings.wave(1, 5),
+        textRenderer: _sized(30),
+        anchor: Anchor.centerLeft,
+        position: Vector2(24, HudLayout.progressBar.center.dy),
+      ),
+    ]);
+  }
+
+  static TextPaint _sized(double size) =>
+      _text.copyWith((s) => s.copyWith(fontSize: size));
 
   final _panel = Paint()..color = GameConfig.hudPanel;
   final _slot = Paint()..color = GameConfig.hudSlot;

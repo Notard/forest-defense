@@ -60,11 +60,11 @@ th{color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>🌰 숲 지키기 · 할 일 목록</h1>
-  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 11:38</p>
+  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 11:51</p>
 
   <div class="hero">
-    <div class="big">23% <small>18 / 77 완료</small></div>
-    <div class="bar"><i style="width:23%"></i></div>
+    <div class="big">29% <small>24 / 83 완료</small></div>
+    <div class="bar"><i style="width:29%"></i></div>
   </div>
 
   
@@ -103,6 +103,15 @@ th{color:var(--muted)}
   </div>
   <div class="sbar"><i style="width:100%"></i></div>
   <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>config.dart</code>: 그리드 크기, 칸 크기, 필드 위치 상수</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>grid.dart</code>: 칸 ↔ 화면 좌표 변환 + 단위 테스트</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">임시 배경(레인 줄무늬)과 HUD·진행 바 자리 그리기</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">마우스 올림/탭 시 칸 강조</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">레터박스 확인 (16:9, 4:3, 19.5:9)</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기: 웹 빌드 캡처 → <a href="preview.html">preview.html</a><span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage complete">
+  <div class="shead">
+    <span class="n">2-1</span>
+    <h2>한글 폰트 (Gaegu Bold)</h2>
+    <span class="cnt">6 / 6</span>
+  </div>
+  <div class="sbar"><i style="width:100%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">후보 3종(Noto Sans KR · Jua · Gaegu) 비교 페이지 <a href="font_preview.html">font_preview.html</a>, 라이선스 확인 (모두 OFL 1.1)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">Noto Sans KR(10.4 MB) 대신 Gaegu Bold 하나로 결정 (사용자)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/subset_font.py</code>: 게임 코드에 쓰인 글자 + 영문·숫자·기호만 남기기 → 2,893 KB → 78 KB</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>assets/fonts/</code>에 폰트와 <code>OFL.txt</code>, pubspec 등록, 문구는 <code>strings.dart</code>에 모음</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">HUD 자리에 임시 글자(도토리 수, 웨이브)로 웹 빌드 표시 확인</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">빠진 글자 검사 테스트 <code>font_coverage_test.dart</code> (일부러 글자를 넣어 실패하는 것도 확인)<span class="tag">완료 기준</span></span></li></ul>
 </section>
 <section class="stage ">
   <div class="shead">
@@ -187,7 +196,7 @@ th{color:var(--muted)}
 </section>
 
   <h3>완료 기록</h3>
-  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr></table>
+  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr></table>
 </div>
 </body>
 </html>
