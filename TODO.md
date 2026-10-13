@@ -4,7 +4,7 @@
 > 체크 후 `python tools/make_todo_html.py` 실행 → 진행률 갱신 + [todo.html](todo.html) 재생성.
 > 작업별 상세 결과: [WORKLOG.md](WORKLOG.md)
 
-**진행률: 35 / 97**
+**진행률: 39 / 99**
 
 ---
 
@@ -54,8 +54,10 @@
 - [x] `tools/pack_sheets.py`: 가로 시트 + `fox.json`(frame, anchor, muzzle, fps, loop, event)
 - [x] `tools/make_art_preview.py` → [art_preview.html](art_preview.html), `tools/make_gifs.py`, `tools/build_sprites.sh`
 - [x] 시범: 여우 4동작 (기본 12 · 공격 8 · 피격 4 · 쓰러짐 8)
-- [ ] 시범 승인: 여우 그림체·움직임 (사용자)
-- [ ] 다람쥐: 기준 그림 → 리그 → 4동작
+- [x] 시범 승인: 여우 그림체·움직임 (사용자: "나쁘지 않아, 이대로 가자")
+- [x] 다른 캐릭터용 준비: 여우 그림을 그림체 참고로 함께 넣기, 투구 슬라임은 슬라임 그림을 고쳐 그리기(`based_on`), 컷아웃용 자세 지정, `tools/rig_helper.py`(좌표 격자)
+- [x] 나머지 6종 기준 그림 (다람쥐·거북이·스컨크·슬라임·투구 슬라임·도깨비불) → `preview/03_refs_lineup.jpg`
+- [x] 다람쥐: 리그 → 4동작 (기본 12 · 도토리 만들기 8 · 피격 4 · 쓰러짐 8)
 - [ ] 거북이: 기준 그림 → 리그 → 4동작 (기본·금 간 기본·피격·쓰러짐)
 - [ ] 스컨크: 기준 그림 → 리그 → 2동작 (준비·폭발)
 - [ ] 슬라임: 기준 그림 → 리그 → 4동작

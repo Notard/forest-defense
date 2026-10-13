@@ -1,0 +1,38 @@
+{
+  "character": "squirrel",
+  "anchor": [
+    204.0,
+    279.0
+  ],
+  "actions": {
+    "idle": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "produce": {
+      "frames": 8,
+      "fps": 12,
+      "loop": false,
+      "event": 5
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    218.0,
+    216.0
+  ],
+  "frame": [
+    320,
+    320
+  ]
+}

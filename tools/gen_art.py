@@ -30,15 +30,37 @@ def grid_shape(frames: int) -> tuple[int, int]:
     return cols, math.ceil(frames / cols)
 
 
+def ref_images(name: str) -> list[Path]:
+    """기준 그림에 함께 넣을 그림: based_on 캐릭터 그림, 아니면 여우 그림(그림체 참고)."""
+    based = PROMPTS["characters"][name].get("based_on")
+    if based:
+        path = ROOT / "art" / "ref" / f"{based}.png"
+        if not path.exists():
+            sys.exit(f"{based} 기준 그림이 먼저 있어야 합니다")
+        return [path]
+    style = ROOT / "art" / "ref" / "fox.png"
+    return [style] if name != "fox" and style.exists() else []
+
+
 def ref_prompt(name: str) -> str:
     c = PROMPTS["characters"][name]
-    return "\n".join([
+    if c.get("based_on"):
+        guide = "The attached image is the existing character to edit. Keep everything identical except what the description asks to add."
+    elif ref_images(name):
+        guide = ("The attached image is ANOTHER character from the same game, given only as the art-style reference. "
+                 "Match its art style exactly (outline color and thickness, cel shading, fur rendering, palette brightness, cuteness), "
+                 "but draw the NEW character described below, not the fox.")
+    else:
+        guide = ""
+    return "\n".join(line for line in [
         PROMPTS["style"],
         PROMPTS["background"],
+        guide,
         f"Character: {c['description']}",
         "Draw exactly ONE character, full body, centered, filling about 80% of a square 1024x1024 canvas.",
-        "This image is the master reference sheet that every animation frame will copy, so keep the design simple and readable at 128px.",
-    ])
+        "This image is the master reference that the cutout animation is built from, so keep the design simple and readable at 128px, "
+        "and keep limbs, tail and head clearly readable as separate shapes.",
+    ] if line)
 
 
 def action_prompt(name: str, action: str) -> str:
@@ -96,7 +118,7 @@ def main() -> None:
     args = sys.argv[1:]
     if len(args) == 2 and args[0] == "ref":
         name = args[1]
-        run_codex(ref_prompt(name), ROOT / "art" / "ref" / f"{name}.png", [], f"ref_{name}")
+        run_codex(ref_prompt(name), ROOT / "art" / "ref" / f"{name}.png", ref_images(name), f"ref_{name}")
     elif len(args) == 3 and args[0] == "action":
         name, action = args[1], args[2]
         ref = ROOT / "art" / "ref" / f"{name}.png"

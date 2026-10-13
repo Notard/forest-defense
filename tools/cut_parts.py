@@ -14,7 +14,7 @@
   - color_key "flame": 다각형 안에서 채도 높은 주황·노랑 픽셀 + 그 테두리 안쪽(밝은 불꽃 속)을 불꽃으로 본다.
     불꽃 속(253,253,222)과 앞발 크림색(253,247,232)은 색이 거의 같아서 색만으로는 못 나눈다
   - 다각형 경계에서 떨어져 나온 작은 섬(부위 픽셀의 2% 미만)은 가장 많이 맞닿은 부위에 넘긴다
-  - 뒤 부위는 앞 부위에 가려진 곳을 fill_band 너비까지 그 부위의 털 색(밝은 픽셀 중앙값)으로 채운다.
+  - 뒤 부위는 앞 부위에 가려진 곳을 fill_band 너비까지, 가려진 곳 바로 옆 그 부위 털 색(외곽선 뺀 중앙값)으로 채운다.
     단 캐릭터 전체 실루엣의 바깥 테두리에서 INSET px 안쪽만 채운다.
     움직일 때 틈으로 살짝 보이는 곳이라 무늬를 흉내 내는 것보다 깨끗한 단색이 낫다
 """
@@ -118,8 +118,12 @@ def main() -> None:
             # 전체 실루엣을 INSET px 줄인 안쪽에만 채운다.
             hidden = grown & inner & polys[i] & solid & (owner >= 0) & (owner < i)
             if hidden.any():
-                fur = rgba[own & (alpha == 255)][:, :3]
-                fur = fur[fur.astype(int).sum(axis=1) > 3 * 215]
+                # 채움 색은 가려진 곳 바로 옆 내 털 색 (외곽선 제외). 흰 여우는 흰색, 주황 다람쥐 꼬리는 주황 (WORKLOG 3-c)
+                near = cv2.dilate(hidden.astype(np.uint8), kernel) > 0
+                fur = rgba[own & near & (alpha == 255)][:, :3]
+                fur = fur[fur.astype(int).sum(axis=1) > 3 * 110]
+                if len(fur) < 50:
+                    fur = rgba[own & (alpha == 255)][:, :3]
                 piece[hidden, :3] = np.median(fur, axis=0).astype(np.uint8)
                 piece[hidden, 3] = 255
 

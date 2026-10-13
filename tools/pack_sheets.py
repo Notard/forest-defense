@@ -8,7 +8,8 @@
 JSON (게임이 읽음)
   frame   [너비, 높이]         한 프레임 크기 (px)
   anchor  [x, y]              프레임 안의 발 위치 → 칸 바닥에 맞춘다
-  muzzle  [x, y]              (있으면) 투사체가 나오는 위치 = 불꽃 기준점
+  muzzle  [x, y]              (있으면) 이벤트가 일어나는 위치: 여우불 발사점, 다람쥐 도토리가 튀어나오는 곳 …
+                              리그의 muzzle_part 부위 기준점 (없으면 flame 부위)
   actions.<동작>              frames, fps, loop, event(이 프레임에서 발사·생산·피해)
 """
 import json
@@ -34,8 +35,9 @@ def main() -> None:
     out_dir = ROOT / "assets" / "images" / name
     out_dir.mkdir(parents=True, exist_ok=True)
     meta = {"character": name, "anchor": to_frame(parts["body"]["pivot"]), "actions": {}}
-    if "flame" in parts:
-        meta["muzzle"] = to_frame(parts["flame"]["pivot"])
+    muzzle = rig.get("muzzle_part", "flame")
+    if muzzle in parts:
+        meta["muzzle"] = to_frame(parts[muzzle]["pivot"])
 
     for action, spec in rig["actions"].items():
         frames = sorted((ROOT / "art" / "render" / name / action).glob("*.png"))

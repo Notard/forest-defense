@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 12:15</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 12:31</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -560,7 +560,40 @@ article td img{margin:0 auto}
 3. <strong>렌더에서 꼬리의 가려진 채움이 몸통 위로 비쳤다</strong> → EEVEE 반투명(BLENDED) 물체는 원점 거리로 그리는 순서를 정하는데 모든 평면의 원점이 같은 곳이었다. 평면마다 원점을 자기 가운데·자기 깊이에 두어 해결
 4. <strong>채움을 앞 부위 모양대로 하니 부위가 돌 때 테두리 없는 흰 띠가 바깥으로 삐져나왔다</strong> → 실루엣을 닫는(closing) 방식은 채움이 거의 없어져(23~74픽셀) 고개를 들면 틈이 생길 상황이라 버리고, <strong>전체 실루엣 바깥 테두리에서 30px 안쪽만</strong> 채우도록 했다
 5. <strong>쓰러짐에서 몸을 발 기준으로 크게 눕히니 꼬리·등이 바닥 아래로 파고들어 캔버스에서 잘렸다</strong> → 쓰러짐을 "어지럽게 흔들리다 납작하게 주저앉기"로 바꾸고 회전은 작게, 캔버스 아래 여유를 90px 늘렸다
-6. 남은 작은 흠: 던진 뒤 앞발 끝에 불꽃 가장자리 점 몇 개, 쓰러짐 마지막에 꼬리 쪽 작은 흰 조각. 게임 크기에서는 안 보이고, 쓰러짐은 게임에서 연기 효과로 덮는다</p></article>
+6. 남은 작은 흠: 던진 뒤 앞발 끝에 불꽃 가장자리 점 몇 개, 쓰러짐 마지막에 꼬리 쪽 작은 흰 조각. 게임 크기에서는 안 보이고, 쓰러짐은 게임에서 연기 효과로 덮는다</p>
+<h3>3-c. 나머지 기준 그림 + 다람쥐 (2026-10-13)</h3>
+<p><strong>기준 그림 6종</strong> (<code>art/ref/</code>, 한 장에 약 1분 반)
+- 여우 그림을 <strong>그림체 참고</strong>로 함께 넣고 "새 캐릭터를 그리되 외곽선·셀 셰이딩·색감은 이 그림과 같게"라고 했다. 여섯 장 모두 여우와 같은 그림체로 나왔다 → <code>preview/03_refs_lineup.jpg</code>
+- 투구 슬라임은 <code>based_on: slime</code>으로 <strong>슬라임 그림을 넣고 투구만 씌우게</strong> 했다. 몸 모양·표정이 그대로라 투구가 깨지면 슬라임 시트로 바꿔도 자연스럽다
+- 컷아웃으로 자르기 쉽게 자세를 프롬프트에 적었다 (꼬리·다리·머리가 몸통과 많이 겹치지 않게). 슬라임은 거의 정면이지만 덩어리 모양이라 방향 문제는 없다
+- <code>tools/rig_helper.py</code>: 리그 좌표를 읽는 격자 그림 (전체 / 영역 확대)</p>
+<p><strong>다람쥐</strong> (<code>tools/rigs/squirrel.json</code>)</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>부위</td>
+<td>꼬리 → 몸통 → 머리 → hug(도토리를 안은 두 앞발 + 도토리)</td>
+</tr>
+<tr>
+<td>동작</td>
+<td>기본 12 · 도토리 만들기 8 (도토리를 들어 흔들다 5번째에 꽉 쥐면 게임이 도토리를 만든다) · 피격 4 · 쓰러짐 8</td>
+</tr>
+<tr>
+<td>이벤트 위치</td>
+<td><code>muzzle_part: hug</code> → 만든 도토리가 튀어나오는 곳. <code>pack_sheets.py</code>가 부위를 고를 수 있게 일반화</td>
+</tr>
+</tbody>
+</table>
+<p><strong>발생한 문제와 해결</strong>
+1. <strong>꼬리와 머리 사이에 크림색 띠가 보였다.</strong> 채움 색이 "부위의 가장 밝은 털"이라 흰 여우에는 맞았지만 주황 꼬리에서는 크림색 배 쪽 색이 골라졌다 → <strong>가려진 곳 바로 옆의 털 색</strong>(외곽선 뺀 중앙값)으로 바꿨다
+2. <strong>피격 때 앞발이 내려가면 턱과 도토리 사이에 틈이 생겼다</strong> → 머리에도 <code>fill_band</code>를 줘서 도토리 뒤 턱 부분을 채웠다. 몸통 영역도 볼 아래까지 넓혔다
+3. 볼 아래 왼쪽의 작은 초록 틈은 원본 그림에도 있는 배경(꼬리·볼·몸통 사이)이라 그대로 둔다</p></article>
 </div>
 </body>
 </html>
