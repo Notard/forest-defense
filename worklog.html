@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 12:50</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 14:17</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -762,7 +762,13 @@ article td img{margin:0 auto}
 1. <strong>Codex가 효과 그림을 스스로 96px 등으로 줄여 저장했다.</strong> 프롬프트에 "최종 크기는 96 × 96"이라고 쓴 탓이다. 이번 그림은 쓸 만해서 그대로 쓰고, 앞으로는 "원본 해상도로 저장, 줄이지 말 것"이라고 쓰고 줄이기는 <code>prep_props.py</code>가 하게 고쳤다
 2. <strong>배경 잔디에 줄무늬가 7개(약 87px 간격)라 레인 5개(108px)와 맞지 않았다.</strong> <code>prep_props.py</code>의 <code>flatten_rows</code>가 잔디 영역의 가로줄 밝기를 평균에 맞춰 줄무늬를 지운다 (풀결은 남김, 가장자리 30px는 원래 그림과 섞음). 줄 밝기 차이가 131~144에서 135~137로 줄었다. 레인 구분은 게임이 그리는 체크무늬가 맡는다
 3. <strong>배경 그림을 에셋에서 읽게 되자 테스트 3개가 실패했다.</strong> 위젯 테스트의 가짜 시계에서는 그림 해독이 끝나지 않아 필드가 붙기 전에 탭했고, 위젯 없이 띄운 카메라 테스트에는 에셋 번들이 없었다. 탭 테스트는 실제 시간으로 필드가 붙을 때까지 기다리고, 카메라 테스트는 <code>GameTester.testGameWidget</code>로 바꿨다
-4. 확인 그림에서 본 것 (5단계에서 조정): 통나무가 첫 칸 다람쥐 꼬리와 겹친다, 키 74px의 거북이에서는 금이 다시 흐리다</p></article>
+4. 확인 그림에서 본 것 (5단계에서 조정): 통나무가 첫 칸 다람쥐 꼬리와 겹친다, 키 74px의 거북이에서는 금이 다시 흐리다</p>
+<h3>3단계 마무리 (2026-10-13)</h3>
+<ul>
+<li>사용자가 확인 그림과 <code>art_preview.html</code>을 보고 승인했다 ("좋아 합격")</li>
+<li>결과: 캐릭터 7종 시트 25장(여우 4 · 다람쥐 4 · 거북이 4 · 스컨크 2 · 슬라임 4 · 투구 슬라임 3 · 도깨비불 4), 효과 5종, 배경 1장</li>
+<li>5단계로 넘긴 것: 통나무와 첫 칸 다람쥐 꼬리 겹침, 게임 크기에서 거북이 금 굵기</li>
+</ul></article>
 </div>
 </body>
 </html>
