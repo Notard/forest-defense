@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 22:56</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 23:23</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -2159,6 +2159,202 @@ article td img{margin:0 auto}
 <li>웹 확인에서 클릭이 너무 빠르면 말풍선이 붙기 전에 그 자리(빈 칸)를 눌러 바로 닫혔다 — 사람 손으로는 생기지 않는 순서라 그대로 둠</li>
 <li>처음 쓴 값 테스트가 게임 코드가 아닌 테스트 안의 공식으로 계산해 아무것도 확인하지 못했다 → 값 계산을 <code>ForestGame.costToLevel</code>로 빼서 그것을 확인</li>
 <li>도움말 놀이 방법이 7줄이 되어 제목과 설명이 붙어 보임 → 글자 크기·위치 조정</li>
+</ol>
+<h2>13. 밤 숲 · 스테이지 10개 (2026-10-13)</h2>
+<h3>결과 요약</h3>
+<table>
+<thead>
+<tr>
+<th>스테이지</th>
+<th>새로 나오는 적</th>
+<th>웨이브</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1-1</td>
+<td>슬라임</td>
+<td>3</td>
+<td>가운데 세 레인 (9단계 그대로)</td>
+</tr>
+<tr>
+<td>1-2</td>
+<td>투구 슬라임</td>
+<td>4</td>
+<td>(9단계 그대로)</td>
+</tr>
+<tr>
+<td>1-3</td>
+<td>도깨비불</td>
+<td>4</td>
+<td>(9단계 그대로)</td>
+</tr>
+<tr>
+<td>1-4</td>
+<td>버섯 포자</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>1-5 보스</td>
+<td>슬라임 왕</td>
+<td>4 + 보스 웨이브</td>
+<td>경고 "슬라임 왕이 나타났어요!"</td>
+</tr>
+<tr>
+<td>2-1</td>
+<td>박쥐</td>
+<td>4</td>
+<td>밤: 하늘 도토리 드물게(10~14초), 시작 도토리 300</td>
+</tr>
+<tr>
+<td>2-2</td>
+<td>돌 골렘</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>2-3</td>
+<td>(섞기)</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>2-4</td>
+<td>(골렘·버섯 많이)</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>2-5 보스</td>
+<td>밤 슬라임 왕 (HP 4500)</td>
+<td>5 + 보스 웨이브</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/stages.dart</code></td>
+<td>1-4 ~ 2-5 웨이브, 밤 시작 도토리 300, 하늘 도토리는 낮·밤 모두</td>
+</tr>
+<tr>
+<td><code>lib/game/components/acorn.dart</code></td>
+<td>하늘 도토리 간격을 스테이지별로: 낮 5~8초, 밤 10~14초</td>
+</tr>
+<tr>
+<td><code>lane_background.dart</code>, <code>forest_game.dart</code></td>
+<td>밤 스테이지는 밤 숲 그림</td>
+</tr>
+<tr>
+<td><code>lib/menu/menu_game.dart</code></td>
+<td>숲 지도 밤 구역: 남색 덮개 대신 밤 그림을 같은 자리에 겹쳐 그림 (두 그림의 구도가 같아 이어져 보임)</td>
+</tr>
+<tr>
+<td><code>waves.dart</code>, <code>wave_runner.dart</code>, <code>strings.dart</code></td>
+<td>보스가 있는 마지막 웨이브는 "슬라임 왕이 나타났어요!" 경고</td>
+</tr>
+<tr>
+<td><code>log.dart</code>, <code>monster.dart</code></td>
+<td>통나무에 깔린 버섯 포자는 나뉘지 않음 (아래 문제 1)</td>
+</tr>
+<tr>
+<td><code>test/bot.dart</code></td>
+<td>봇을 공용 파일로: 판의 카드만 쓰고, 고슴도치를 벽으로, 박쥐·골렘 레인에 부엉이, 골렘·보스 레인에 곰</td>
+</tr>
+<tr>
+<td><code>test/stage_balance_test.dart</code></td>
+<td>스테이지 10개 × 봇 3수준 × 시드 3 = <strong>90판</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>진행 방식 — 봇 기준</h3>
+<ul>
+<li>봇은 그 스테이지에 <strong>처음 왔을 때의 상태</strong>로 둔다: 친구는 앞 스테이지를 모두 깼을 때의 해금, 강화는 앞 스테이지를 모두 <strong>별 1개씩만</strong> 따고 받은 솔방울(가장 적은 경우)로 "시작 도토리 → 여우 → 다람쥐" 순서로 산 것. 레벨업·스컨크는 쓰지 않는다</li>
+<li>예: 2-4에 오면 솔방울 90개 → 시작 도토리 1, 여우 2, 다람쥐 1단계</li>
+<li>처음엔 강화 없이 돌렸는데, 그러면 2-4에 온 사람이 상점을 한 번도 안 쓴 셈이라 지나치게 비관적이었다</li>
+<li>기준: 보통 스테이지는 "처음" 수준(1.5초마다 한 번, 도토리 60%만 줍고, 다람쥐 둘, 늦게 반응)이 시드 셋 모두 깬다. 보스 스테이지는 "익숙함"이 깬다. "서툼"은 결과만 본다</li>
+</ul>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>204/204</strong> (전체를 두 번 돌려 봇 판이 흔들리지 않는 것 확인)</li>
+<li>마지막 봇 결과 (이긴 판 / 3):</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>1-1</th>
+<th>1-2</th>
+<th>1-3</th>
+<th>1-4</th>
+<th>1-5</th>
+<th>2-1</th>
+<th>2-2</th>
+<th>2-3</th>
+<th>2-4</th>
+<th>2-5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>익숙함</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>처음</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>서툼</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>웹(미리보기 창 음소거): 2-5 보스 웨이브(<code>?stage=2-5&amp;wave=6&amp;speed=4</code>)를 밤 숲 판에서 → <code>preview/13_night_boss.jpg</code>, 숲 지도 밤 구역 → <code>preview/13_map_night.jpg</code></li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li><strong>버섯 포자가 통나무에 깔리면 바로 게임오버.</strong> 작은 버섯이 이미 지나간 통나무 <strong>뒤</strong>(둥지 바로 앞)에 생겨 그대로 둥지에 닿았다. 봇이 2-4에서 89초 만에 지는 것을 보고 찾음 → 통나무에 깔리면 나뉘지 않는다(<code>crushed</code>)</li>
+<li><strong>밤이 너무 어려움.</strong> 계획대로 하늘 도토리를 없애자 "처음" 봇이 밤 스테이지를 0~1판밖에 못 깼다. 낮은 하늘 도토리만 분당 약 230개, 밤은 다람쥐 한 마리당 분당 약 83개 → 밤에도 드물게(10~14초) 떨어지게 하고 계획서도 고침</li>
+<li>그래도 남은 2-1·2-3·2-4의 "처음" 패배: 판을 다시 돌려 보니 박쥐가 여우를 넘어 통나무를 쓴 뒤, 도토리가 모자라 그 레인에 여우를 다시 놓지 못했다 → 밤 시작 도토리 250 → 300, 2-1 박쥐 첫 웨이브와 2-3·2-4 중반 웨이브를 가볍게, 2-4 마지막 큰 무리의 골렘 하나를 슬라임으로</li>
+<li>봇 결과가 판마다 아주 조금 다르다: 캐릭터 그림을 이미 읽어 두었는지에 따라 몬스터가 붙는 프레임이 달라서. 같은 판을 따로 돌리면 이기던 판이 묶어 돌리면 질 수 있었다 → 기준을 넉넉히 맞추고 전체 테스트를 두 번 돌려 확인</li>
 </ol></article>
 </div>
 </body>

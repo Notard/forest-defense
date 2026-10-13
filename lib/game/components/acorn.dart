@@ -107,12 +107,19 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
 
 /// 7~10초마다 무작위 칸 위로 도토리를 떨어뜨린다. 첫 도토리는 [firstDelay]초 뒤.
 class SkyAcornSpawner extends Component with HasGameReference<ForestGame> {
-  SkyAcornSpawner({Random? random, this.firstDelay = 4, this.lanes = const [0, 1, 2, 3, 4]}) : _random = random ?? Random();
+  SkyAcornSpawner({Random? random, this.firstDelay = 4, this.lanes = const [0, 1, 2, 3, 4], this.minGap = dayMinGap, this.maxGap = dayMaxGap})
+      : _random = random ?? Random();
 
   /// 도토리가 떨어지는 레인 (스테이지가 쓰는 레인).
   final List<int> lanes;
 
-  static const double minGap = 5, maxGap = 8; // 7~10 → 5~8 (7-1단계)
+  static const double dayMinGap = 5, dayMaxGap = 8; // 7~10 → 5~8 (7-1단계)
+
+  /// 밤 숲은 드물게 (13단계): 처음엔 "없음"으로 계획했지만, 다람쥐 수입만으로는 처음 하는 사람이 버티지 못했다.
+  static const double nightMinGap = 10, nightMaxGap = 14;
+
+  /// 다음 도토리까지 간격 (초).
+  final double minGap, maxGap;
 
   final Random _random;
   final double firstDelay;

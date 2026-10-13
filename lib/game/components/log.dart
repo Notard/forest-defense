@@ -57,6 +57,7 @@ class RollingLog extends SpriteComponent with HasGameReference<ForestGame> {
           removeFromParent();
           return;
         }
+        m.crushed = true; // 통나무에 깔림: 버섯 포자도 나뉘지 않는다 (13단계)
         m.takeDamage(m.hp + m.helmetHp);
       }
     }

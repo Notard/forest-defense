@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:forest_defense/game/components/acorn.dart';
 import 'package:forest_defense/game/progress.dart';
 import 'package:forest_defense/game/stages.dart';
 import 'package:forest_defense/game/units.dart';
@@ -10,7 +11,8 @@ void main() {
   test('스테이지는 10개, 지역마다 마지막은 보스, 밤은 하늘 도토리 없음', () {
     expect(stages, hasLength(10));
     expect(stages.where((s) => s.boss).map((s) => s.id), ['1-5', '2-5']);
-    expect(stages.where((s) => s.region == Region.night).every((s) => !s.skyAcorns), isTrue);
+    // 13단계: 밤에도 하늘 도토리가 떨어지지만 드물다 (낮 5~8초, 밤 10~14초)
+    expect(SkyAcornSpawner.nightMinGap, greaterThan(SkyAcornSpawner.dayMaxGap));
     expect(s11.lanes, [1, 2, 3]);
   });
 

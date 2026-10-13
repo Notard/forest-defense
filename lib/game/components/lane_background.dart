@@ -10,11 +10,14 @@ import '../grid.dart';
 /// 배경 그림의 잔디 줄무늬(7줄)는 레인(5줄)과 맞지 않아 tools/prep_props.py에서 지웠다.
 /// 칸 경계는 여기서 그리는 체크무늬로 보인다 (WORKLOG 3-g).
 class LaneBackground extends PositionComponent with HasGameReference {
-  LaneBackground({this.closedLanes = const []})
+  LaneBackground({this.closedLanes = const [], this.night = false})
       : super(size: Vector2(GameConfig.width, GameConfig.height), priority: -10);
 
   /// 이 스테이지에서 쓰지 않는 레인. 어둡게 덮고 빗금을 긋는다 (놓을 수 없음).
   final List<int> closedLanes;
+
+  /// 밤 숲 그림을 쓸지 (13단계, 낮 그림과 구도가 같다).
+  final bool night;
   final _closed = Paint()..color = const Color(0xA0182A12);
   final _hatch = Paint()
     ..color = const Color(0x30000000)
@@ -28,7 +31,7 @@ class LaneBackground extends PositionComponent with HasGameReference {
 
   @override
   Future<void> onLoad() async {
-    _picture = Sprite(await game.images.load('fx/background.webp'));
+    _picture = Sprite(await game.images.load(night ? 'fx/background_night.webp' : 'fx/background.webp'));
   }
 
   @override

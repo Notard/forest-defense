@@ -44,8 +44,11 @@ class WaveStarted extends WaveEvent {
   final bool big;
 }
 
-/// "큰 무리가 몰려와요!" 경고 (마지막 웨이브 [warningTime]초 전).
-class BigWaveWarning extends WaveEvent {}
+/// "큰 무리가 몰려와요!" 경고 (마지막 웨이브 [warningTime]초 전). 보스가 있는 웨이브면 [boss].
+class BigWaveWarning extends WaveEvent {
+  BigWaveWarning({this.boss = false});
+  final bool boss;
+}
 
 /// 웨이브 진행 규칙 (화면과 분리해 단위 테스트한다).
 ///
@@ -120,7 +123,7 @@ class WaveDirector {
     _untilNext -= dt;
     if (waves[_next].big && !_warned && _untilNext <= warningTime) {
       _warned = true;
-      events.add(BigWaveWarning());
+      events.add(BigWaveWarning(boss: waves[_next].monsters.any((m) => m.boss)));
     }
     if (_untilNext <= 0) {
       _current = _next++;

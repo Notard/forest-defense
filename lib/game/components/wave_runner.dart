@@ -29,9 +29,9 @@ class WaveRunner extends Component with HasGameReference<ForestGame> {
           game.addMonster(type, row: row, x: GameConfig.spawnX + _random.nextDouble() * 30);
         case WaveStarted(:final number, :final big):
           if (!big) game.world.add(Banner(Strings.waveBanner(number)));
-        case BigWaveWarning():
+        case BigWaveWarning(:final boss):
           game.sfx.play(Sfx.warning);
-          game.world.add(Banner(Strings.bigWave, big: true));
+          game.world.add(Banner(boss ? Strings.bossWave : Strings.bigWave, big: true));
       }
     }
   }

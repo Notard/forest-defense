@@ -79,6 +79,10 @@ class Monster extends Actor {
   static const double jumpTime = 0.6, jumpHeight = 70;
   bool get jumping => _jumpTo != null;
 
+  /// 통나무에 깔렸는지. 깔린 버섯 포자는 나뉘지 않는다: 나뉘면 작은 버섯이 이미 지나간 통나무 뒤(둥지 바로 앞)에
+  /// 생겨 그대로 둥지에 닿아 게임오버가 되었다 (13단계, 자동 플레이 봇으로 찾음).
+  bool crushed = false;
+
   // ── 보스 소환 (11단계) ──
   /// 지금까지 소환한 횟수 (HP 75%·50%·25%에서 한 번씩).
   int summons = 0;
@@ -235,7 +239,7 @@ class Monster extends Actor {
     game.defeated++;
     game.sfx.play(Sfx.slimeDie);
     // 버섯 포자: 작은 버섯으로 나뉜다 (addMonster는 부르자마자 대기 수를 올려서, 이 사이에 클리어로 판정되지 않는다)
-    for (var i = 0; i < type.splitsInto; i++) {
+    for (var i = 0; i < (crushed ? 0 : type.splitsInto); i++) {
       game.addMonster(MonsterType.miniMushroom, row: row, x: position.x - 24 + i * 52);
     }
   }

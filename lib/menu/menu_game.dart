@@ -94,8 +94,15 @@ class MapScreen extends PositionComponent with HasGameReference<MenuGame> {
   ];
 
   late final Sprite _background;
+  late final Sprite _nightPicture;
   final _shade = Paint()..color = const Color(0x66000000);
-  final _night = Paint()..color = const Color(0x8A0E1E44);
+  final _nightRim = Paint()
+    ..color = const Color(0x99B9D4FF)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 3;
+
+  /// 밤 숲 구역 (오른쪽).
+  static final RRect nightArea = RRect.fromRectAndRadius(const Rect.fromLTWH(648, 125, 620, 565), const Radius.circular(30));
   final _path = Paint()
     ..color = const Color(0xFFE9D3A6)
     ..strokeWidth = 7
@@ -104,6 +111,7 @@ class MapScreen extends PositionComponent with HasGameReference<MenuGame> {
   @override
   Future<void> onLoad() async {
     _background = Sprite(await game.images.load('fx/background.webp'));
+    _nightPicture = Sprite(await game.images.load('fx/background_night.webp'));
     final p = game.progress;
     add(TextComponent(text: Strings.map, textRenderer: _text(64, const Color(0xFFFFF4DC), shadow: 5), anchor: Anchor.center, position: Vector2(640, 62)));
     add(TextComponent(text: Strings.dayForest, textRenderer: _text(36, const Color(0xFFFFE6A8)), anchor: Anchor.center, position: Vector2(330, 150)));
@@ -121,8 +129,13 @@ class MapScreen extends PositionComponent with HasGameReference<MenuGame> {
   @override
   void render(Canvas canvas) {
     _background.render(canvas, size: size);
+    // 밤 숲 구역은 밤 그림을 같은 자리에 겹쳐 그린다 (두 그림의 구도가 같아 이어져 보인다)
+    canvas.save();
+    canvas.clipRRect(nightArea);
+    _nightPicture.render(canvas, size: size);
+    canvas.restore();
     canvas.drawRect(size.toRect(), _shade);
-    canvas.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(648, 125, 620, 565), const Radius.circular(30)), _night);
+    canvas.drawRRect(nightArea, _nightRim);
     // 원판을 잇는 점선 길
     for (var i = 0; i + 1 < spots.length; i++) {
       final a = spots[i], b = spots[i + 1];

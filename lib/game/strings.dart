@@ -19,6 +19,9 @@ abstract final class Strings {
   /// 마지막 큰 무리 웨이브 경고.
   static const bigWave = '큰 무리가 몰려와요!';
 
+  /// 보스가 있는 마지막 웨이브 경고 (13단계).
+  static const bossWave = '슬라임 왕이 나타났어요!';
+
   // ── 메인 화면·카운트다운 ──
   static const subtitle = '숲속 친구들과 함께 둥지를 지켜요';
   static const start = '게임 시작';

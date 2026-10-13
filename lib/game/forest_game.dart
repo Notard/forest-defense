@@ -198,11 +198,14 @@ class ForestGame extends FlameGame {
     await sfx.load();
     await images.loadAll(const ['fx/acorn.webp', 'fx/fireball.webp', 'fx/smoke.webp', 'fx/helmet.webp', 'fx/log.webp']);
     await world.addAll([
-      LaneBackground(closedLanes: [for (var r = 0; r < GameConfig.rows; r++) if (!laneOpen(r)) r]),
+      LaneBackground(closedLanes: [for (var r = 0; r < GameConfig.rows; r++) if (!laneOpen(r)) r], night: stage.region == Region.night),
       field,
       PlacementGhost(),
       hud,
-      if (skyAcorns) SkyAcornSpawner(random: _random, lanes: stage.lanes),
+      if (skyAcorns)
+        stage.region == Region.night
+            ? SkyAcornSpawner(random: _random, lanes: stage.lanes, minGap: SkyAcornSpawner.nightMinGap, maxGap: SkyAcornSpawner.nightMaxGap)
+            : SkyAcornSpawner(random: _random, lanes: stage.lanes),
     ]);
     if (practice) await _addPracticeTargets();
     if (wavesOn) {
