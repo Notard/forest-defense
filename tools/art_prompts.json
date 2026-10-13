@@ -106,6 +106,13 @@
         0.15,
         0.9
       ]
+    },
+    "shovel": {
+      "size": [
+        96,
+        96
+      ],
+      "prompt": "A small cartoon garden shovel icon, tilted 45 degrees with the blade at the bottom-left: shiny steel-gray blade with a soft highlight, short warm wooden handle with a rounded grip. Centered, bold and readable at 48px."
     }
   }
 }

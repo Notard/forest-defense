@@ -8,6 +8,7 @@
 JSON (게임이 읽음)
   frame   [너비, 높이]         한 프레임 크기 (px)
   anchor  [x, y]              프레임 안의 발 위치 → 칸 바닥에 맞춘다
+  bbox    [x0, y0, x1, y1]    첫 동작 첫 프레임에서 그림이 있는 영역 → 게임 표시 크기·카드 초상화에 쓴다
   muzzle  [x, y]              (있으면) 이벤트가 일어나는 위치: 여우불 발사점, 다람쥐 도토리가 튀어나오는 곳 …
                               리그의 muzzle_point 좌표, 또는 muzzle_part 부위 기준점 (없으면 flame 부위)
   actions.<동작>              frames, fps, loop, event(이 프레임에서 발사·생산·피해)
@@ -52,6 +53,8 @@ def main() -> None:
             sheet.paste(im, (i * w, 0))
         sheet.save(out_dir / f"{action}.png", optimize=True)
         meta["frame"] = [w, h]
+        if "bbox" not in meta:
+            meta["bbox"] = list(imgs[0].getchannel("A").point(lambda v: 255 if v >= 128 else 0).getbbox())
         meta["actions"][action] = {k: spec[k] for k in ("frames", "fps", "loop", "event") if k in spec}
         print(f"{name}/{action}.png  {sheet.width}×{sheet.height}  {(out_dir / f'{action}.png').stat().st_size / 1024:,.0f} KB")
 

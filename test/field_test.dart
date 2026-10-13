@@ -1,28 +1,15 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/grid.dart';
+
+import 'support.dart';
 
 /// 실제 입력 경로(화면 탭 → 고정 해상도 카메라 → 필드)로 칸 판정을 확인한다.
 void main() {
-  // 위젯 테스트 화면은 800 × 600 (4:3)이라 위아래 레터박스가 생긴다.
-  // 1280 × 720 → 배율 0.625, 그려지는 높이 450, 위쪽 여백 75.
-  Offset toScreen(Vector2 world) =>
-      Offset(world.x * 0.625, 75 + world.y * 0.625);
-
-  // 배경 그림을 실제로 읽어 들이는 동안(가짜 시계가 아닌 실제 시간) 필드가 붙을 때까지 기다린다.
-  Future<void> waitForField(ForestGame game, WidgetTester tester) async {
-    for (var i = 0; i < 200 && !game.field.isMounted; i++) {
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-      await tester.pump();
-    }
-    expect(game.field.isMounted, isTrue);
-  }
-
-  GameTester(ForestGame.new).testGameWidget(
+  GameTester(testGame).testGameWidget(
     '레터박스가 있어도 탭한 화면 위치가 올바른 칸으로 바뀐다',
-    setUp: waitForField,
+    setUp: waitForLoad,
     verify: (game, tester) async {
       expect(game.canvasSize, Vector2(800, 600));
       for (final cell in [
@@ -37,9 +24,9 @@ void main() {
     },
   );
 
-  GameTester(ForestGame.new).testGameWidget(
+  GameTester(testGame).testGameWidget(
     '필드 밖(HUD·둥지·레터박스)을 탭하면 선택이 바뀌지 않는다',
-    setUp: waitForField,
+    setUp: waitForLoad,
     verify: (game, tester) async {
       await tester.tapAt(toScreen(Grid.center((row: 1, col: 1))));
       await tester.pump(const Duration(milliseconds: 100));

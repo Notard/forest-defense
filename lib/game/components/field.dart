@@ -6,11 +6,9 @@ import 'package:flame/events.dart';
 import '../config.dart';
 import '../grid.dart';
 
-/// 필드 입력 영역. 마우스를 올린 칸과 마지막으로 누른 칸을 강조한다.
+/// 필드 입력 영역. 마우스를 올린 칸을 밝게 하고, 누른 칸을 [onCellTap]으로 알린다.
 ///
-/// 마우스와 터치는 같은 탭 경로로 들어온다. 터치에는 "올림"이 없으므로
-/// 탭한 칸을 [selectedCell]로 남겨 어느 칸을 눌렀는지 보이게 한다.
-/// 4단계에서 [onCellTap]에 유닛 배치를 연결한다.
+/// 마우스와 터치는 같은 탭 경로로 들어온다. 마지막으로 누른 칸은 [selectedCell]에 남는다.
 class Field extends PositionComponent with TapCallbacks, PointerMoveCallbacks {
   Field({this.onCellTap})
       : super(
@@ -28,10 +26,6 @@ class Field extends PositionComponent with TapCallbacks, PointerMoveCallbacks {
   Cell? selectedCell;
 
   final _hoverFill = Paint()..color = const Color(0x40FFFFFF);
-  final _selectStroke = Paint()
-    ..color = const Color(0xFFFFF3B0)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 4;
 
   /// 이 컴포넌트 기준 좌표 [local]이 가리키는 칸.
   Cell? _cellAtLocal(Vector2 local) => Grid.cellAt(local + position);
@@ -58,14 +52,6 @@ class Field extends PositionComponent with TapCallbacks, PointerMoveCallbacks {
   void render(Canvas canvas) {
     final hovered = hoveredCell;
     if (hovered != null) canvas.drawRect(_localRect(hovered), _hoverFill);
-    final selected = selectedCell;
-    if (selected != null) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(_localRect(selected).deflate(2),
-            const Radius.circular(10)),
-        _selectStroke,
-      );
-    }
   }
 
   Rect _localRect(Cell cell) {

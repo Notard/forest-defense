@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 14:17</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 14:29</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -768,7 +768,75 @@ article td img{margin:0 auto}
 <li>사용자가 확인 그림과 <code>art_preview.html</code>을 보고 승인했다 ("좋아 합격")</li>
 <li>결과: 캐릭터 7종 시트 25장(여우 4 · 다람쥐 4 · 거북이 4 · 스컨크 2 · 슬라임 4 · 투구 슬라임 3 · 도깨비불 4), 효과 5종, 배경 1장</li>
 <li>5단계로 넘긴 것: 통나무와 첫 칸 다람쥐 꼬리 겹침, 게임 크기에서 거북이 금 굵기</li>
-</ul></article>
+</ul>
+<h2>4. 자원과 유닛 배치 (2026-10-13)</h2>
+<h3>결과 요약</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/units.dart</code></td>
+<td>유닛 4종 수치 (비용·쿨다운·HP·표시 키). 스컨크는 놓자마자 <code>arm</code>(준비) 동작</td>
+</tr>
+<tr>
+<td><code>lib/game/garden.dart</code></td>
+<td>규칙: 도토리(시작 150, 하나 25), 카드 쿨다운, 칸 점유, 삽(환불 없음). 화면과 분리</td>
+</tr>
+<tr>
+<td><code>lib/game/art.dart</code></td>
+<td><code>CharacterArt</code>: <code>&lt;캐릭터&gt;.json</code> + 시트를 Flame 애니메이션으로, 캐릭터별 캐시. 키 기준 배율 (<code>bbox</code> 사용)</td>
+</tr>
+<tr>
+<td><code>lib/game/components/unit.dart</code></td>
+<td>칸에 선 유닛. 발을 칸 아래 끝에서 8px 위에, 아래 레인일수록 앞에 그림</td>
+</tr>
+<tr>
+<td><code>lib/game/components/acorn.dart</code></td>
+<td>줍는 도토리 + 하늘 도토리 생성기 (7~10초, 첫 4초)</td>
+</tr>
+<tr>
+<td><code>lib/game/components/ghost.dart</code></td>
+<td>카드를 고른 채 마우스를 올린 칸에 놓일 모습 (반투명)</td>
+</tr>
+<tr>
+<td><code>lib/game/hud/hud.dart</code>, <code>layout.dart</code></td>
+<td>HUD: 반투명 판, 도토리 수, 카드 4장, 삽, 일시정지 자리, 웨이브·진행 바 자리</td>
+</tr>
+<tr>
+<td><code>lib/game/forest_game.dart</code></td>
+<td>고른 카드·삽 모드, 칸 누르기 처리, <code>?acorns=</code> 시작 도토리</td>
+</tr>
+<tr>
+<td><code>assets/images/fx/shovel.png</code></td>
+<td>삽 아이콘 (Codex). 이번에는 원본 해상도(636 KB)로 받았다</td>
+</tr>
+</tbody>
+</table>
+<h3>진행 방식</h3>
+<ul>
+<li>규칙(<code>Garden</code>)을 먼저 순수 Dart로 만들고 단위 테스트 8개를 붙인 뒤 화면을 얹었다</li>
+<li>실제 입력 경로 테스트(<code>placement_test.dart</code>) 5개: 카드 → 칸 놓기, 찬 칸 거절과 취소, 삽, 도토리 부족 카드, 도토리 줍기 (한 프레임씩 시간을 흘려 확인)</li>
+<li>테스트 공통 도구를 <code>test/support.dart</code>로 모았다 (화면 좌표 변환, 로드 대기, 탭)</li>
+<li>웹 빌드를 브라우저에서 직접 플레이했다: 다람쥐·여우 놓기 → 도토리 줍기(0 → 25) → 삽으로 다람쥐 치우기(도토리 그대로 25), 그리고 <code>?acorns=1000</code>으로 네 유닛을 모두 놓고 쿨다운이 따로 도는지 확인 → <code>preview/04_place.jpg</code></li>
+</ul>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>27/27</strong> (규칙 8 · 입력 경로 5 · 필드 2 · 그리드 8 · 폰트 3 · 카메라 1)</li>
+<li>웹: 콘솔 에러 없음. 8초 뒤 다람쥐·여우 카드는 다시 눌리고 거북이(30초)·스컨크(50초)는 덮개가 남아 있음</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li><strong>HUD가 테스트에서 끝내 붙지 않았다.</strong> 놓기 미리보기를 <code>SpriteComponent</code>로 만들었는데, 이 컴포넌트는 붙는 순간 그림이 꼭 있어야 한다(assert). 평소에 그림이 없는 미리보기가 assert에 걸리자 그 뒤에 붙을 HUD까지 멈췄다 → 미리보기를 <code>PositionComponent</code>로 바꾸고 그림이 있을 때만 직접 그린다</li>
+<li><strong>브라우저에서 도토리를 눌렀는데 수가 안 늘었다.</strong> 테스트로 한 프레임씩 재현해도 정상이었다. 원인은 내 조작이 느린 것: 화면을 찍고 다음 클릭까지 몇 초씩 걸려 도토리가 8초 수명이 끝나 이미 사라진 뒤였다. 바로 누르자 0 → 25로 정상</li>
+<li><strong>도토리 수가 세 자리가 되자 숫자가 아이콘을 덮었다</strong> ("650"의 6) → 아이콘 옆 58px에 들어가도록 글자 크기를 40 → 24까지 줄여 맞춘다</li>
+<li>브라우저 패널이 1280 × 720 흉내보다 작을 때 화면이 잘려 보였다 → 확인은 패널 원래 크기(1024 × 768, 위아래 레터박스)에서 했다. 좌표 변환은 테스트와 같다</li>
+<li>나중에 할 것 (7단계): 삽 모드일 때 칸 강조 색을 바꾸기, 터치에서도 놓일 모습 보이기</li>
+</ol></article>
 </div>
 </body>
 </html>
