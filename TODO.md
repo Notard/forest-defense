@@ -4,7 +4,7 @@
 > 체크 후 `python tools/make_todo_html.py` 실행 → 진행률 갱신 + [todo.html](todo.html) 재생성.
 > 작업별 상세 결과: [WORKLOG.md](WORKLOG.md)
 
-**진행률: 11 / 60**
+**진행률: 11 / 75**
 
 ---
 
@@ -81,15 +81,32 @@
 - [ ] 웹에서 첫 클릭 이후 재생 확인 ✅ 완료 기준
 
 ## 9. 플랫폼 빌드
-- [ ] 앱 이름 "숲 지키기", Codex 아이콘 적용
+- [ ] 앱 이름 "숲 지키기", Codex 아이콘 원본 생성
+- [ ] 아이콘 크기별 생성 (앱, 파비콘, PWA 192·512·마스커블)
 - [ ] `tools/build_all.sh` (Windows · 웹 · APK)
 - [ ] Windows exe 실행 확인
-- [ ] 웹 빌드 GitHub Pages 배포 (사용자 확인 후)
 - [ ] Android APK 설치·터치 확인 (사용자 기기)
 - [ ] 사용자 플레이 테스트 ✅ 완료 기준
 
-## 10. 마무리
-- [ ] README (소개, 플레이 GIF, 조작법, 빌드 방법)
+## 10. 배포: PWA · Microsoft Store
+- [ ] `web/manifest.json` 정리 (이름, fullscreen, 가로, scope `/forest-defense/`, 아이콘)
+- [ ] Flutter 3.44 기본 서비스 워커 여부 확인, 없으면 `tools/make_sw.py`로 오프라인 캐시 서비스 워커 생성
+- [ ] 시작 화면 "앱으로 설치" 버튼 (지원 브라우저에서만)
+- [ ] 로컬에서 매니페스트·서비스 워커·오프라인 새로 고침 확인
+- [ ] GitHub Pages 배포 (사용자 확인 후)
+- [ ] Edge·Chrome 데스크톱 설치, 안드로이드 홈 화면 추가 확인
+- [ ] PWA 오프라인 플레이 확인 ✅ PWA 완료 기준
+- [ ] `msix` 패키지 추가, `msix_config` 작성 (최소 권한)
+- [ ] 테스트 인증서 MSIX 로컬 설치·실행·삭제 확인
+- [ ] 개인정보 처리방침 페이지 (GitHub Pages)
+- [ ] 스토어 등록 정보: 설명(한·영), 스크린샷 4장 이상, 키워드
+- [ ] Partner Center 계정·앱 이름 예약 (사용자), Identity 값 반영
+- [ ] 연령 등급(IARC) 설문 (사용자와 함께)
+- [ ] `dart run msix:create --store` → 제출 (사용자)
+- [ ] 인증 통과, Store에서 받은 앱 실행 확인 ✅ Store 완료 기준
+
+## 11. 마무리
+- [ ] README (소개, 플레이 GIF, 조작법, 빌드 방법, PWA 주소, Store 링크)
 - [ ] 결과 보고서 REPORT.md ✅ 완료 기준
 
 ---
@@ -99,4 +116,5 @@
 | 날짜 | 단계 | 메모 |
 |---|---|---|
 | 2026-10-13 | 0. 기획 | 질문으로 방향 결정, plan.md 작성 |
+| 2026-10-13 | 계획 변경 | 10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로 |
 | 2026-10-13 | 1. 프로젝트 생성 | Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1 |

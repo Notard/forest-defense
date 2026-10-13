@@ -12,6 +12,7 @@
 |---|---|
 | 엔진 | Flutter 3.44.1 + **Flame 1.38**, 효과음은 flame_audio |
 | 플랫폼 | Windows(exe) · 웹(GitHub Pages) · Android(APK) |
+| 공개 | **Microsoft Store**(MSIX) · **PWA**(GitHub Pages에서 설치 가능한 웹 앱) |
 | 입력 | 마우스 클릭 / 터치 탭 (같은 코드로 처리) |
 | 화면 | 논리 해상도 **1280 × 720 (16:9)** 고정, 다른 비율은 레터박스 |
 | 그래픽 | 2D 카툰 스프라이트. **Codex CLI로 생성**, 움직임은 코드 트윈(흔들기·늘었다 줄기) |
@@ -187,16 +188,66 @@ y   0 ┌───────────────────────�
 
 - `tools/build_all.sh`로 한 번에 빌드
 - 확인: 16:9, 4:3(태블릿), 19.5:9(폰 가로)에서 레터박스와 터치 위치가 맞는지
-- 앱 이름 "숲 지키기", 아이콘은 Codex로 생성
+- 앱 이름 "숲 지키기", 아이콘은 Codex로 생성. 이때 스토어·PWA용 크기까지 한 번에 만든다 (10단계 참고)
 
-**완료 기준:** 세 플랫폼 결과물이 모두 실행되고, 웹 버전 링크로 플레이할 수 있다.
+**완료 기준:** 세 플랫폼 결과물이 모두 로컬에서 실행된다.
 
 ---
 
-## 10. 마무리
+## 10. 배포: PWA · Microsoft Store
+
+두 곳 모두 같은 코드와 같은 아이콘 원본을 쓴다. 공개 직전 단계(저장소 공개, 스토어 제출)는 매번 사용자 확인을 받는다.
+
+### 10-1. PWA (GitHub Pages)
+
+| 항목 | 내용 |
+|---|---|
+| 주소 | `https://notard.github.io/forest-defense/` (GitHub Pages는 HTTPS라 설치 조건을 만족) |
+| 빌드 | `flutter build web --release --base-href /forest-defense/` → `gh-pages` 브랜치 또는 `docs/`로 배포 |
+| `web/manifest.json` | 이름 "숲 지키기", short_name, `display: fullscreen`, `orientation: landscape`, 시작 주소·scope를 `/forest-defense/`로, 테마·배경색 숲색 |
+| 아이콘 | 192·512px 일반 + 마스커블(안전 영역 80%) 각 1장, 파비콘 |
+| 오프라인 | 한 번 열면 인터넷 없이도 실행되도록 서비스 워커로 앱 파일 캐시 |
+| 설치 안내 | 브라우저의 설치 버튼 외에, 게임 시작 화면에 "앱으로 설치" 버튼 (`beforeinstallprompt`를 지원하는 브라우저에서만 표시) |
+| 업데이트 | 새 버전 배포 시 캐시 버전을 올려 다음 실행 때 교체 |
+
+- 확인할 것: Flutter 3.44에서 기본 서비스 워커가 아직 제공되는지. 제공되지 않으면 `tools/make_sw.py`로 빌드 결과물 목록을 읽어 캐시용 서비스 워커를 직접 만든다
+- 검증: Chrome DevTools의 Application 패널(매니페스트·서비스 워커), 오프라인 모드에서 새로 고침, Edge·Chrome 데스크톱 설치, 안드로이드 Chrome "홈 화면에 추가"
+
+**완료 기준:** PWA로 설치한 앱이 오프라인에서도 처음부터 끝까지 플레이된다.
+
+### 10-2. Microsoft Store (MSIX)
+
+| 항목 | 내용 |
+|---|---|
+| 방식 | 네이티브 Windows 빌드를 **MSIX**로 포장 (`msix` 패키지, `dart run msix:create --store`) |
+| 이유 | PWA를 포장하는 방법(PWABuilder)도 있지만, 네이티브 빌드가 더 빠르고 오프라인·효과음이 브라우저 정책의 영향을 받지 않는다 |
+| 패키지 정보 | `pubspec.yaml`의 `msix_config`: 표시 이름, 게시자 표시 이름, Identity Name·Publisher(CN=…)는 Partner Center에서 받은 값 그대로 |
+| 기능(capabilities) | 인터넷 불필요 → 최소 권한 (`internetClient`도 빼기) |
+| 아이콘 | 원본 1장으로 Store 로고·타일 크기 생성 (`msix`가 자동 생성, 결과 확인) |
+| 로컬 테스트 | 테스트 인증서로 서명한 MSIX를 설치해 실행·삭제 확인 |
+
+**스토어 등록 정보 (사용자와 함께 준비)**
+- 앱 이름 예약: "숲 지키기" (영문 이름도 하나: 예 "Forest Keepers")
+- 설명(한국어, 영어), 주요 기능 목록, 검색 키워드
+- 스크린샷: 1920×1080 이상 4장 이상 (게임 화면, 배치, 전투, 클리어)
+- 연령 등급: IARC 설문 (폭력 표현이 거의 없는 만화풍 → 전체 이용가 예상)
+- 개인정보 처리방침 URL: 데이터를 수집하지 않는다는 짧은 페이지를 GitHub Pages에 둔다
+- 가격: 무료
+
+**사용자가 직접 해야 하는 일**
+- Microsoft Partner Center 개발자 계정 등록과 약관 동의 (등록 비용·절차는 그 시점에 확인)
+- 앱 이름 예약 후 Identity 값을 알려주기
+- 최종 제출 버튼 (인증 심사는 보통 며칠 걸린다)
+
+**완료 기준:** Store 인증을 통과하고, Store에서 받은 앱이 실행된다.
+
+---
+
+## 11. 마무리
 
 - README(소개, 플레이 GIF, 조작법, 빌드 방법), 결과 보고서 REPORT.md
 - GitHub 저장소 `Notard/forest-defense` (만들기 전에 확인)
+- README에 PWA 주소와 Store 링크 추가
 
 ---
 
