@@ -107,16 +107,21 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
 }
 
 /// 둥근 나무판 슬롯 (카드·삽·도토리 칸 공통 바탕).
+/// 매 프레임 카드마다 새로 만들지 않도록 붓을 돌려 쓴다 (16-1단계).
+final _slotFill = Paint()..color = const Color(0xFFE9D3A6);
+final _slotRim = Paint()
+  ..color = _ink
+  ..style = PaintingStyle.stroke
+  ..strokeWidth = 3;
+final _slotRimOn = Paint()
+  ..color = const Color(0xFFFFE066)
+  ..style = PaintingStyle.stroke
+  ..strokeWidth = 5;
+
 void _drawSlot(Canvas canvas, Vector2 size, {required bool highlighted}) {
   final r = RRect.fromRectAndRadius(Offset.zero & Size(size.x, size.y), const Radius.circular(12));
-  canvas.drawRRect(r, Paint()..color = const Color(0xFFE9D3A6));
-  canvas.drawRRect(
-    r.deflate(1.5),
-    Paint()
-      ..color = highlighted ? const Color(0xFFFFE066) : _ink
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = highlighted ? 5 : 3,
-  );
+  canvas.drawRRect(r, _slotFill);
+  canvas.drawRRect(r.deflate(1.5), highlighted ? _slotRimOn : _slotRim);
 }
 
 /// 왼쪽 위 도토리 수.

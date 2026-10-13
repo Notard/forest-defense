@@ -62,6 +62,14 @@
 
     // 오프라인 캐시 (tools/make_sw.py가 빌드 뒤 sw.js를 만든다). Flutter 기본 서비스 워커는 쓰지 않는다.
     if ('serviceWorker' in navigator) {
+      // 새 버전이 올라오면 새 서비스 워커가 자리 잡는 순간 한 번 새로 고친다.
+      // (안 그러면 첫 새로 고침에는 예전 저장본이 떠서 "고쳤는데 그대로"로 보인다. 처음 방문 때는 새로 고치지 않음)
+      var hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!hadController || window.__forestReloaded) return;
+        window.__forestReloaded = true;
+        window.location.reload();
+      });
       window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
     }
   </script>

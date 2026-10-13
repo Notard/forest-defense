@@ -197,6 +197,16 @@ class ForestGame extends FlameGame {
     // 효과 그림은 미리 읽어 둔다. 첫 여우불·첫 연기에서 그림을 읽느라 한 박자 늦지 않게.
     await sfx.load();
     await images.loadAll(const ['fx/acorn.webp', 'fx/fireball.webp', 'fx/smoke.webp', 'fx/helmet.webp', 'fx/log.webp']);
+    // 이 판에 나올 몬스터·쓸 수 있는 친구 그림도 미리 읽는다. 처음 나오는 순간 시트를 풀면 핸드폰에서 멈칫했다 (16-1단계).
+    // 투구 슬라임은 투구가 깨지면, 보스는 소환할 때 슬라임 그림을 쓴다. 작은 버섯은 버섯 그림을 같이 쓴다.
+    final sheets = <String>{
+      for (final u in units) u.sheet,
+      for (final w in stage.waves)
+        for (final m in w.monsters) m.sheet,
+      for (final m in practiceKinds ?? const <MonsterType>[]) m.sheet,
+      MonsterType.slime.sheet,
+    };
+    await Future.wait([for (final name in sheets) CharacterArt.load(this, name)]);
     await world.addAll([
       LaneBackground(closedLanes: [for (var r = 0; r < GameConfig.rows; r++) if (!laneOpen(r)) r], night: stage.region == Region.night),
       field,

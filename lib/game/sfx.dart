@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
 
+import '../platform/web_sfx.dart';
+
 /// 효과음 (`tools/make_sfx.py`로 만든 assets/audio/*.wav). 볼륨과 같은 소리 사이 최소 간격을 함께 둔다.
 enum Sfx {
   pickup('pickup', 0.7),
@@ -56,6 +58,11 @@ class SoundBoard {
 
   Future<void> load() async {
     if (!enabled) return;
+    if (WebSfx.available) {
+      // 웹: 통로 하나에 미리 풀어 둔 소리 (앱에서 한 번만 받는다, 16-1단계)
+      await WebSfx.load({for (final s in Sfx.values) s.file: 'assets/audio/${s.path}'});
+      return;
+    }
     try {
       await FlameAudio.audioCache.loadAll([for (final s in Sfx.values) s.path]);
       for (final s in Sfx.values.where((s) => s.pooled)) {
@@ -74,6 +81,10 @@ class SoundBoard {
     played.add(s);
     if (played.length > 100) played.removeAt(0); // 기록은 최근 것만
     if (!enabled) return;
+    if (WebSfx.available) {
+      WebSfx.play(s.file, s.volume);
+      return;
+    }
     final pool = _pools[s];
     final Future<Object?> started = pool != null ? pool.start(volume: s.volume) : FlameAudio.play(s.path, volume: s.volume);
     unawaited(started.then<Object?>((v) => v, onError: (_) => null));
