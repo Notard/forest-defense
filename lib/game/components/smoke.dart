@@ -19,7 +19,7 @@ class Smoke extends SpriteComponent with HasGameReference<ForestGame> {
 
   @override
   Future<void> onLoad() async {
-    sprite = Sprite(await game.images.load('fx/smoke.png'));
+    sprite = Sprite(await game.images.load('fx/smoke.webp'));
     addAll([
       ScaleEffect.to(Vector2.all(1), EffectController(duration: duration, curve: Curves.easeOutCubic)),
       OpacityEffect.fadeOut(EffectController(duration: duration, startDelay: duration * 0.3)),

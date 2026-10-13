@@ -21,7 +21,7 @@ class LaneBackground extends PositionComponent with HasGameReference {
 
   @override
   Future<void> onLoad() async {
-    _picture = Sprite(await game.images.load('fx/background.jpg'));
+    _picture = Sprite(await game.images.load('fx/background.webp'));
   }
 
   @override

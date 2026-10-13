@@ -14,7 +14,7 @@ SIZE = 200  # GIF 한 칸 크기 (px)
 
 
 def frames_of(name: str, action: str, meta: dict) -> list[Image.Image]:
-    sheet = Image.open(ROOT / "assets" / "images" / name / f"{action}.png").convert("RGBA")
+    sheet = Image.open(ROOT / "assets" / "images" / name / f"{action}.webp").convert("RGBA")
     w, h = meta["frame"]
     out = []
     for i in range(meta["actions"][action]["frames"]):

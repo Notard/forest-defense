@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 14:44</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 14:50</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -896,7 +896,50 @@ article td img{margin:0 auto}
 <li>다람쥐 도토리가 다람쥐 발 위에 반쯤 겹쳐 떨어졌다 → 18~48px에서 34~64px 오른쪽으로 옮겼다</li>
 <li>브라우저 패널 배율이 바뀐 뒤 화면이 확대돼 보이는 현상이 다시 있었다 (2단계 문제 3과 같음, 새로 고침하면 정상). 9단계 확인 항목에 이미 있다</li>
 <li><strong>그림 용량이 크다</strong>: 스프라이트 PNG 31장이 10.7 MB라 웹에서 연습 모드 첫 화면까지 몇 초 걸렸다. WebP(품질 88)로 바꾸면 2.2 MB로 줄어든다 → 9단계 TODO에 추가 (화질 확인 후)</li>
-</ol></article>
+</ol>
+<h2>6-0. 그림을 WebP로 (2026-10-13)</h2>
+<p>사용자 요청으로 9단계에 있던 그림 용량 줄이기를 6단계 전에 앞당겨 했다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>전 (PNG/JPG)</th>
+<th>후 (WebP)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>assets/images</code> 전체</td>
+<td>11 MB</td>
+<td><strong>2.4 MB</strong></td>
+</tr>
+<tr>
+<td>스프라이트 시트 31장</td>
+<td>10.7 MB</td>
+<td>품질 88</td>
+</tr>
+<tr>
+<td>효과</td>
+<td>PNG</td>
+<td>품질 90</td>
+</tr>
+<tr>
+<td>배경</td>
+<td>JPG 241 KB</td>
+<td>품질 85, 129 KB</td>
+</tr>
+<tr>
+<td>웹 연습 모드 첫 화면</td>
+<td>약 7초</td>
+<td>약 3초 (그림 19장, 1.27 MB 내려받음)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>화질 확인</strong>: 여우·다람쥐·도깨비불 시트를 PNG와 비교 → 투명도 차이 0 (WebP 손실 압축에서도 알파는 무손실), 색 차이 평균 2.5~3.3/255. 2배 확대해 나란히 봐도 구분되지 않았다</li>
+<li>바꾼 곳: <code>pack_sheets.py</code>(시트 WebP, 예전 PNG 지움), <code>prep_props.py</code>(효과·배경), <code>make_art_preview.py</code>·<code>make_gifs.py</code>, 게임 코드의 그림 경로 9개 파일</li>
+<li>검증: <code>flutter test</code> 32/32 (테스트가 실제 WebP를 읽는다), 웹 빌드 콘솔 에러 없음·PNG 요청 0개, Windows exe 빌드 후 실행 유지 (화면은 직접 보지 못해 9단계 사용자 확인 항목으로 남김)</li>
+</ul></article>
 </div>
 </body>
 </html>

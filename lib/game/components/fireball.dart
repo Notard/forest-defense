@@ -19,7 +19,7 @@ class Fireball extends SpriteComponent with HasGameReference<ForestGame> {
 
   @override
   Future<void> onLoad() async {
-    sprite = Sprite(await game.images.load('fx/fireball.png'));
+    sprite = Sprite(await game.images.load('fx/fireball.webp'));
     angle = -pi / 2; // 위로 선 불꽃 끝이 뒤(왼쪽)로 날리도록 눕힌다
   }
 

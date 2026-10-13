@@ -67,7 +67,7 @@ class CharacterArt {
     );
     final images = <String, Image>{
       for (final action in actions.keys)
-        action: await game.images.load('$name/$action.png'),
+        action: await game.images.load('$name/$action.webp'),
     };
     Vector2 vec(List<dynamic> v) => Vector2((v[0] as num).toDouble(), (v[1] as num).toDouble());
     final b = (json['bbox'] as List).map((v) => (v as num).toDouble()).toList();

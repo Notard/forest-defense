@@ -3,7 +3,8 @@
     python tools/prep_props.py
 
 - art/ref/props/<이름>.png (gen_art.py prop) → 알파 정리, 여백 자르기, size 안에 맞춰 가운데 정렬
-- 배경(opaque)은 16:9로 가운데를 잘라 원본 해상도 그대로 JPG로 저장 (고해상도 화면에서도 선명하게)
+- 모두 WebP로 저장한다 (효과 품질 90, 배경 품질 85, 투명도는 무손실)
+- 배경(opaque)은 16:9로 가운데를 잘라 원본 해상도 그대로 저장 (고해상도 화면에서도 선명하게)
   flatten_rows가 있으면 그 영역에서 가로줄마다 밝기를 평균에 맞춰 줄무늬를 지운다 (풀결은 남는다)
 - 컷아웃 조각에서 바로 쓰는 효과: 여우불 = fox/flame, 투구 = slime_helmet/helmet (build_sprites.sh를 먼저)
 """
@@ -82,19 +83,22 @@ def main() -> None:
                 im = im.crop((0, (im.height - h) // 2, im.width, (im.height + h) // 2))
             if "flatten_rows" in spec:
                 im = flatten_rows(im, spec["flatten_rows"])
-            path = OUT / f"{name}.jpg"
-            im.save(path, quality=88, optimize=True)
+            path = OUT / f"{name}.webp"
+            im.save(path, "WEBP", quality=85, method=6)
+            (OUT / f"{name}.jpg").unlink(missing_ok=True)
         else:
-            path = OUT / f"{name}.png"
-            fit(clean(im), tuple(spec["size"])).save(path, optimize=True)
+            path = OUT / f"{name}.webp"
+            fit(clean(im), tuple(spec["size"])).save(path, "WEBP", quality=90, method=6)
+            (OUT / f"{name}.png").unlink(missing_ok=True)
         print(f"{path.relative_to(ROOT).as_posix()}  {Image.open(path).size}  {path.stat().st_size / 1024:,.0f} KB")
     for name, (character, part, size) in FROM_PARTS.items():
         src = ROOT / "art" / "parts" / character / f"{part}.png"
         if not src.exists():
             print(f"{name}: {character} 조각 없음 (bash tools/build_sprites.sh {character})")
             continue
-        path = OUT / f"{name}.png"
-        fit(clean(Image.open(src)), size).save(path, optimize=True)
+        path = OUT / f"{name}.webp"
+        fit(clean(Image.open(src)), size).save(path, "WEBP", quality=90, method=6)
+        (OUT / f"{name}.png").unlink(missing_ok=True)
         print(f"{path.relative_to(ROOT).as_posix()}  {size}  ← {character}/{part}")
 
 

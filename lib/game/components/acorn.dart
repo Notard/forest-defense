@@ -47,7 +47,7 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
 
   @override
   Future<void> onLoad() async {
-    sprite = Sprite(await game.images.load('fx/acorn.png'));
+    sprite = Sprite(await game.images.load('fx/acorn.webp'));
   }
 
   /// 손가락으로 누르기 쉽게 실제 그림보다 넓게 받는다.

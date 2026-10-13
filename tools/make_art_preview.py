@@ -83,7 +83,7 @@ for (const ch of DATA) {
     meta.innerHTML = `<span><b>${ACTIONS[name] || name}</b> <code>${name}</code></span>` +
       `<span>${a.frames}프레임 · ${a.fps}fps · ${a.loop ? '반복' : '한 번'}${a.event ? ` · 이벤트 ${a.event}` : ''}</span>`;
     const strip = document.createElement('div'); strip.className = 'strip';
-    const src = `assets/images/${ch.character}/${name}.png`;
+    const src = `assets/images/${ch.character}/${name}.webp`;
     for (let i = 0; i < a.frames; i++) {
       const s = document.createElement('span');
       s.style.backgroundImage = `url(${src})`;

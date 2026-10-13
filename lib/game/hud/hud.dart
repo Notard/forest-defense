@@ -40,8 +40,8 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
 
   @override
   Future<void> onLoad() async {
-    final acorn = Sprite(await game.images.load('fx/acorn.png'));
-    final shovelIcon = Sprite(await game.images.load('fx/shovel.png'));
+    final acorn = Sprite(await game.images.load('fx/acorn.webp'));
+    final shovelIcon = Sprite(await game.images.load('fx/shovel.webp'));
     acornCounter = AcornCounter(acorn);
     cards = [
       for (final (i, type) in UnitType.values.indexed)

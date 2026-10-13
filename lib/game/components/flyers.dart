@@ -13,7 +13,7 @@ class FlyingHelmet extends SpriteComponent with HasGameReference<ForestGame> {
 
   @override
   Future<void> onLoad() async {
-    sprite = Sprite(await game.images.load('fx/helmet.png'));
+    sprite = Sprite(await game.images.load('fx/helmet.webp'));
     const t = 0.7;
     addAll([
       // 몬스터 뒤쪽(오른쪽)으로 포물선

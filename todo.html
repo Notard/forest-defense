@@ -60,10 +60,10 @@ th{color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>🌰 숲 지키기 · 할 일 목록</h1>
-  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 14:44</p>
+  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 14:50</p>
 
   <div class="hero">
-    <div class="big">63% <small>71 / 113 완료</small></div>
+    <div class="big">63% <small>72 / 114 완료</small></div>
     <div class="bar"><i style="width:63%"></i></div>
   </div>
 
@@ -167,14 +167,14 @@ th{color:var(--muted)}
   <div class="sbar"><i style="width:0%"></i></div>
   <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/make_sfx.py</code>: 효과음 11종 합성 → <code>assets/audio/</code></span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">사건별 재생 연결, 소리 켜기/끄기</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">웹에서 첫 클릭 이후 재생 확인<span class="tag">완료 기준</span></span></li></ul>
 </section>
-<section class="stage ">
+<section class="stage active">
   <div class="shead">
     <span class="n">9</span>
     <h2>플랫폼 빌드</h2>
-    <span class="cnt">0 / 8</span>
+    <span class="cnt">1 / 9</span>
   </div>
-  <div class="sbar"><i style="width:0%"></i></div>
-  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">앱 이름 &quot;숲 지키기&quot;, Codex 아이콘 원본 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">아이콘 크기별 생성 (앱, 파비콘, PWA 192·512·마스커블)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">그림 용량 줄이기: 스프라이트 PNG 10.7 MB → WebP(품질 88) 2.2 MB 예상, 화질 확인 (웹·PWA 첫 로딩)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/build_all.sh</code> (Windows · 웹 · APK)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Windows exe 실행 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">배율이 다른 모니터로 창을 옮겨도 화면이 확대되지 않는지 확인 (2단계 문제 3)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Android APK 설치·터치 확인 (사용자 기기)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">사용자 플레이 테스트<span class="tag">완료 기준</span></span></li></ul>
+  <div class="sbar"><i style="width:11%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">앱 이름 &quot;숲 지키기&quot;, Codex 아이콘 원본 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">아이콘 크기별 생성 (앱, 파비콘, PWA 192·512·마스커블)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">그림 용량 줄이기: PNG → WebP, assets/images 11 MB → 2.4 MB (사용자 요청으로 6단계 전에 앞당겨 함)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Windows exe에서 WebP 그림이 제대로 보이는지 눈으로 확인 (사용자)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/build_all.sh</code> (Windows · 웹 · APK)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Windows exe 실행 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">배율이 다른 모니터로 창을 옮겨도 화면이 확대되지 않는지 확인 (2단계 문제 3)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Android APK 설치·터치 확인 (사용자 기기)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">사용자 플레이 테스트<span class="tag">완료 기준</span></span></li></ul>
 </section>
 <section class="stage ">
   <div class="shead">
@@ -196,7 +196,7 @@ th{color:var(--muted)}
 </section>
 
   <h3>완료 기록</h3>
-  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계를 Spriteflow 방식 프레임 애니메이션으로 다시 계획</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계 제작 방식을 Blender 2D 컷아웃으로 변경, 여우 시범 4동작</td></tr><tr><td>2026-10-13</td><td>5. 유닛 능력</td><td>다람쥐 생산·여우 공격·거북이 금·스컨크 폭발, 연습 상대, 테스트 32/32</td></tr><tr><td>2026-10-13</td><td>4. 자원과 유닛 배치</td><td>도토리·카드·쿨다운·삽·미리보기, 테스트 27/27, 웹에서 직접 플레이 확인</td></tr><tr><td>2026-10-13</td><td>3. 아트와 애니메이션</td><td>캐릭터 7종 컷아웃(시트 25장), 효과 5종, 배경, 필드를 배경에 맞춤, 사용자 승인</td></tr></table>
+  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계를 Spriteflow 방식 프레임 애니메이션으로 다시 계획</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계 제작 방식을 Blender 2D 컷아웃으로 변경, 여우 시범 4동작</td></tr><tr><td>2026-10-13</td><td>그림 WebP 변환</td><td>11 MB → 2.4 MB, 웹 첫 화면 약 7초 → 3초</td></tr><tr><td>2026-10-13</td><td>5. 유닛 능력</td><td>다람쥐 생산·여우 공격·거북이 금·스컨크 폭발, 연습 상대, 테스트 32/32</td></tr><tr><td>2026-10-13</td><td>4. 자원과 유닛 배치</td><td>도토리·카드·쿨다운·삽·미리보기, 테스트 27/27, 웹에서 직접 플레이 확인</td></tr><tr><td>2026-10-13</td><td>3. 아트와 애니메이션</td><td>캐릭터 7종 컷아웃(시트 25장), 효과 5종, 배경, 필드를 배경에 맞춤, 사용자 승인</td></tr></table>
 </div>
 </body>
 </html>

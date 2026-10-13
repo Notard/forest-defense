@@ -67,7 +67,7 @@ class ForestGame extends FlameGame {
     field = Field(onCellTap: onCellTapped);
     hud = Hud();
     // 효과 그림은 미리 읽어 둔다. 첫 여우불·첫 연기에서 그림을 읽느라 한 박자 늦지 않게.
-    await images.loadAll(const ['fx/acorn.png', 'fx/fireball.png', 'fx/smoke.png', 'fx/helmet.png', 'fx/log.png']);
+    await images.loadAll(const ['fx/acorn.webp', 'fx/fireball.webp', 'fx/smoke.webp', 'fx/helmet.webp', 'fx/log.webp']);
     await world.addAll([
       LaneBackground(),
       field,

@@ -12,7 +12,7 @@ abstract final class GameConfig {
   // ── 필드 (레인 × 칸) ──────────────────────────────
   static const int rows = 5;
   static const int cols = 9;
-  // 배경 그림(assets/images/fx/background.jpg)의 잔디밭에 맞춘 값 (WORKLOG 3-g).
+  // 배경 그림(assets/images/fx/background.webp)의 잔디밭에 맞춘 값 (WORKLOG 3-g).
   // 잔디밭은 1280 × 720 기준 x 207~1055, y 110~646.
   static const double cellWidth = 96;
   static const double cellHeight = 108;

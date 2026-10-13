@@ -3,7 +3,9 @@
     python tools/pack_sheets.py fox
 
 읽는 것  art/render/<캐릭터>/<동작>/0001.png …, tools/rigs/<캐릭터>.json
-만드는 것 assets/images/<캐릭터>/<동작>.png, assets/images/<캐릭터>/<캐릭터>.json
+만드는 것 assets/images/<캐릭터>/<동작>.webp, assets/images/<캐릭터>/<캐릭터>.json
+
+시트는 WebP(품질 88, 투명도는 무손실)로 저장한다. PNG보다 약 1/5 크기이고 화질 차이는 평균 3/255 (WORKLOG 6-0).
 
 JSON (게임이 읽음)
   frame   [너비, 높이]         한 프레임 크기 (px)
@@ -20,6 +22,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
+WEBP_QUALITY = 88
 
 
 def main() -> None:
@@ -51,12 +54,13 @@ def main() -> None:
         sheet = Image.new("RGBA", (w * len(imgs), h))
         for i, im in enumerate(imgs):
             sheet.paste(im, (i * w, 0))
-        sheet.save(out_dir / f"{action}.png", optimize=True)
+        sheet.save(out_dir / f"{action}.webp", "WEBP", quality=WEBP_QUALITY, method=6)
+        (out_dir / f"{action}.png").unlink(missing_ok=True)  # 예전 PNG 시트 정리
         meta["frame"] = [w, h]
         if "bbox" not in meta:
             meta["bbox"] = list(imgs[0].getchannel("A").point(lambda v: 255 if v >= 128 else 0).getbbox())
         meta["actions"][action] = {k: spec[k] for k in ("frames", "fps", "loop", "event") if k in spec}
-        print(f"{name}/{action}.png  {sheet.width}×{sheet.height}  {(out_dir / f'{action}.png').stat().st_size / 1024:,.0f} KB")
+        print(f"{name}/{action}.webp  {sheet.width}×{sheet.height}  {(out_dir / f'{action}.webp').stat().st_size / 1024:,.0f} KB")
 
     (out_dir / f"{name}.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"{name}/{name}.json  anchor {meta['anchor']}  muzzle {meta.get('muzzle')}")

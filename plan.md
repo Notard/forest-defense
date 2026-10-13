@@ -116,7 +116,7 @@ y   0 ┌───────────────────────�
 ② tools/rigs/fox.json        부위 다각형·기준점·부모·동작 키프레임 (사람이 씀)
 ③ cut_parts.py fox           기준 그림을 부위 조각으로 자르기   → art/parts/fox/*.png + rig.json
 ④ blender_cutout.py          조각을 평면에 붙여 동작별 렌더     → art/render/fox/<동작>/0001.png …
-⑤ pack_sheets.py fox         동작별 가로 시트 + 메타데이터      → assets/images/fox/<동작>.png, fox.json
+⑤ pack_sheets.py fox         동작별 가로 시트 + 메타데이터      → assets/images/fox/<동작>.webp, fox.json
 ⑥ make_art_preview.py        모든 시트를 실제 fps로 재생        → art_preview.html
    make_gifs.py fox          문서용 GIF                         → preview/03_fox_*.gif
 ```
@@ -130,7 +130,7 @@ y   0 ┌───────────────────────�
 | 캐릭터 그림 1장에서 모든 동작 생성 | Codex 기준 그림 1장 → 모든 동작이 같은 조각으로 움직이므로 그림체가 완전히 같다 |
 | 동작 프리셋: idle · attack · hit · death … | 아래 3-4 동작표 |
 | 6~12프레임, 매끈한 2D는 12~24fps | 4~12프레임, 12fps (쓰러짐 10fps). 컷아웃이라 나중에 24fps로 올려도 추가 작업 없음 |
-| 스프라이트 시트 PNG + JSON | 동작별 가로 시트 + 캐릭터별 JSON (frame, anchor, muzzle, frames, fps, loop, event) |
+| 스프라이트 시트 PNG + JSON | 동작별 가로 시트(WebP) + 캐릭터별 JSON (frame, anchor, bbox, muzzle, frames, fps, loop, event) |
 | Workspace에서 바로 재생 | `art_preview.html` (실제 속도·¼ 느리게·한 프레임·게임 크기) |
 
 ### 3-3. 그림·리그 규칙
@@ -158,7 +158,7 @@ y   0 ┌───────────────────────�
 > 투구 슬라임은 **초록 슬라임에 도토리 깍지 투구**: 투구가 깨지면 일반 슬라임과 같아야 하므로 같은 몸을 쓴다.
 > 표정 변화(찡그림·어지러움)가 필요하면 눈 부위를 따로 잘라 바꿔 끼운다 (원작도 같은 방식).
 
-### 3-5. 효과와 배경 (정지 그림, `assets/images/fx/`)
+### 3-5. 효과와 배경 (정지 그림, `assets/images/fx/`, WebP)
 
 효과는 프레임 애니메이션 대신 정지 그림 한 장을 게임 코드가 돌리고·키우고·흐리게 해서 움직인다. 작고 빨라서 프레임으로 그려도 차이가 잘 보이지 않기 때문이다.
 
@@ -169,7 +169,7 @@ y   0 ┌───────────────────────�
 | 투구 깨짐 | `helmet.png` (투구 슬라임 투구 조각) | 위로 튀어 돌며 떨어지고 흐려짐 |
 | 통나무 | `log.png` (Codex, 나이테 단면) | 레인을 따라 굴러감 = 회전 + 이동 |
 | 쓰러짐 연기 · 스컨크 폭발 | `smoke.png` (Codex) | 커지며 흐려짐 (폭발은 더 크게) |
-| 배경 | `background.jpg` (Codex, 16:9 원본 해상도) | 고정. 칸 체크무늬는 게임이 반투명으로 겹쳐 그린다 |
+| 배경 | `background.webp` (Codex, 16:9 원본 해상도) | 고정. 칸 체크무늬는 게임이 반투명으로 겹쳐 그린다 |
 
 카드는 그림 대신 코드로 그린다 (둥근 나무색 판 + 유닛 기본 동작 첫 프레임 + 비용). `python tools/prep_props.py`로 정리한다.
 

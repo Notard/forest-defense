@@ -60,7 +60,7 @@ lib/
     components/             배경, 필드 입력, (예정) 유닛·몬스터·투사체
     hud/                    HUD (지금은 자리 표시)
 test/                       좌표 변환·입력 경로·빠진 글자 테스트
-assets/images/<캐릭터>/      동작별 스프라이트 시트 + <캐릭터>.json
+assets/images/<캐릭터>/      동작별 스프라이트 시트(WebP) + <캐릭터>.json
 assets/images/fx/           효과(도토리·통나무·연기·여우불·투구)와 배경
 assets/fonts/               Gaegu Bold (게임에 쓰는 글자만 남긴 78 KB) + OFL.txt
 tools/make_todo_html.py     TODO.md·WORKLOG.md → HTML
