@@ -9,6 +9,7 @@ import '../config.dart';
 import '../forest_game.dart';
 import '../garden.dart';
 import '../grid.dart';
+import '../sfx.dart';
 
 /// 주울 수 있는 도토리. 하늘에서 떨어지거나(4단계) 다람쥐가 만든다(5단계, [Acorn.popped]).
 ///
@@ -92,6 +93,7 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
   void collect() {
     if (_collecting) return;
     _collecting = true;
+    game.sfx.play(Sfx.pickup);
     opacity = 1;
     angle = 0;
     priority = 1100; // HUD 위로

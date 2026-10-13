@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 
 import '../config.dart';
 import '../forest_game.dart';
+import '../sfx.dart';
 import 'unit.dart';
 
 /// 레인마다 하나씩 둥지 앞에 놓인 통나무 (plan.md 7단계).
@@ -55,6 +56,7 @@ class RollingLog extends SpriteComponent with HasGameReference<ForestGame> {
   void roll() {
     if (rolling) return;
     rolling = true;
+    game.sfx.play(Sfx.log);
     game.logs.remove(row);
   }
 }

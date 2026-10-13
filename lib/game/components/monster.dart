@@ -5,6 +5,7 @@ import '../config.dart';
 import '../forest_game.dart';
 import '../grid.dart';
 import '../monsters.dart';
+import '../sfx.dart';
 import 'actor.dart';
 import 'flyers.dart';
 import 'unit.dart';
@@ -94,7 +95,10 @@ class Monster extends Actor {
       if (eating != target || current != 'eat') {
         eating = target;
         play('eat', onEvent: () {
-          if (eating?.alive ?? false) eating!.takeDamage(biteDamage);
+          if (eating?.alive ?? false) {
+            game.sfx.play(Sfx.bite);
+            eating!.takeDamage(biteDamage);
+          }
         });
       }
       return;
@@ -128,6 +132,7 @@ class Monster extends Actor {
   }
 
   void _loseHelmet() {
+    game.sfx.play(Sfx.helmet);
     animations = {for (final a in slimeArt.actions) a: slimeArt.animation(a)};
     play(restAction);
     game.world.add(FlyingHelmet(position: absolutePosition - Vector2(0, size.y * 0.55)));
@@ -140,6 +145,7 @@ class Monster extends Actor {
   void onDeath() {
     game.monsters.remove(this);
     game.defeated++;
+    game.sfx.play(Sfx.slimeDie);
   }
 
   /// 이 몬스터가 있는 칸 (필드 밖이면 null).

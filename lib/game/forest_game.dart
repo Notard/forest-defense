@@ -19,6 +19,7 @@ import 'grid.dart';
 import 'hud/hud.dart';
 import 'hud/panel.dart';
 import 'monsters.dart';
+import 'sfx.dart';
 import 'strings.dart';
 import 'units.dart';
 
@@ -40,10 +41,12 @@ class ForestGame extends FlameGame {
     this.timeScale = 1,
     this.logsOn = true,
     this.onRestart,
+    bool sound = true,
   })
       : _random = random ?? Random(),
         garden = Garden(acorns: startAcorns ?? Garden.startAcorns),
         wavesOn = waves ?? !practice,
+        sfx = SoundBoard(enabled: sound),
         super(
           camera: CameraComponent.withFixedResolution(
             width: GameConfig.width,
@@ -88,6 +91,9 @@ class ForestGame extends FlameGame {
   /// 다시 하기: 앱이 게임을 새로 만든다 (main.dart).
   final void Function()? onRestart;
 
+  /// 효과음 (테스트에서는 끈다).
+  final SoundBoard sfx;
+
   /// 내보내기로 했지만 그림을 읽느라 아직 목록에 들어오지 않은 몬스터 수 (클리어 판정용).
   int _pendingSpawns = 0;
 
@@ -114,6 +120,7 @@ class ForestGame extends FlameGame {
     field = Field(onCellTap: onCellTapped);
     hud = Hud();
     // 효과 그림은 미리 읽어 둔다. 첫 여우불·첫 연기에서 그림을 읽느라 한 박자 늦지 않게.
+    await sfx.load();
     await images.loadAll(const ['fx/acorn.webp', 'fx/fireball.webp', 'fx/smoke.webp', 'fx/helmet.webp', 'fx/log.webp']);
     await world.addAll([
       LaneBackground(),
@@ -148,6 +155,7 @@ class ForestGame extends FlameGame {
     if (state == GameState.lost || state == GameState.won) return;
     _closePanel();
     state = GameState.lost;
+    sfx.play(Sfx.lose);
     world.add(CenterPanel(
       title: Strings.gameOver,
       subtitle: Strings.result(defeated: defeated, logsLeft: logs.length),
@@ -158,6 +166,7 @@ class ForestGame extends FlameGame {
   void win() {
     if (state != GameState.playing) return;
     state = GameState.won;
+    sfx.play(Sfx.win);
     world.add(CenterPanel(
       title: Strings.cleared,
       titleColor: const Color(0xFFFFE066),
@@ -257,6 +266,7 @@ class ForestGame extends FlameGame {
     if (type == null) return;
     if (garden.place(type, cell) != PlaceResult.placed) return;
     selectedUnit = null;
+    sfx.play(Sfx.place);
     final unit = UnitComponent(type: type, cell: cell, art: await CharacterArt.load(this, type.sheet));
     unitComponents[cell] = unit;
     await world.add(unit);

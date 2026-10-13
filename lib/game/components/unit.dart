@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import '../art.dart';
 import '../config.dart';
 import '../grid.dart';
+import '../sfx.dart';
 import '../units.dart';
 import 'acorn.dart';
 import 'actor.dart';
@@ -96,7 +97,10 @@ class Fox extends UnitComponent {
     }
   }
 
-  void _shoot() => game.world.add(Fireball(position: framePointToWorld(art.muzzle!), row: cell.row));
+  void _shoot() {
+    game.sfx.play(Sfx.shot);
+    game.world.add(Fireball(position: framePointToWorld(art.muzzle!), row: cell.row));
+  }
 }
 
 /// 거북이: 공격 없이 HP 4000으로 막는다. 절반 아래로 떨어지면 금 간 등껍질.
@@ -130,6 +134,7 @@ class Skunk extends UnitComponent {
   }
 
   void _blast() {
+    game.sfx.play(Sfx.boom);
     final center = framePointToWorld(art.muzzle!);
     game.world.add(Smoke(position: center, size: GameConfig.cellWidth * 2.6, duration: 0.7));
     for (final m in game.monsters.toList()) {

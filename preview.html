@@ -26,12 +26,37 @@ th,td{border-bottom:1px solid var(--line);padding:8px 12px;text-align:left;verti
 th{background:var(--leaf-soft)}
 code{background:var(--leaf-soft);padding:1px 6px;border-radius:4px;font-size:.88em}
 .wrap{overflow-x:auto}
+audio{height:32px;max-width:240px}
 </style>
 </head>
 <body>
 <main>
   <h1>🌰 숲 지키기 · 게임 미리보기</h1>
   <p class="muted"><a href="todo.html">할 일 목록</a> · <a href="worklog.html">작업 기록</a> · 계획서 <code>plan.md</code> · 단계마다 웹 빌드를 브라우저에서 캡처해 이 페이지에 쌓는다</p>
+
+  <h2>8단계 · 효과음 (2026-10-13)</h2>
+  <p>파이썬으로 직접 합성한 효과음 12가지 (외부 음원 없음, 모두 317 KB). 아래에서 바로 들어 볼 수 있다. 게임에서는 오른쪽 위 스피커 버튼으로 끄고 켠다.</p>
+  <div class="wrap">
+  <table>
+      <tr><th>소리</th><th>느낌</th><th>듣기</th></tr>
+      <tr><td>도토리 줍기</td><td>맑은 띠링 두 음</td><td><audio controls preload="none" src="assets/audio/pickup.wav"></audio></td></tr>
+      <tr><td>동물 놓기</td><td>부드러운 퐁</td><td><audio controls preload="none" src="assets/audio/place.wav"></audio></td></tr>
+      <tr><td>여우불 발사</td><td>위로 올라가는 화르륵</td><td><audio controls preload="none" src="assets/audio/shot.wav"></audio></td></tr>
+      <tr><td>여우불 명중</td><td>짧은 툭</td><td><audio controls preload="none" src="assets/audio/hit.wav"></audio></td></tr>
+      <tr><td>몬스터 쓰러짐</td><td>출렁이며 내려가는 뾰옹</td><td><audio controls preload="none" src="assets/audio/slime_die.wav"></audio></td></tr>
+      <tr><td>갉아먹기</td><td>냠 두 번</td><td><audio controls preload="none" src="assets/audio/bite.wav"></audio></td></tr>
+      <tr><td>스컨크 폭발</td><td>낮은 펑 + 푸슈우</td><td><audio controls preload="none" src="assets/audio/boom.wav"></audio></td></tr>
+      <tr><td>통나무 굴러감</td><td>드르르르</td><td><audio controls preload="none" src="assets/audio/log.wav"></audio></td></tr>
+      <tr><td>큰 무리 경고</td><td>뿔피리 두 음 두 번</td><td><audio controls preload="none" src="assets/audio/warning.wav"></audio></td></tr>
+      <tr><td>클리어</td><td>올라가는 종소리</td><td><audio controls preload="none" src="assets/audio/win.wav"></audio></td></tr>
+      <tr><td>게임오버</td><td>내려가는 세 음</td><td><audio controls preload="none" src="assets/audio/lose.wav"></audio></td></tr>
+      <tr><td>투구 깨짐</td><td>쇳소리 땡</td><td><audio controls preload="none" src="assets/audio/helmet.wav"></audio></td></tr>
+  </table>
+  </div>
+  <figure style="margin-top:16px">
+    <img src="preview/08_sfx_waves.png" alt="효과음 12개의 파형" width="1040" height="294">
+    <figcaption><b>파형</b> — 모두 최대 -3 dB로 맞추고 앞뒤를 짧게 페이드했다</figcaption>
+  </figure>
 
   <h2>7단계 · 통나무와 승패 (2026-10-13)</h2>
   <p>레인마다 통나무가 한 번 굴러가 몬스터를 쓸어낸다. 통나무를 쓴 레인이 뚫리면 게임오버, 끝까지 막으면 클리어. 일시정지와 다시 하기.</p>

@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 
 import '../config.dart';
 import '../forest_game.dart';
+import '../sfx.dart';
 import 'monster.dart';
 
 /// 여우불: 레인을 따라 오른쪽으로 날아가 처음 닿는 몬스터에게 피해를 준다.
@@ -33,6 +34,7 @@ class Fireball extends SpriteComponent with HasGameReference<ForestGame> {
     final target = _firstMonsterHit();
     if (target != null) {
       target.takeDamage(damage);
+      game.sfx.play(Sfx.hit);
       removeFromParent();
     } else if (position.x > GameConfig.width + 40) {
       removeFromParent();

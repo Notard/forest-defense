@@ -17,6 +17,7 @@ abstract final class HudLayout {
 
   static const Rect shovel = Rect.fromLTWH(504, _top, 80, _slotHeight);
   static const Rect pause = Rect.fromLTWH(1198, 22, 70, 60);
+  static const Rect sound = Rect.fromLTWH(1118, 22, 70, 60);
 
   /// 아래 띠 (웨이브 이름 + 진행 바). 배경 뿌리가 비치게 반투명.
   static const Rect bottomBand = Rect.fromLTWH(0, 652, 1280, 68);

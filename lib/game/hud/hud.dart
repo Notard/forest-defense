@@ -55,6 +55,7 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
       ...cards,
       shovel,
       PauseButton(),
+      SoundButton(),
       _waveLabel,
     ]);
   }
@@ -251,4 +252,44 @@ class PauseButton extends PositionComponent with TapCallbacks, HasGameReference<
 
   @override
   void onTapDown(TapDownEvent event) => game.togglePause();
+}
+
+/// 소리 켜기/끄기: 스피커 그림, 꺼지면 X.
+class SoundButton extends PositionComponent with TapCallbacks, HasGameReference<ForestGame> {
+  SoundButton() : super(position: HudLayout.sound.topLeft.toVector2(), size: HudLayout.sound.size.toVector2());
+
+  final _bg = Paint()..color = _panel;
+  final _fill = Paint()..color = _cream;
+  final _line = Paint()
+    ..color = _cream
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 4
+    ..strokeCap = StrokeCap.round;
+
+  @override
+  void render(Canvas canvas) {
+    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(14)), _bg);
+    final cx = size.x / 2 - 8, cy = size.y / 2;
+    // 스피커 몸통과 나팔
+    canvas.drawRect(Rect.fromLTWH(cx - 12, cy - 7, 8, 14), _fill);
+    canvas.drawPath(
+      Path()
+        ..moveTo(cx - 5, cy - 7)
+        ..lineTo(cx + 6, cy - 16)
+        ..lineTo(cx + 6, cy + 16)
+        ..lineTo(cx - 5, cy + 7)
+        ..close(),
+      _fill,
+    );
+    if (game.sfx.muted) {
+      canvas.drawLine(Offset(cx + 13, cy - 8), Offset(cx + 27, cy + 8), _line);
+      canvas.drawLine(Offset(cx + 27, cy - 8), Offset(cx + 13, cy + 8), _line);
+    } else {
+      canvas.drawArc(Rect.fromCircle(center: Offset(cx + 6, cy), radius: 12), -0.8, 1.6, false, _line);
+      canvas.drawArc(Rect.fromCircle(center: Offset(cx + 6, cy), radius: 21), -0.8, 1.6, false, _line);
+    }
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) => game.sfx.muted = !game.sfx.muted;
 }

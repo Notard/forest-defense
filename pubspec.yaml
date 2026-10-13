@@ -73,6 +73,8 @@ flutter:
     - assets/images/slime/
     - assets/images/slime_helmet/
     - assets/images/wisp/
+    # 효과음 (tools/make_sfx.py)
+    - assets/audio/
   fonts:
     - family: Gaegu
       fonts:

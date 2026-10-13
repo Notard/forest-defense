@@ -7,6 +7,7 @@ import 'package:flutter/painting.dart';
 
 import '../config.dart';
 import '../forest_game.dart';
+import '../sfx.dart';
 import '../strings.dart';
 import '../waves.dart';
 
@@ -29,6 +30,7 @@ class WaveRunner extends Component with HasGameReference<ForestGame> {
         case WaveStarted(:final number, :final big):
           if (!big) game.world.add(Banner(Strings.waveBanner(number)));
         case BigWaveWarning():
+          game.sfx.play(Sfx.warning);
           game.world.add(Banner(Strings.bigWave, big: true));
       }
     }

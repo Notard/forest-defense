@@ -89,7 +89,7 @@ void main() {
     },
   );
 
-  GameTester(() => ForestGame(skyAcorns: false, waves: true, startWave: 5)).testGameWidget(
+  GameTester(() => ForestGame(skyAcorns: false, waves: true, startWave: 5, sound: false)).testGameWidget(
     '마지막 웨이브까지 모두 쓰러뜨리면 클리어 판이 뜬다',
     setUp: waitForLoad,
     verify: (game, tester) async {
@@ -134,7 +134,7 @@ void main() {
 
   testWidgets('다시 하기 버튼은 앱에 새 게임을 요청한다', (tester) async {
     var restarted = 0;
-    final game = ForestGame(skyAcorns: false, waves: false, onRestart: () => restarted++);
+    final game = ForestGame(skyAcorns: false, waves: false, sound: false, onRestart: () => restarted++);
     final button = PanelButton(Strings.retry, game.restart);
     button.onPressed();
     expect(restarted, 1);
