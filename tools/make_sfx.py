@@ -188,6 +188,10 @@ def spine():  # 고슴도치 가시에 찔림: 짧고 높은 "칙" (10단계)
     return hiss * env(n, 0.001, 55) * 1.5 + tone(2400, 0.09) * env(n, 0.001, 70) * 0.3
 
 
+def levelup():  # 친구 레벨업: 반짝이며 올라가는 네 음 (12-2단계)
+    return pad(notes([1046.5, 1318.5, 1568.0, 2093.0], 0.32, 0.06, 9, bell=True), 0.6)
+
+
 SOUNDS = {
     "pickup": (pickup, "도토리 줍기"),
     "place": (place, "동물 놓기"),
@@ -206,6 +210,7 @@ SOUNDS = {
     "hoot": (hoot, "부엉이 감속"),
     "swipe": (swipe, "곰 내려치기"),
     "spine": (spine, "가시 찔림"),
+    "levelup": (levelup, "레벨업"),
 }
 
 

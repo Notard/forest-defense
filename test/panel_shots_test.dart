@@ -5,7 +5,10 @@ import 'package:flame/game.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:forest_defense/game/components/level_bubble.dart';
+import 'package:forest_defense/game/components/unit.dart';
 import 'package:forest_defense/game/forest_game.dart';
+import 'package:forest_defense/game/grid.dart';
 import 'package:forest_defense/game/hud/title.dart';
 import 'package:forest_defense/game/progress.dart';
 import 'package:forest_defense/game/stages.dart';
@@ -83,4 +86,46 @@ void main() {
       },
     );
   }
+
+  // 판 안 레벨업 (12-2단계): Lv3 여우(별 둘), Lv2 곰(별 하나), 거북이 말풍선(맨 윗줄이라 발 아래), 다람쥐 말풍선(머리 위)
+  GameTester(() => ForestGame(skyAcorns: false, waves: false, sound: false, intro: false, logsOn: false)).testGameWidget(
+    '레벨업',
+    setUp: waitForLoad,
+    verify: (game, tester) async {
+      game.garden.acorns = 10000;
+      Future<UnitComponent> put(UnitType t, Cell c) async {
+        await tester.runAsync(() async {
+          game.selectedUnit = t;
+          await game.onCellTapped(c);
+          game.update(0);
+        });
+        return game.unitComponents[c]!;
+      }
+
+      final fox = await put(UnitType.fox, (row: 2, col: 3));
+      final bear = await put(UnitType.bear, (row: 3, col: 4));
+      await put(UnitType.turtle, (row: 0, col: 1));
+      await put(UnitType.squirrel, (row: 1, col: 2));
+      game.levelUp(fox);
+      game.levelUp(fox);
+      game.levelUp(bear);
+      await tester.runAsync(() async {
+        await game.onCellTapped((row: 1, col: 2));
+        for (var i = 0; i < 40; i++) {
+          game.update(1 / 60);
+          await Future<void>.delayed(const Duration(milliseconds: 5));
+        }
+      });
+      // 거북이 말풍선도 함께 보이도록 하나 더 붙인다 (게임은 하나만 띄우지만 그림용)
+      await tester.runAsync(() async {
+        await game.world.add(LevelBubble(game.unitComponents[(row: 0, col: 1)]!));
+        for (var i = 0; i < 20; i++) {
+          game.update(1 / 60);
+          await Future<void>.delayed(const Duration(milliseconds: 5));
+        }
+      });
+      await tester.pump();
+      await expectLater(find.byType(GameWidget<ForestGame>), matchesGoldenFile('shots/levelup.png'));
+    },
+  );
 }

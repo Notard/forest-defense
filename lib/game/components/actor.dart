@@ -27,7 +27,8 @@ abstract class Actor extends SpriteAnimationGroupComponent<String> with HasGameR
         );
 
   final CharacterArt art;
-  final int maxHp;
+  /// 최대 HP. 친구 레벨업(12-2단계)이 늘린다.
+  int maxHp;
   final double _scale;
   double hp;
 

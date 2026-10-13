@@ -9,6 +9,7 @@ import 'components/acorn.dart';
 import 'components/field.dart';
 import 'components/ghost.dart';
 import 'components/lane_background.dart';
+import 'components/level_bubble.dart';
 import 'components/log.dart';
 import 'components/monster.dart';
 import 'components/unit.dart';
@@ -365,7 +366,39 @@ class ForestGame extends FlameGame {
   }
 
   /// 카드를 누름. 이미 고른 카드면 취소. 누를 수 없는 카드면 false (카드가 흔들린다).
+  // ── 판 안 레벨업 (12-2단계) ──
+  /// 지금 떠 있는 레벨업 말풍선.
+  LevelBubble? bubble;
+
+  /// 다음 레벨 값: Lv2는 친구 값, Lv3는 1.5배 (5 단위로 반올림).
+  int levelCost(UnitComponent u) => costToLevel(u.type, u.level);
+
+  /// [from]레벨에서 한 단계 올리는 값.
+  static int costToLevel(UnitType t, int from) => from == 1 ? t.cost : ((t.cost * 1.5) / 5).round() * 5;
+
+  /// 도토리를 내고 레벨을 올린다. 올릴 수 없거나 도토리가 모자라면 false.
+  bool levelUp(UnitComponent u) {
+    if (!u.canLevel || garden.acorns < levelCost(u)) return false;
+    garden.acorns -= levelCost(u);
+    u.levelUp();
+    sfx.play(Sfx.levelUp);
+    closeBubble();
+    return true;
+  }
+
+  void openBubble(UnitComponent u) {
+    closeBubble();
+    world.add(bubble = LevelBubble(u));
+  }
+
+  void closeBubble() {
+    final b = bubble;
+    bubble = null;
+    if (b != null && b.parent != null) b.removeFromParent();
+  }
+
   bool selectCard(UnitType type) {
+    closeBubble();
     if (selectedUnit == type) {
       selectedUnit = null;
       return true;
@@ -377,6 +410,7 @@ class ForestGame extends FlameGame {
   }
 
   void toggleShovel() {
+    closeBubble();
     shovelMode = !shovelMode;
     if (shovelMode) selectedUnit = null;
   }
@@ -390,7 +424,16 @@ class ForestGame extends FlameGame {
       return;
     }
     final type = selectedUnit;
-    if (type == null) return;
+    if (type == null) {
+      // 아무것도 고르지 않고 친구를 누르면 레벨업 말풍선 (다시 누르면 닫기)
+      final unit = unitComponents[cell];
+      if (unit != null && unit.canLevel && bubble?.unit != unit) {
+        openBubble(unit);
+      } else {
+        closeBubble();
+      }
+      return;
+    }
     if (garden.place(type, cell) != PlaceResult.placed) return;
     selectedUnit = null;
     sfx.play(Sfx.place);

@@ -1,6 +1,9 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
+import 'package:flutter/animation.dart';
 
 import '../art.dart';
 import '../config.dart';
@@ -11,6 +14,7 @@ import '../upgrades.dart';
 import 'acorn.dart';
 import 'actor.dart';
 import 'fireball.dart';
+import 'level_bubble.dart';
 import 'hoot_wave.dart';
 import 'monster.dart';
 import 'smoke.dart';
@@ -18,7 +22,8 @@ import 'smoke.dart';
 /// 칸에 놓인 동물. 발이 칸 바닥에 오도록 세운다. 능력은 동물별 하위 클래스에 있다 (plan.md 5단계).
 abstract class UnitComponent extends Actor {
   UnitComponent._({required this.type, required this.cell, required super.art, int? maxHp})
-      : super(
+      : baseMaxHp = maxHp ?? type.maxHp,
+        super(
           maxHp: maxHp ?? type.maxHp,
           scale: art.scaleForHeight(type.displayHeight),
           startAction: type.idleAction,
@@ -40,6 +45,62 @@ abstract class UnitComponent extends Actor {
 
   final UnitType type;
   final Cell cell;
+
+  // ── 판 안 레벨업 (12-2단계) ──
+  static const int maxLevel = 3;
+
+  /// 1~3. 놓은 친구를 누르면 도토리를 내고 올린다.
+  int level = 1;
+
+  /// 주 능력 배율: Lv1 1.0, Lv2 1.4, Lv3 1.8.
+  double get power => 1 + 0.4 * (level - 1);
+
+  /// 레벨을 올릴 수 있는지 (스컨크는 놓자마자 터지니 없음).
+  bool get canLevel => alive && type != UnitType.skunk && level < maxLevel;
+
+  /// Lv1 최대 HP (강화 상점 반영). 거북이·고슴도치는 레벨마다 이것의 [power]배가 된다.
+  final int baseMaxHp;
+
+  void levelUp() {
+    if (!canLevel) return;
+    level++;
+    if (type == UnitType.turtle || type == UnitType.hedgehog) {
+      final grown = (baseMaxHp * power).round();
+      hp += grown - maxHp;
+      maxHp = grown;
+    }
+    onLevelUp();
+    game.world.add(LevelSparkle(position: position - Vector2(0, type.displayHeight * 0.5)));
+    add(SequenceEffect([
+      ScaleEffect.to(Vector2.all(1.18), EffectController(duration: 0.1)),
+      ScaleEffect.to(Vector2.all(1), EffectController(duration: 0.22, curve: Curves.easeOutBack)),
+    ]));
+  }
+
+  /// 레벨이 오른 뒤 친구별 처리 (기본은 없음).
+  void onLevelUp() {}
+
+  static final _starFill = Paint()..color = const Color(0xFFFFD34D);
+  static final _starRim = Paint()
+    ..color = const Color(0xFF4A3220)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+
+  /// 발밑에 레벨 별 (Lv2 하나, Lv3 둘).
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    if (level < 2) return;
+    final foot = Offset(size.x * anchor.x, size.y * anchor.y);
+    final n = level - 1;
+    final s = 1 / scale.x; // 통 튀는 동안에도 별 크기는 그대로
+    for (var i = 0; i < n; i++) {
+      final c = foot + Offset((i - (n - 1) / 2) * 20 * s, 2);
+      final p = starPath(c, 9 * s);
+      canvas.drawPath(p, _starFill);
+      canvas.drawPath(p, _starRim);
+    }
+  }
 
   /// 칸 안에서 발이 닿는 위치: 가로 가운데, 칸 아래 끝에서 [footInset] 위.
   static Vector2 footOf(Cell cell) =>
@@ -81,7 +142,7 @@ class Squirrel extends UnitComponent {
     if (!alive) return;
     _next -= dt;
     if (_next <= 0 && !busy) {
-      _next = interval * game.boosts.squirrelInterval;
+      _next = interval * game.boosts.squirrelInterval / power;
       play('produce', onEvent: _popAcorn);
     }
   }
@@ -116,7 +177,7 @@ class Fox extends UnitComponent {
 
   void _shoot() {
     game.sfx.play(Sfx.shot);
-    game.world.add(Fireball(position: framePointToWorld(art.muzzle!), row: cell.row, power: Fireball.damage * game.boosts.foxDamage));
+    game.world.add(Fireball(position: framePointToWorld(art.muzzle!), row: cell.row, power: Fireball.damage * game.boosts.foxDamage * power));
   }
 }
 
@@ -177,7 +238,7 @@ class Hedgehog extends UnitComponent {
   @override
   void onBitten(Monster by) {
     game.sfx.play(Sfx.spine);
-    by.takeDamage(spineDamage * game.boosts.spineDamage);
+    by.takeDamage(spineDamage * game.boosts.spineDamage * power);
   }
 }
 
@@ -206,7 +267,7 @@ class Owl extends UnitComponent {
     game.sfx.play(Sfx.hoot);
     game.world.add(HootWave(from: framePointToWorld(art.muzzle!), row: cell.row));
     for (final m in _ahead.toList()) {
-      m.slow(slowSeconds + game.boosts.owlSlowExtra);
+      m.slow((slowSeconds + game.boosts.owlSlowExtra) * power);
     }
   }
 }
@@ -240,7 +301,7 @@ class Bear extends UnitComponent {
     final paw = framePointToWorld(art.muzzle!);
     game.world.add(Smoke(position: Vector2(paw.x, position.y - 14), size: GameConfig.cellWidth * 0.8, duration: 0.35));
     for (final m in game.monsters.where(_inReach).toList()) {
-      m.takeDamage(damage * game.boosts.bearDamage);
+      m.takeDamage(damage * game.boosts.bearDamage * power);
     }
   }
 }

@@ -158,18 +158,19 @@ class HelpTab extends PositionComponent with TapCallbacks {
 class HowToPage extends PositionComponent with HasGameReference<FlameGame> {
   HowToPage() : super(position: HelpPanel.content.topLeft.toVector2(), size: HelpPanel.content.size.toVector2());
 
-  static const double rowHeight = 64, iconSize = 54, textX = 92;
-  static final titlePaint = _text(30, _gold);
-  static final linePaint = _text(25, _cream);
+  static const double rowHeight = 54, iconSize = 46, textX = 92;
+  static final titlePaint = _text(26, _gold);
+  static final linePaint = _text(23, _cream);
+  static final _lvPaint = _text(24, _ink);
 
-  /// 줄마다 아이콘 (null이면 코드로 그린 별).
+  /// 줄마다 아이콘. null이면 코드로 그린다: '별 세 개'는 별 셋, '레벨업'은 Lv 배지.
   final List<Sprite?> _icons = [];
 
   @override
   Future<void> onLoad() async {
     Future<Sprite> fx(String name) async => Sprite(await game.images.load('fx/$name.webp'));
     final fox = await CharacterArt.load(game, UnitType.fox.sheet);
-    _icons.addAll([await fx('acorn'), portrait(fox, UnitType.fox.idleAction), await fx('shovel'), await fx('log'), null, await fx('pinecone')]);
+    _icons.addAll([await fx('acorn'), portrait(fox, UnitType.fox.idleAction), null, await fx('shovel'), await fx('log'), null, await fx('pinecone')]);
   }
 
   final _star = Paint()..color = const Color(0xFFFFD34D);
@@ -186,15 +187,20 @@ class HowToPage extends PositionComponent with HasGameReference<FlameGame> {
       final icon = i < _icons.length ? _icons[i] : null;
       if (icon != null) {
         drawFitted(canvas, icon, Rect.fromCenter(center: center, width: iconSize, height: iconSize));
+      } else if (title == Strings.howTo[2].$1) {
+        // 레벨업: 노란 동그라미에 Lv
+        canvas.drawCircle(center, 22, _star);
+        canvas.drawCircle(center, 22, _starRim);
+        _lvPaint.render(canvas, 'Lv', Vector2(center.dx, center.dy), anchor: Anchor.center);
       } else {
         for (var k = 0; k < 3; k++) {
-          final p = StarRow.star(center + Offset((k - 1) * 20.0, k == 1 ? -6 : 6), 11);
+          final p = StarRow.star(center + Offset((k - 1) * 18.0, k == 1 ? -6 : 6), 10);
           canvas.drawPath(p, _star);
           canvas.drawPath(p, _starRim);
         }
       }
-      titlePaint.render(canvas, title, Vector2(textX, y + 18), anchor: Anchor.centerLeft);
-      linePaint.render(canvas, line, Vector2(textX, y + 46), anchor: Anchor.centerLeft);
+      titlePaint.render(canvas, title, Vector2(textX, y + 13), anchor: Anchor.centerLeft);
+      linePaint.render(canvas, line, Vector2(textX, y + 39), anchor: Anchor.centerLeft);
     }
   }
 }
