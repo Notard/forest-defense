@@ -31,6 +31,10 @@ class CharacterArt {
 
   bool loops(String action) => _data[action]!['loop'] as bool;
 
+  int frameCount(String action) => _data[action]!['frames'] as int;
+
+  double fps(String action) => (_data[action]!['fps'] as num).toDouble();
+
   /// 발에서 머리 끝까지의 높이 (프레임 px).
   double get characterHeight => anchor.y - bbox.top;
 

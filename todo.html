@@ -60,11 +60,11 @@ th{color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>🌰 숲 지키기 · 할 일 목록</h1>
-  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 14:50</p>
+  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 15:04</p>
 
   <div class="hero">
-    <div class="big">63% <small>72 / 114 완료</small></div>
-    <div class="bar"><i style="width:63%"></i></div>
+    <div class="big">69% <small>81 / 118 완료</small></div>
+    <div class="bar"><i style="width:69%"></i></div>
   </div>
 
   
@@ -144,10 +144,10 @@ th{color:var(--muted)}
   <div class="shead">
     <span class="n">6</span>
     <h2>몬스터와 웨이브</h2>
-    <span class="cnt">1 / 7</span>
+    <span class="cnt">10 / 11</span>
   </div>
-  <div class="sbar"><i style="width:14%"></i></div>
-  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">몬스터 바탕 <code>Monster</code> (HP, 투구, 맞음·쓰러짐) — 5단계에서 연습 상대로 먼저 만듦</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">공통: 이동 시트, 유닛 앞에서 멈추고 갉아먹기 시트</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">슬라임 · 투구 슬라임(투구 깨짐) · 도깨비불</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>waves.dart</code>: 웨이브 5개 정의, &quot;큰 무리&quot; 경고</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">웨이브 진행 바</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">단위 테스트: 웨이브 순서, 투구 HP 처리</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기 갱신<span class="tag">완료 기준</span></span></li></ul>
+  <div class="sbar"><i style="width:91%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">몬스터 바탕 <code>Monster</code> (HP, 투구, 맞음·쓰러짐) — 5단계에서 연습 상대로 먼저 만듦</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">이동: 슬라임 칸당 4.7초, 도깨비불 2.3초</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">갉아먹기: 앞 52px 안 동물에서 멈춤, 이벤트 프레임마다 한 입(초당 피해 × 0.5초), 동물이 없어지면 다시 걸음, 먹는 중엔 피격 동작 없이 깜빡임만</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">둥지 앞 도착 처리 자리 (7단계에서 통나무·게임오버)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>waves.dart</code>: 웨이브 5개(몬스터 41마리), 첫 웨이브 20초 뒤, 다 잡으면 5초·아니면 14초 뒤 다음 웨이브, 큰 무리 3초 전 경고</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">웨이브 글자(&quot;웨이브 n&quot;, &quot;큰 무리가 몰려와요!&quot;), 폰트에 글자 추가 (115자, 85 KB)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">HUD: 웨이브 번호, 진행 바(내보낸 비율 + 웨이브 표시, 큰 무리는 노랑)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">확인용 주소 옵션 <code>?wave=5</code>, <code>?speed=2</code></span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">단위 테스트: 웨이브 6개, 몬스터 5개, 전체 43/43</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">웹에서 확인: 웨이브 1 글자, 슬라임이 걸어와 거북이를 갉아먹음, 진행 바<span class="tag">완료 기준</span></span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">큰 무리 경고를 실제 화면에서 눈으로 확인 (브라우저 패널이 숨어 있어 실시간 진행이 안 됨 → 사용자 확인 또는 7단계 때)</span></li></ul>
 </section>
 <section class="stage ">
   <div class="shead">
@@ -196,7 +196,7 @@ th{color:var(--muted)}
 </section>
 
   <h3>완료 기록</h3>
-  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계를 Spriteflow 방식 프레임 애니메이션으로 다시 계획</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계 제작 방식을 Blender 2D 컷아웃으로 변경, 여우 시범 4동작</td></tr><tr><td>2026-10-13</td><td>그림 WebP 변환</td><td>11 MB → 2.4 MB, 웹 첫 화면 약 7초 → 3초</td></tr><tr><td>2026-10-13</td><td>5. 유닛 능력</td><td>다람쥐 생산·여우 공격·거북이 금·스컨크 폭발, 연습 상대, 테스트 32/32</td></tr><tr><td>2026-10-13</td><td>4. 자원과 유닛 배치</td><td>도토리·카드·쿨다운·삽·미리보기, 테스트 27/27, 웹에서 직접 플레이 확인</td></tr><tr><td>2026-10-13</td><td>3. 아트와 애니메이션</td><td>캐릭터 7종 컷아웃(시트 25장), 효과 5종, 배경, 필드를 배경에 맞춤, 사용자 승인</td></tr></table>
+  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계를 Spriteflow 방식 프레임 애니메이션으로 다시 계획</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계 제작 방식을 Blender 2D 컷아웃으로 변경, 여우 시범 4동작</td></tr><tr><td>2026-10-13</td><td>6. 몬스터와 웨이브</td><td>이동·갉아먹기, 웨이브 5개·큰 무리 경고, 진행 바, 테스트 43/43</td></tr><tr><td>2026-10-13</td><td>그림 WebP 변환</td><td>11 MB → 2.4 MB, 웹 첫 화면 약 7초 → 3초</td></tr><tr><td>2026-10-13</td><td>5. 유닛 능력</td><td>다람쥐 생산·여우 공격·거북이 금·스컨크 폭발, 연습 상대, 테스트 32/32</td></tr><tr><td>2026-10-13</td><td>4. 자원과 유닛 배치</td><td>도토리·카드·쿨다운·삽·미리보기, 테스트 27/27, 웹에서 직접 플레이 확인</td></tr><tr><td>2026-10-13</td><td>3. 아트와 애니메이션</td><td>캐릭터 7종 컷아웃(시트 25장), 효과 5종, 배경, 필드를 배경에 맞춤, 사용자 승인</td></tr></table>
 </div>
 </body>
 </html>

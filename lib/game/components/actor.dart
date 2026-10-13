@@ -83,12 +83,15 @@ abstract class Actor extends SpriteAnimationGroupComponent<String> with HasGameR
       die();
     } else {
       onHurt();
-      if (!_busy && art.actions.contains('hit')) play('hit');
+      if (!_busy && canFlinch && art.actions.contains('hit')) play('hit');
     }
   }
 
   /// 피해 뒤 처리 (거북이 금 간 등껍질 등). 기본은 아무것도 안 함.
   void onHurt() {}
+
+  /// 맞았을 때 피격 동작을 할지. 갉아먹는 몬스터는 깜빡이기만 해서 깨무는 박자를 지킨다.
+  bool get canFlinch => true;
 
   /// 게임 규칙에서 빼기 (칸 비우기, 몬스터 목록에서 빼기).
   void onDeath();

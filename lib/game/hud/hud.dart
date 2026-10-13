@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
@@ -53,27 +55,52 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
       ...cards,
       shovel,
       PauseButton(),
-      // 웨이브 이름과 진행 바는 6단계에서 실제 값으로 바꾼다
-      TextComponent(
-        text: Strings.wave(1, 5),
-        textRenderer: _text(30),
-        anchor: Anchor.centerLeft,
-        position: Vector2(24, HudLayout.progressBar.center.dy),
-      ),
+      _waveLabel,
     ]);
+  }
+
+  final _waveLabel = TextComponent(
+    text: '',
+    textRenderer: _text(30),
+    anchor: Anchor.centerLeft,
+    position: Vector2(24, HudLayout.progressBar.center.dy),
+  );
+  final _marker = Paint()..color = _cream;
+  final _bigMarker = Paint()..color = const Color(0xFFFFE066);
+
+  @override
+  void update(double dt) {
+    final d = game.waveRunner?.director;
+    _waveLabel.text = d == null ? '' : Strings.wave(d.displayWave, d.waves.length);
   }
 
   @override
   void render(Canvas canvas) {
     canvas.drawRRect(RRect.fromRectAndRadius(HudLayout.topPanel, const Radius.circular(16)), _panelPaint);
     canvas.drawRect(HudLayout.bottomBand, _panelPaint);
+    final d = game.waveRunner?.director;
+    if (d == null) return;
+    // 진행 바: 내보낸 몬스터 비율. 왼쪽이 시작, 오른쪽 끝이 마지막 웨이브
     final bar = HudLayout.progressBar;
     canvas.drawRRect(RRect.fromRectAndRadius(bar, const Radius.circular(8)), _barTrack);
-    // 6단계 전까지 자리 표시로 30%
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(bar.left, bar.top, bar.width * 0.3, bar.height), const Radius.circular(8)),
-      _barFill,
-    );
+    if (d.progress > 0) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(bar.left, bar.top, max(bar.height, bar.width * d.progress), bar.height), const Radius.circular(8)),
+        _barFill,
+      );
+    }
+    // 웨이브가 시작되는 자리마다 작은 표시, 큰 무리는 노란 표시
+    var before = 0;
+    for (final w in d.waves) {
+      if (before > 0) {
+        final x = bar.left + bar.width * before / d.total;
+        canvas.drawRRect(
+            RRect.fromRectAndRadius(Rect.fromLTWH(x - 2, bar.top - 6, 4, bar.height + 12), const Radius.circular(2)),
+            w.big ? _bigMarker : _marker);
+      }
+      before += w.monsters.length;
+    }
   }
 }
 

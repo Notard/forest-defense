@@ -25,7 +25,7 @@ void main() {
 
   Future<void> addMonster(ForestGame game, WidgetTester tester, MonsterType type, Cell cell) async {
     await tester.runAsync(() async {
-      await game.addMonster(type, row: cell.row, x: Grid.center(cell).x);
+      await game.addMonster(type, row: cell.row, x: Grid.center(cell).x, moving: false);
       game.update(0);
     });
   }

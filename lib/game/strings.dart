@@ -7,4 +7,10 @@ abstract final class Strings {
   static const title = '숲 지키기';
 
   static String wave(int current, int total) => '웨이브 $current / $total';
+
+  /// 웨이브가 시작될 때 가운데에 잠깐 뜨는 글자.
+  static String waveBanner(int number) => '웨이브 $number';
+
+  /// 마지막 큰 무리 웨이브 경고.
+  static const bigWave = '큰 무리가 몰려와요!';
 }

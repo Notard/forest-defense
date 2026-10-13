@@ -9,9 +9,9 @@ import 'actor.dart';
 import 'flyers.dart';
 import 'unit.dart';
 
-/// 레인을 따라 오는 몬스터. 왼쪽을 본다.
+/// 레인을 따라 오는 몬스터. 왼쪽을 보고 걸어오다 앞에 동물이 있으면 멈춰 갉아먹는다 (plan.md 6단계).
 ///
-/// 5단계에서는 제자리에 선 연습 상대로만 쓴다(`?practice=1`). 이동·갉아먹기·웨이브는 6단계.
+/// [moving]이 false면 제자리에 선 연습 상대다 (`?practice=1`).
 class Monster extends Actor {
   Monster._({
     required this.type,
@@ -20,6 +20,7 @@ class Monster extends Actor {
     required this.slimeArt,
     required super.scale,
     required double x,
+    this.moving = true,
   })  : helmetHp = type.helmetHp.toDouble(),
         super(
           maxHp: type.hp,
@@ -29,13 +30,13 @@ class Monster extends Actor {
         );
 
   /// 그림을 읽어 몬스터를 만든다. 투구 슬라임은 투구가 깨질 때를 위해 슬라임 그림도 읽는다.
-  static Future<Monster> create(ForestGame game, MonsterType type, {required int row, required double x}) async {
+  static Future<Monster> create(ForestGame game, MonsterType type, {required int row, required double x, bool moving = true}) async {
     final art = await CharacterArt.load(game, type.sheet);
     final slime = await CharacterArt.load(game, MonsterType.slime.sheet);
     // 투구 슬라임 시트는 몸이 슬라임 시트와 같은 크기로 보이도록 캔버스를 맞춰 두었다 (WORKLOG 3-f).
     // 그래서 같은 배율을 쓴다.
     final scale = type == MonsterType.wisp ? art.scaleForHeight(type.displayHeight) : slime.scaleForHeight(type.displayHeight);
-    return Monster._(type: type, row: row, art: art, slimeArt: slime, scale: scale, x: x);
+    return Monster._(type: type, row: row, art: art, slimeArt: slime, scale: scale, x: x, moving: moving);
   }
 
   final MonsterType type;
@@ -49,8 +50,65 @@ class Monster extends Actor {
   /// 맞는 범위의 반폭 (논리 px). 여우불이 x - hitHalfWidth에 닿으면 맞는다.
   static const double hitHalfWidth = 30;
 
+  /// 걷는지 (false면 연습 상대).
+  final bool moving;
+
+  /// 걷는 속도 (논리 px/초).
+  double get speed => GameConfig.cellWidth / type.secondsPerCell;
+
+  /// 동물 발 x에서 이만큼 오른쪽까지 다가오면 멈춰 갉아먹는다.
+  static const double biteReach = 52;
+
+  /// 지금 갉아먹는 동물 (없으면 null).
+  UnitComponent? eating;
+
   @override
   String get restAction => 'walk';
+
+  @override
+  bool get canFlinch => eating == null;
+
+  /// 같은 레인에서 바로 앞(왼쪽)에 붙은 살아 있는 동물.
+  UnitComponent? _blocker() {
+    UnitComponent? found;
+    for (final u in game.unitComponents.values) {
+      if (u.cell.row != row || !u.alive) continue;
+      final gap = position.x - u.position.x;
+      if (gap >= -10 && gap <= biteReach && (found == null || u.position.x > found.position.x)) found = u;
+    }
+    return found;
+  }
+
+  /// 갉아먹기 한 번(시트 이벤트 프레임)의 피해 = 초당 피해 × 한 바퀴 시간.
+  double get biteDamage {
+    final cycle = art.frameCount('eat') / art.fps('eat');
+    return type.biteDps * cycle;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!alive || !moving) return;
+    final target = _blocker();
+    if (target != null) {
+      if (eating != target || current != 'eat') {
+        eating = target;
+        play('eat', onEvent: () {
+          if (eating?.alive ?? false) eating!.takeDamage(biteDamage);
+        });
+      }
+      return;
+    }
+    if (eating != null) {
+      eating = null;
+      play('walk');
+    }
+    position.x -= speed * dt;
+    if (position.x < reachedHomeX) game.onMonsterReachedHome(this);
+  }
+
+  /// 이 x보다 왼쪽에 닿으면 둥지에 닿은 것 (7단계에서 통나무·게임오버를 붙인다).
+  static const double reachedHomeX = GameConfig.logColumnX - 60;
 
   @override
   void takeDamage(double amount) {
