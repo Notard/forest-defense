@@ -110,7 +110,7 @@ class _PanelBox extends PositionComponent {
 
 /// 판 안의 나무 버튼.
 class PanelButton extends PositionComponent with TapCallbacks {
-  PanelButton(this.label, this.onPressed) : super(size: buttonSize);
+  PanelButton(this.label, this.onPressed, {double? width}) : super(size: Vector2(width ?? buttonSize.x, buttonSize.y));
 
   static final Vector2 buttonSize = Vector2(180, 70);
 

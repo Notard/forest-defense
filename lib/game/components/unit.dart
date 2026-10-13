@@ -7,6 +7,7 @@ import '../config.dart';
 import '../grid.dart';
 import '../sfx.dart';
 import '../units.dart';
+import '../upgrades.dart';
 import 'acorn.dart';
 import 'actor.dart';
 import 'fireball.dart';
@@ -16,9 +17,9 @@ import 'smoke.dart';
 
 /// 칸에 놓인 동물. 발이 칸 바닥에 오도록 세운다. 능력은 동물별 하위 클래스에 있다 (plan.md 5단계).
 abstract class UnitComponent extends Actor {
-  UnitComponent._({required this.type, required this.cell, required super.art})
+  UnitComponent._({required this.type, required this.cell, required super.art, int? maxHp})
       : super(
-          maxHp: type.maxHp,
+          maxHp: maxHp ?? type.maxHp,
           scale: art.scaleForHeight(type.displayHeight),
           startAction: type.idleAction,
           position: footOf(cell),
@@ -26,10 +27,11 @@ abstract class UnitComponent extends Actor {
           priority: cell.row * 10 + 1,
         );
 
-  factory UnitComponent({required UnitType type, required Cell cell, required CharacterArt art}) => switch (type) {
+  factory UnitComponent({required UnitType type, required Cell cell, required CharacterArt art, Boosts boosts = Boosts.none}) =>
+      switch (type) {
         UnitType.squirrel => Squirrel(cell: cell, art: art),
         UnitType.fox => Fox(cell: cell, art: art),
-        UnitType.turtle => Turtle(cell: cell, art: art),
+        UnitType.turtle => Turtle(cell: cell, art: art, maxHp: boosts.maxHpOf(type)),
         UnitType.skunk => Skunk(cell: cell, art: art),
         UnitType.hedgehog => Hedgehog(cell: cell, art: art),
         UnitType.owl => Owl(cell: cell, art: art),
@@ -79,7 +81,7 @@ class Squirrel extends UnitComponent {
     if (!alive) return;
     _next -= dt;
     if (_next <= 0 && !busy) {
-      _next = interval;
+      _next = interval * game.boosts.squirrelInterval;
       play('produce', onEvent: _popAcorn);
     }
   }
@@ -114,13 +116,13 @@ class Fox extends UnitComponent {
 
   void _shoot() {
     game.sfx.play(Sfx.shot);
-    game.world.add(Fireball(position: framePointToWorld(art.muzzle!), row: cell.row));
+    game.world.add(Fireball(position: framePointToWorld(art.muzzle!), row: cell.row, power: Fireball.damage * game.boosts.foxDamage));
   }
 }
 
 /// 거북이: 공격 없이 HP 4000으로 막는다. 절반 아래로 떨어지면 금 간 등껍질.
 class Turtle extends UnitComponent {
-  Turtle({required super.cell, required super.art}) : super._(type: UnitType.turtle);
+  Turtle({required super.cell, required super.art, super.maxHp}) : super._(type: UnitType.turtle);
 
   bool get cracked => hp < maxHp / 2;
 
@@ -175,7 +177,7 @@ class Hedgehog extends UnitComponent {
   @override
   void onBitten(Monster by) {
     game.sfx.play(Sfx.spine);
-    by.takeDamage(spineDamage);
+    by.takeDamage(spineDamage * game.boosts.spineDamage);
   }
 }
 
@@ -204,7 +206,7 @@ class Owl extends UnitComponent {
     game.sfx.play(Sfx.hoot);
     game.world.add(HootWave(from: framePointToWorld(art.muzzle!), row: cell.row));
     for (final m in _ahead.toList()) {
-      m.slow(slowSeconds);
+      m.slow(slowSeconds + game.boosts.owlSlowExtra);
     }
   }
 }
@@ -238,7 +240,7 @@ class Bear extends UnitComponent {
     final paw = framePointToWorld(art.muzzle!);
     game.world.add(Smoke(position: Vector2(paw.x, position.y - 14), size: GameConfig.cellWidth * 0.8, duration: 0.35));
     for (final m in game.monsters.where(_inReach).toList()) {
-      m.takeDamage(damage);
+      m.takeDamage(damage * game.boosts.bearDamage);
     }
   }
 }

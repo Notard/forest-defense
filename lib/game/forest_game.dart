@@ -15,6 +15,7 @@ import 'components/unit.dart';
 import 'components/wave_runner.dart';
 import 'config.dart';
 import 'garden.dart';
+import 'upgrades.dart';
 import 'grid.dart';
 import 'hud/frozen.dart';
 import 'hud/hud.dart';
@@ -57,10 +58,11 @@ class ForestGame extends FlameGame {
     this.onFinish,
     bool sound = true,
     this.intro = true,
+    this.boosts = Boosts.none,
   })  : units = units ?? UnitType.values,
         _random = random ?? Random(),
         skyAcorns = skyAcorns ?? stage.skyAcorns,
-        garden = Garden(acorns: startAcorns ?? stage.startAcorns),
+        garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns, cooldownOf: boosts.cooldownOf),
         wavesOn = waves ?? !practice,
         sfx = SoundBoard(enabled: sound),
         super(
@@ -137,6 +139,9 @@ class ForestGame extends FlameGame {
 
   /// 도토리·쿨다운·칸 점유 규칙.
   final Garden garden;
+
+  /// 강화 상점에서 산 영구 강화 (12단계). 유닛 능력이 이것을 보고 수치를 고친다.
+  final Boosts boosts;
 
   late final Field field;
   late final Hud hud;
@@ -342,7 +347,7 @@ class ForestGame extends FlameGame {
     if (garden.place(type, cell) != PlaceResult.placed) return;
     selectedUnit = null;
     sfx.play(Sfx.place);
-    final unit = UnitComponent(type: type, cell: cell, art: await CharacterArt.load(this, type.sheet));
+    final unit = UnitComponent(type: type, cell: cell, art: await CharacterArt.load(this, type.sheet), boosts: boosts);
     unitComponents[cell] = unit;
     await world.add(unit);
   }

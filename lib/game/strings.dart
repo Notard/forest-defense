@@ -1,4 +1,5 @@
 import 'units.dart';
+import 'upgrades.dart';
 
 /// 화면에 나오는 모든 문구. 글자를 고칠 때는 여기만 바꾼다.
 ///
@@ -44,6 +45,24 @@ abstract final class Strings {
         UnitType.owl => '부엉이',
         UnitType.bear => '곰',
       };
+
+  // ── 강화 상점 (12단계) ──
+  static String upgradeName(Upgrade u) => u.unit == null ? '시작 도토리' : unitName(u.unit!);
+
+  /// 한 단계마다 오르는 것.
+  static String upgradeEffect(Upgrade u) => switch (u) {
+        Upgrade.squirrel => '도토리 만들기 10% 빨리',
+        Upgrade.fox => '여우불 15% 세게',
+        Upgrade.turtle => '체력 25% 더',
+        Upgrade.hedgehog => '가시 30% 세게',
+        Upgrade.skunk => '다시 놓기 15% 빨리',
+        Upgrade.owl => '느리게 하기 1초 더',
+        Upgrade.bear => '내려치기 20% 세게',
+        Upgrade.startAcorns => '도토리 25개 더 들고 시작',
+      };
+  static const maxed = '다 올렸어요';
+  static String unlockAt(String stageId) => '$stageId 깨면 열려요';
+  static const shopHint = '솔방울은 별을 처음 얻을 때 받아요';
 
   // ── 결과·일시정지 화면 ──
   static const cleared = '숲을 지켰어요!';

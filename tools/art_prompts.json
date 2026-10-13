@@ -164,6 +164,14 @@
       ],
       "ref": "art/ref/props/background.png",
       "prompt": "The attached image is the DAY version of this game background. Redraw EXACTLY the same scene and layout (same tree on the left with the round burrow door, same canopy band on top, same open lawn in the center with no objects, same winding dirt path on the right, same mossy root strip at the bottom) but at NIGHT: deep blue and teal moonlit colors, a soft moon glow from the top right, a warm glowing lantern hanging by the burrow door, a few small glowing fireflies only in the canopy and the path area (none on the lawn), the lawn darker blue-green but still clearly readable. Same art style, thick outlines. No characters, no text, no UI."
+    },
+    "pinecone": {
+      "size": [
+        96,
+        96
+      ],
+      "ref": "art/ref/props/acorn.png",
+      "prompt": "A single cute cartoon pinecone, the reward currency earned by clearing stages. Plump rounded cone with overlapping warm brown scales whose tips are lighter tan, a tiny green needle sprig on top, bright glossy highlight, slightly tilted, centered. A small soft sparkle star near the top. Same art style, outline and lighting as the reference acorn. Readable at 48px."
     }
   }
 }

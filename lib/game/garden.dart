@@ -6,7 +6,12 @@ enum PlaceResult { placed, notEnoughAcorns, coolingDown, occupied }
 
 /// 도토리, 카드 쿨다운, 칸 점유를 관리하는 규칙 (화면과 분리해 단위 테스트한다).
 class Garden {
-  Garden({this.acorns = startAcorns});
+  Garden({this.acorns = startAcorns, this.cooldownOf = baseCooldown});
+
+  /// 유닛별 쿨다운 (초). 강화 상점의 스컨크 강화가 줄인다 (12단계).
+  final double Function(UnitType) cooldownOf;
+
+  static double baseCooldown(UnitType t) => t.cooldown;
 
   /// 시작 도토리 (plan.md 4단계). 150 → 200: 처음 하는 사람에게 너무 어려웠다 (7-1단계).
   static const int startAcorns = 200;
@@ -28,7 +33,7 @@ class Garden {
   double cooldownLeft(UnitType type) => _cooldownLeft[type] ?? 0;
 
   /// 남은 쿨다운 비율 0~1 (카드 위 어두운 덮개 높이).
-  double cooldownFraction(UnitType type) => cooldownLeft(type) / type.cooldown;
+  double cooldownFraction(UnitType type) => cooldownLeft(type) / cooldownOf(type);
 
   bool canAfford(UnitType type) => acorns >= type.cost;
 
@@ -48,7 +53,7 @@ class Garden {
     if (result != PlaceResult.placed) return result;
     acorns -= type.cost;
     _units[cell] = type;
-    _cooldownLeft[type] = type.cooldown;
+    _cooldownLeft[type] = cooldownOf(type);
     return result;
   }
 

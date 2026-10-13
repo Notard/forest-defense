@@ -66,6 +66,7 @@ class _ForestAppState extends State<ForestApp> {
       startWave: int.tryParse(_query['wave'] ?? '') ?? 1,
       timeScale: (double.tryParse(_query['speed'] ?? '') ?? 1).clamp(1.0, 4.0),
       intro: _query['intro'] != '0',
+      boosts: p.boosts,
       onFinish: stage == demoStage
           ? null
           : ({required won, required usedLog, required lostUnit}) {

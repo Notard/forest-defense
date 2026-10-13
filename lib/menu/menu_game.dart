@@ -16,10 +16,11 @@ import '../game/progress.dart';
 import '../game/sfx.dart';
 import '../game/stages.dart';
 import '../game/strings.dart';
+import 'shop_screen.dart';
 
-enum MenuPage { title, map }
+enum MenuPage { title, map, shop }
 
-/// 판 밖의 화면: 메인 화면과 숲 지도 (plan.md 확장). 판은 ForestGame이 따로 그린다.
+/// 판 밖의 화면: 메인 화면, 숲 지도, 강화 상점 (plan.md 확장). 판은 ForestGame이 따로 그린다.
 class MenuGame extends FlameGame {
   MenuGame({required this.progress, required this.onPlay, this.startPage = MenuPage.title, bool sound = true})
       : sfx = SoundBoard(enabled: sound),
@@ -53,6 +54,7 @@ class MenuGame extends FlameGame {
           show(MenuPage.map);
         }),
       MenuPage.map => MapScreen(),
+      MenuPage.shop => ShopScreen(),
     });
   }
 }
@@ -96,6 +98,7 @@ class MapScreen extends PositionComponent with HasGameReference<MenuGame> {
     add(TextComponent(text: Strings.totalStars(p.totalStars, stages.length * 3), textRenderer: _text(28, const Color(0xFFFFE066)), anchor: Anchor.centerRight, position: Vector2(1250, 104)));
     final back = PanelButton(Strings.toTitle, () => game.show(MenuPage.title))..position = Vector2(24, 26);
     add(back);
+    add(ShopButton(canBuy: p.canBuyAny));
     for (final (i, s) in stages.indexed) {
       add(StageNode(s, open: p.isOpen(s), stars: p.starsOf(s), isNext: p.isOpen(s) && !p.cleared(s), position: spots[i].toVector2()));
     }
@@ -203,5 +206,29 @@ class StageNode extends PositionComponent with TapCallbacks, HasGameReference<Me
     }
     game.sfx.play(Sfx.place);
     game.onPlay(stage);
+  }
+}
+
+/// 지도 오른쪽 아래 강화 상점 버튼. 살 수 있는 강화가 있으면 뒤에서 빛이 맥박친다.
+class ShopButton extends PositionComponent with HasGameReference<MenuGame> {
+  ShopButton({required this.canBuy}) : super(position: Vector2(1036, 626), size: Vector2(220, 70));
+
+  final bool canBuy;
+  double _t = 0;
+  final _glow = Paint();
+
+  @override
+  Future<void> onLoad() async {
+    add(PanelButton(Strings.shop, () => game.show(MenuPage.shop), width: size.x));
+  }
+
+  @override
+  void update(double dt) => _t += dt;
+
+  @override
+  void render(Canvas canvas) {
+    if (!canBuy) return;
+    _glow.color = const Color(0xFFFFE066).withValues(alpha: 0.35 + 0.3 * math.sin(_t * 4));
+    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect().inflate(7 + 2 * math.sin(_t * 4)), const Radius.circular(22)), _glow);
   }
 }
