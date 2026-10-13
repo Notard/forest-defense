@@ -48,6 +48,13 @@ abstract class UnitComponent extends Actor {
     game.garden.remove(cell);
     game.unitComponents.remove(cell);
   }
+
+  /// 몬스터에게 쓰러짐 (★★★를 잃는다). 스컨크가 스스로 터지는 것은 die를 거치지 않는다.
+  @override
+  void die() {
+    game.lostUnit = true;
+    super.die();
+  }
 }
 
 /// 다람쥐: 놓고 7초 뒤, 그 뒤로 24초마다 도토리를 만든다. 만들기 5번째 프레임에 도토리가 튀어나온다.

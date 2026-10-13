@@ -133,12 +133,5 @@ void main() {
     },
   );
 
-  testWidgets('다시 하기 버튼은 앱에 새 게임을 요청한다', (tester) async {
-    var restarted = 0;
-    final game = ForestGame(skyAcorns: false, waves: false, sound: false, intro: false, onRestart: ({required bool title}) => restarted++);
-    final button = PanelButton(Strings.retry, game.restart);
-    button.onPressed();
-    expect(restarted, 1);
-  });
 }
 

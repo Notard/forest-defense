@@ -46,10 +46,10 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
     final shovelIcon = Sprite(await game.images.load('fx/shovel.webp'));
     acornCounter = AcornCounter(acorn);
     cards = [
-      for (final (i, type) in UnitType.values.indexed)
-        UnitCard(type, await CharacterArt.load(game, type.sheet), HudLayout.cards[i]),
+      for (final (i, type) in game.units.indexed)
+        UnitCard(type, await CharacterArt.load(game, type.sheet), HudLayout.card(i)),
     ];
-    shovel = ShovelButton(shovelIcon);
+    shovel = ShovelButton(shovelIcon, HudLayout.shovel(game.units.length));
     await addAll([
       acornCounter,
       ...cards,
@@ -77,7 +77,7 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
 
   @override
   void render(Canvas canvas) {
-    canvas.drawRRect(RRect.fromRectAndRadius(HudLayout.topPanel, const Radius.circular(16)), _panelPaint);
+    canvas.drawRRect(RRect.fromRectAndRadius(HudLayout.topPanel(game.units.length), const Radius.circular(16)), _panelPaint);
     canvas.drawRect(HudLayout.bottomBand, _panelPaint);
     final d = game.waveRunner?.director;
     if (d == null) return;
@@ -220,8 +220,7 @@ class UnitCard extends PositionComponent with TapCallbacks, HasGameReference<For
 
 /// 삽: 누르면 치우기 모드, 다시 누르면 취소.
 class ShovelButton extends PositionComponent with TapCallbacks, HasGameReference<ForestGame> {
-  ShovelButton(this._icon)
-      : super(position: HudLayout.shovel.topLeft.toVector2(), size: HudLayout.shovel.size.toVector2());
+  ShovelButton(this._icon, Rect slot) : super(position: slot.topLeft.toVector2(), size: slot.size.toVector2());
 
   final Sprite _icon;
 

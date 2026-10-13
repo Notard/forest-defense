@@ -30,7 +30,7 @@ class PlacementGhost extends PositionComponent with HasGameReference<ForestGame>
   void update(double dt) {
     final type = game.selectedUnit;
     final cell = game.field.hoveredCell;
-    if (type == null || cell == null || game.garden.unitAt(cell) != null) {
+    if (type == null || cell == null || !game.laneOpen(cell.row) || game.garden.unitAt(cell) != null) {
       _sprite = null;
       return;
     }

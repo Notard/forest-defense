@@ -14,11 +14,12 @@ import 'support.dart';
 /// 실제 입력 경로로 카드 고르기 → 칸에 놓기 → 삽으로 치우기 → 도토리 줍기를 확인한다.
 void main() {
   Vector2 card(UnitType type) {
-    final r = HudLayout.cards[type.index];
+    final r = HudLayout.card(type.index);
     return Vector2(r.center.dx, r.center.dy);
   }
 
-  final shovel = Vector2(HudLayout.shovel.center.dx, HudLayout.shovel.center.dy);
+  final shovelRect = HudLayout.shovel(UnitType.values.length);
+  final shovel = Vector2(shovelRect.center.dx, shovelRect.center.dy);
   const cell = (row: 2, col: 3);
 
   Future<void> settle(ForestGame game, WidgetTester tester) async {

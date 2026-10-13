@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
@@ -24,15 +26,20 @@ TextPaint _text(double size, Color color) => TextPaint(
 /// 판이 떠 있는 동안 게임 시계는 멈춘다(ForestGame.frozen). 판 자신의 등장 효과는
 /// 멈춘 시계와 상관없이 [update]에서 실제 시간으로 돌린다.
 class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
-  CenterPanel({required this.title, this.subtitle, required this.buttons, this.titleColor = _cream})
+  CenterPanel({required this.title, this.lines = const [], this.stars, required this.buttons, this.titleColor = _cream})
       : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 2000);
 
   final String title;
-  final String? subtitle;
+
+  /// 제목 아래 작은 글줄들 (결과, 솔방울, 새 친구).
+  final List<String> lines;
+
+  /// 결과의 별 (0~3). null이면 별 줄을 그리지 않는다.
+  final int? stars;
   final Color titleColor;
   final List<PanelButton> buttons;
 
-  static const Size _panel = Size(640, 300);
+  Size get _panel => Size(640, 200 + (stars == null ? 0 : 66) + lines.length * 40.0);
   final _dim = Paint()..color = const Color(0x99000000);
 
   late final _PanelBox _box;
@@ -47,20 +54,26 @@ class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
       text: title,
       textRenderer: _text(64, titleColor),
       anchor: Anchor.center,
-      position: Vector2(_panel.width / 2, 74),
+      position: Vector2(_panel.width / 2, 66),
     ));
-    if (subtitle != null) {
+    var y = 122.0;
+    if (stars != null) {
+      _box.add(StarRow(stars!, position: Vector2(_panel.width / 2, y + 22)));
+      y += 66;
+    }
+    for (final line in lines) {
       _box.add(TextComponent(
-        text: subtitle!,
+        text: line,
         textRenderer: _text(28, const Color(0xFFE9D3A6)),
         anchor: Anchor.center,
-        position: Vector2(_panel.width / 2, 138),
+        position: Vector2(_panel.width / 2, y + 12),
       ));
+      y += 40;
     }
     final gap = 24.0, w = PanelButton.buttonSize.x;
     final total = buttons.length * w + (buttons.length - 1) * gap;
     for (final (i, b) in buttons.indexed) {
-      b.position = Vector2((_panel.width - total) / 2 + i * (w + gap), 196);
+      b.position = Vector2((_panel.width - total) / 2 + i * (w + gap), _panel.height - 100);
       _box.add(b);
     }
     _box.add(ScaleEffect.to(Vector2.all(1), EffectController(duration: 0.3, curve: Curves.easeOutBack)));
@@ -129,5 +142,46 @@ class PanelButton extends PositionComponent with TapCallbacks {
   void onTapUp(TapUpEvent event) {
     _down = false;
     onPressed();
+  }
+}
+
+/// 별 세 개 (얻은 만큼 금색, 나머지는 빈 별). 하나씩 통 튀며 나타난다.
+class StarRow extends PositionComponent with RunsWhileFrozen {
+  StarRow(this.count, {required super.position}) : super(anchor: Anchor.center, size: Vector2(190, 56));
+
+  final int count;
+  double _t = 0;
+  final _gold = Paint()..color = const Color(0xFFFFD34D);
+  final _empty = Paint()..color = const Color(0x40FFFFFF);
+  final _rim = Paint()
+    ..color = const Color(0xFF4A3220)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 3
+    ..strokeJoin = StrokeJoin.round;
+
+  @override
+  void update(double dt) => _t += dt;
+
+  static Path star(Offset c, double r) {
+    final path = Path();
+    for (var i = 0; i < 10; i++) {
+      final a = -1.5708 + i * 0.6283;
+      final rr = i.isEven ? r : r * 0.45;
+      final p = Offset(c.dx + rr * math.cos(a), c.dy + rr * math.sin(a));
+      i == 0 ? path.moveTo(p.dx, p.dy) : path.lineTo(p.dx, p.dy);
+    }
+    return path..close();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    for (var i = 0; i < 3; i++) {
+      final appear = ((_t - 0.25 - i * 0.3) / 0.25).clamp(0.0, 1.0);
+      final filled = i < count && appear > 0;
+      final pop = filled ? 1 + 0.4 * math.sin(appear * math.pi) : 1.0;
+      final path = star(Offset(30 + i * 65.0, size.y / 2), 26 * pop);
+      canvas.drawPath(path, filled ? _gold : _empty);
+      canvas.drawPath(path, _rim);
+    }
   }
 }

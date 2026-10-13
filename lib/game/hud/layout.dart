@@ -5,17 +5,16 @@ abstract final class HudLayout {
   static const double _top = 9;
   static const double _slotHeight = 90;
 
-  /// 도토리 칸·카드·삽 뒤에 까는 반투명 판. 나머지 위쪽은 배경 나무 지붕이 보이게 둔다.
-  static const Rect topPanel = Rect.fromLTWH(4, 3, 588, 102);
+  /// 도토리 칸·카드·삽 뒤에 까는 반투명 판. 카드 수에 맞춰 늘고, 나머지 위쪽은 배경 나무 지붕이 보이게 둔다.
+  static Rect topPanel(int cards) => Rect.fromLTWH(4, 3, shovel(cards).right + 8 - 4, 102);
 
   static const Rect acornCounter = Rect.fromLTWH(12, _top, 116, _slotHeight);
 
-  /// 유닛 카드 4장. 도토리 칸 오른쪽에 80px 폭 + 8px 틈.
-  static final List<Rect> cards = [
-    for (var i = 0; i < 4; i++) Rect.fromLTWH(140 + i * 88.0, _top, 80, _slotHeight),
-  ];
+  /// 유닛 카드 (최대 7장). 도토리 칸 오른쪽에 80px 폭 + 8px 틈.
+  static Rect card(int i) => Rect.fromLTWH(140 + i * 88.0, _top, 80, _slotHeight);
 
-  static const Rect shovel = Rect.fromLTWH(504, _top, 80, _slotHeight);
+  /// 삽은 마지막 카드 오른쪽 (카드가 4장이면 x 504).
+  static Rect shovel(int cards) => Rect.fromLTWH(140 + cards * 88.0 + 12, _top, 80, _slotHeight);
   static const Rect pause = Rect.fromLTWH(1198, 22, 70, 60);
   static const Rect sound = Rect.fromLTWH(1118, 22, 70, 60);
 

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
@@ -14,7 +15,6 @@ import '../sfx.dart';
 import '../strings.dart';
 import '../units.dart';
 import 'frozen.dart';
-import 'panel.dart';
 
 TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
       style: TextStyle(
@@ -30,8 +30,11 @@ TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
     );
 
 /// 메인 화면: 숲 배경, 제목, 마주 선 동물과 몬스터, 게임 시작 버튼 (7-2단계).
-class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<ForestGame>, RunsWhileFrozen {
-  TitleScreen() : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<FlameGame> {
+  TitleScreen({required this.onStart}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+
+  /// 게임 시작 버튼 (숲 지도로).
+  final void Function() onStart;
 
   late final Sprite _background;
   final _shade = Paint()..color = const Color(0x59000000);
@@ -67,7 +70,7 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
       final art = await CharacterArt.load(game, type.sheet);
       add(_actor(art, action, x, ground - type.floatHeight * 1.4, type.displayHeight * 1.4));
     }
-    add(StartButton(position: Vector2(GameConfig.width / 2, 438), onPressed: game.startGame));
+    add(StartButton(position: Vector2(GameConfig.width / 2, 438), onPressed: onStart));
   }
 
   SpriteAnimationComponent _actor(CharacterArt art, String action, double x, double footY, double height) {
@@ -212,6 +215,3 @@ class Countdown extends PositionComponent with TapCallbacks, HasGameReference<Fo
   @override
   void onTapDown(TapDownEvent event) {}
 }
-
-/// 결과·일시정지 판에 넣는 "처음으로" 버튼을 만든다.
-PanelButton toTitleButton(ForestGame game) => PanelButton(Strings.toTitle, () => game.restart(title: true));

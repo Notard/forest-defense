@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 16:10</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 16:18</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -1358,7 +1358,71 @@ article td img{margin:0 auto}
 <li>진행은 <code>shared_preferences</code>로 기기에 저장 (웹·Windows·Android 모두)</li>
 <li><strong>단계 번호</strong>: 확장을 플랫폼 빌드·배포보다 먼저 하므로 9~14단계를 확장에 쓰고, 예전 9(빌드)·10(배포)·11(마무리)을 15·16·17로 옮겼다. 위 기록의 "9단계에서 확인"은 15단계를 뜻한다</li>
 <li>새 그림 8장(캐릭터 7 + 밤 숲 배경)은 계획서를 쓰는 동안 Codex로 먼저 그리기 시작했다. 밤 배경은 낮 배경을 참고 그림으로 넣어 같은 구도로 그리게 했다 (<code>art_prompts.json</code> props에 <code>ref</code> 추가)</li>
-</ul></article>
+</ul>
+<h2>9. 확장 기반: 스테이지·저장·지도·결과 (2026-10-13)</h2>
+<h3>결과 요약</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/stages.dart</code></td>
+<td><code>StageDef</code>(id·지역·레인·시작 도토리·보스·해금·웨이브), 스테이지 10개(새 적이 생기면 13단계에서 웨이브를 다시 짬), 예전 데모 <code>demoStage</code></td>
+</tr>
+<tr>
+<td><code>lib/game/progress.dart</code></td>
+<td><code>Progress</code>(스테이지별 최고 별·솔방울·강화), 열린 스테이지, 해금한 유닛, <code>record</code>(별 판정 → 보상), <code>shared_preferences</code> 저장·읽기</td>
+</tr>
+<tr>
+<td><code>lib/menu/menu_game.dart</code></td>
+<td>메뉴 게임: 메인 화면 + <strong>숲 지도</strong>(원판 10개, 별, 자물쇠, 보스 왕관, 다음 스테이지 빛, 밤 숲 파란 구역, 솔방울·별 합계, 처음으로)</td>
+</tr>
+<tr>
+<td><code>lib/main.dart</code></td>
+<td>앱 흐름: 진행 읽기 → 메인 화면 → 지도 → 판 → 결과 → 지도/다시/다음. 확인용 주소 옵션이 있으면 메뉴 없이 바로 판 (<code>?stage=1-3</code> 추가)</td>
+</tr>
+<tr>
+<td><code>lib/game/forest_game.dart</code></td>
+<td>스테이지로 시작(레인·하늘 도토리·시작 도토리·웨이브), 쓸 수 있는 유닛만 카드, 별 조건 기록(<code>usedLog</code>, <code>lostUnit</code>), 결과를 앱에 넘겨 보상 받기, 나가기(<code>GameExit</code>)</td>
+</tr>
+<tr>
+<td><code>lane_background.dart</code></td>
+<td>쓰지 않는 레인을 어둡게 덮고 빗금</td>
+</tr>
+<tr>
+<td><code>hud/panel.dart</code></td>
+<td>판에 별 줄(<code>StarRow</code>, 하나씩 통 튀며 나타남)과 여러 줄 글</td>
+</tr>
+<tr>
+<td><code>hud/layout.dart</code>, <code>hud.dart</code></td>
+<td>카드 칸을 해금한 수만큼 (최대 7장), 삽·위 판 폭이 따라 늘어남</td>
+</tr>
+</tbody>
+</table>
+<h3>진행 방식</h3>
+<ul>
+<li>메인 화면·지도는 <strong>메뉴 게임</strong>(<code>MenuGame</code>)이 그리고, 판은 스테이지마다 <code>ForestGame</code>을 새로 만든다. 앱(<code>ForestApp</code>)이 둘을 오가며 진행을 기록·저장한다. 판 안에 메뉴까지 넣으면 판을 되돌리는 일이 복잡해져서 나눴다</li>
+<li>진행 규칙(<code>Progress</code>)과 스테이지 데이터는 순수 Dart로 먼저 만들고 테스트 7개를 붙였다</li>
+<li>결과 판: 이기면 별 줄 + 결과 + 솔방울 + 새 친구, 버튼은 지도로 · 다시 하기 · 다음 스테이지. 지면 지도로 · 다시 하기. 일시정지는 계속하기 · 다시 하기 · 지도로 (7-2의 "처음으로"는 지도에 있는 버튼으로 옮김)</li>
+</ul>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>73/73</strong></li>
+<li><code>progress_test</code> 7개: 스테이지 10개·보스·밤, 처음엔 1-1과 다람쥐·여우만, 별 판정, 해금·다음 스테이지 열림·솔방울(처음 얻은 별만), 보스 20개, 저장·읽기, 깨진 저장</li>
+<li><code>stage_play_test</code> 4개: 1-1은 가운데 세 레인·통나무 셋·카드 둘·바깥 레인에 못 놓음, 잃음·통나무 기록(삽은 잃은 것 아님), 1-1을 깨면 결과 판에 별 3·솔방울 30·새 친구 거북이·버튼 셋</li>
+<li><code>title_test</code> 4개: 메인 화면 → 지도, 지도에서 열린 1-1만 시작, 판 카운트다운, 판의 나가기 버튼</li>
+<li>웹: 저장소를 지우고 시작 → 메인 화면 → 숲 지도(1-1만 열림, 별 0/30) → 1-1 카운트다운(바깥 두 레인 빗금, 통나무 셋, 카드 둘) → <code>preview/09_*</code></li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>문구가 늘어 폰트 글자 검사 테스트가 실패 → 폰트를 다시 만들었다 (145 KB)</li>
+<li>테스트에서 다람쥐를 연달아 놓으려다 쿨다운에 걸렸다 → 두 번째는 여우로</li>
+<li>새 그림 8장은 백그라운드로 그리는 중 (고슴도치·부엉이·곰·골렘 완료)</li>
+</ol></article>
 </div>
 </body>
 </html>

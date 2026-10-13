@@ -13,9 +13,9 @@ import '../waves.dart';
 
 /// 웨이브 규칙([WaveDirector])을 게임에 연결한다: 몬스터 내보내기, 웨이브 글자, 큰 무리 경고.
 class WaveRunner extends Component with HasGameReference<ForestGame> {
-  WaveRunner({Random? random, int startWave = 1})
+  WaveRunner({Random? random, int startWave = 1, List<Wave> waves = stageWaves, List<int> lanes = const [0, 1, 2, 3, 4]})
       : _random = random ?? Random(),
-        director = WaveDirector(random: random, startWave: startWave);
+        director = WaveDirector(random: random, startWave: startWave, waves: waves, lanes: lanes);
 
   final WaveDirector director;
   final Random _random;

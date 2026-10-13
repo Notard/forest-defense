@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'config.dart';
 import 'monsters.dart';
 
 /// 웨이브 하나: 몬스터를 [gap]초 간격으로 순서대로 내보낸다. 레인은 무작위.
@@ -56,7 +55,8 @@ class BigWaveWarning extends WaveEvent {}
 /// - 큰 무리 웨이브는 시작 [warningTime]초 전에 경고를 낸다
 class WaveDirector {
   /// [startWave](1부터)를 주면 그 웨이브부터 시작한다 (확인용 `?wave=5`). 앞 웨이브는 다 지나간 것으로 친다.
-  WaveDirector({this.waves = stageWaves, Random? random, int startWave = 1}) : _random = random ?? Random() {
+  WaveDirector({this.waves = stageWaves, Random? random, int startWave = 1, this.lanes = const [0, 1, 2, 3, 4]})
+      : _random = random ?? Random() {
     _next = (startWave - 1).clamp(0, waves.length - 1);
     _spawnedTotal = waves.take(_next).fold(0, (sum, w) => sum + w.monsters.length);
   }
@@ -65,6 +65,9 @@ class WaveDirector {
   static const double firstDelay = 30, clearDelay = 7, maxWait = 18, warningTime = 3;
 
   final List<Wave> waves;
+
+  /// 몬스터가 나오는 레인 (스테이지가 쓰는 레인).
+  final List<int> lanes;
   final Random _random;
 
   /// 다음에 시작할 웨이브 번호 (0부터). waves.length면 모두 시작했다.
@@ -103,7 +106,7 @@ class WaveDirector {
       _spawnTimer -= dt;
       while (_spawning && _spawnTimer <= 0) {
         final wave = waves[_current];
-        events.add(SpawnMonster(wave.monsters[_spawnIndex], _random.nextInt(GameConfig.rows)));
+        events.add(SpawnMonster(wave.monsters[_spawnIndex], lanes[_random.nextInt(lanes.length)]));
         _spawnIndex++;
         _spawnedTotal++;
         _spawnTimer += wave.gap;

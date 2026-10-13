@@ -107,7 +107,10 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
 
 /// 7~10초마다 무작위 칸 위로 도토리를 떨어뜨린다. 첫 도토리는 [firstDelay]초 뒤.
 class SkyAcornSpawner extends Component with HasGameReference<ForestGame> {
-  SkyAcornSpawner({Random? random, this.firstDelay = 4}) : _random = random ?? Random();
+  SkyAcornSpawner({Random? random, this.firstDelay = 4, this.lanes = const [0, 1, 2, 3, 4]}) : _random = random ?? Random();
+
+  /// 도토리가 떨어지는 레인 (스테이지가 쓰는 레인).
+  final List<int> lanes;
 
   static const double minGap = 5, maxGap = 8; // 7~10 → 5~8 (7-1단계)
 
@@ -121,7 +124,7 @@ class SkyAcornSpawner extends Component with HasGameReference<ForestGame> {
     if (_next > 0) return;
     _next = minGap + _random.nextDouble() * (maxGap - minGap);
     final col = _random.nextInt(GameConfig.cols);
-    final row = _random.nextInt(GameConfig.rows);
+    final row = lanes[_random.nextInt(lanes.length)];
     final x = Grid.center((row: row, col: col)).x;
     game.world.add(Acorn(from: Vector2(x, GameConfig.fieldY - 30), landY: Grid.laneCenterY(row) + 18));
   }

@@ -1,3 +1,5 @@
+import 'units.dart';
+
 /// 화면에 나오는 모든 문구. 글자를 고칠 때는 여기만 바꾼다.
 ///
 /// 폰트(Gaegu Bold)는 필요한 글자만 남긴 파일이라, 새 문구를 넣으면
@@ -20,6 +22,25 @@ abstract final class Strings {
   static const start = '게임 시작';
   static const go = '시작!';
   static const toTitle = '처음으로';
+
+  // ── 숲 지도 ──
+  static const map = '숲 지도';
+  static const dayForest = '낮 숲';
+  static const nightForest = '밤 숲';
+  static const toMap = '지도로';
+  static const next = '다음 스테이지';
+  static const shop = '강화 상점';
+  static String pineconesGained(int n) => '솔방울 +$n';
+  static String pinecones(int n) => '솔방울 $n';
+  static String totalStars(int n, int max) => '별 $n / $max';
+  static String newFriend(UnitType t) => '새 친구: ${unitName(t)}!';
+
+  static String unitName(UnitType t) => switch (t) {
+        UnitType.squirrel => '다람쥐',
+        UnitType.fox => '여우',
+        UnitType.turtle => '거북이',
+        UnitType.skunk => '스컨크',
+      };
 
   // ── 결과·일시정지 화면 ──
   static const cleared = '숲을 지켰어요!';
