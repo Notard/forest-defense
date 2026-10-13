@@ -39,6 +39,42 @@
       "name": "도깨비불",
       "facing": "left",
       "description": "A small floating purple will-o'-the-wisp spirit monster, cute and mischievous. Side 3/4 view facing LEFT. A rounded teardrop flame-shaped body of glowing lavender-purple with a lighter core, two big eyes and a small grin on the left side, and a wispy flame tail trailing up and to the RIGHT. It floats above the ground (no legs)."
+    },
+    "hedgehog": {
+      "name": "고슴도치",
+      "facing": "right",
+      "description": "A round chubby hedgehog, the spiky wall that hurts monsters who bite it. Side 3/4 view facing RIGHT, standing on short little legs. A big dome of brown-and-cream spines covering the back like a chestnut burr, a soft beige face and belly, tiny pink nose, determined but cute eyes with a white highlight. The spine dome is clearly separated from the face and feet."
+    },
+    "owl": {
+      "name": "부엉이",
+      "facing": "right",
+      "description": "A fluffy round barn owl, the magic support that slows monsters. Standing upright on a small stump-free pose, side 3/4 view facing RIGHT. Soft caramel-and-cream feathers, a heart-shaped pale face, huge round amber eyes with white highlights, small beak, both wings folded at the sides and clearly separated from the body outline, little ear tufts."
+    },
+    "bear": {
+      "name": "곰",
+      "facing": "right",
+      "description": "A sturdy brown bear cub, the heavy hitter that swipes monsters right in front of it. Standing upright, side 3/4 view facing RIGHT, one big front paw raised high ready to swipe (clearly separated from the body), other paw on the belly. Warm brown fur, lighter tan muzzle and belly, small round ears, brave eyes with a white highlight."
+    },
+    "golem": {
+      "name": "돌 골렘",
+      "facing": "left",
+      "description": "A chunky stone golem monster, cute not scary, very slow and very tough. Side 3/4 view facing LEFT. Body made of rounded grey boulders with green moss patches, two short thick stone legs, two big stone fists, small glowing teal eyes and a tiny grumpy mouth on the left side. Arms and legs clearly separated from the body."
+    },
+    "bat": {
+      "name": "박쥐",
+      "facing": "left",
+      "description": "A small purple bat monster flying, cute and sneaky. Side 3/4 view facing LEFT, both wings spread wide open (clearly separated from the round body), big pointy ears, big mischievous eyes, a tiny fang. Floating in the air, no ground."
+    },
+    "mushroom": {
+      "name": "버섯 포자",
+      "facing": "left",
+      "description": "A walking mushroom monster, cute. Side 3/4 view facing LEFT. A big round red cap with white spots, a cream stem body with a small face (two dot eyes and a little mouth) on the left side, two tiny feet. The cap is clearly separated from the stem."
+    },
+    "boss_slime": {
+      "name": "거대 슬라임",
+      "facing": "left",
+      "based_on": "slime",
+      "description": "EXACTLY the same green slime as the attached slime image (same shape, colors, glossy style, facing LEFT), but now it is the KING: wearing a small golden crown tilted on top, with slightly angry eyebrows and a bigger grin. Change nothing else."
     }
   },
   "actions": {
@@ -71,7 +107,7 @@
     }
   },
   "props": {
-    "_설명": "정지 그림 (효과·배경). python tools/gen_art.py prop <이름> → art/ref/props/<이름>.png. 게임에서 코드로 돌리기·크기·투명도를 바꿔 움직인다. size = assets/images/fx/에 저장할 크기 (prep_props.py). background.flatten_rows = 줄무늬를 지울 잔디 영역 [x0, x1, y0, y1] (비율). 원본 잔디에 줄무늬가 7개라 레인 5개와 안 맞아서 지우고 게임이 레인 체크무늬를 그린다 (WORKLOG 3-g).",
+    "_설명": "정지 그림 (효과·배경). python tools/gen_art.py prop <이름> → art/ref/props/<이름>.png. 게임에서 코드로 돌리기·크기·투명도를 바꿔 움직인다. size = assets/images/fx/에 저장할 크기 (prep_props.py). background.flatten_rows = 줄무늬를 지울 잔디 영역 [x0, x1, y0, y1] (비율). 원본 잔디에 줄무늬가 7개라 레인 5개와 안 맞아서 지우고 게임이 레인 체크무늬를 그린다 (WORKLOG 3-g). ref가 있으면 그 그림을 참고 그림으로 넣는다 (밤 배경은 낮 배경을 넣어 구도를 그대로 따르게).",
     "acorn": {
       "size": [
         96,
@@ -113,6 +149,21 @@
         96
       ],
       "prompt": "A small cartoon garden shovel icon, tilted 45 degrees with the blade at the bottom-left: shiny steel-gray blade with a soft highlight, short warm wooden handle with a rounded grip. Centered, bold and readable at 48px."
+    },
+    "background_night": {
+      "size": [
+        1280,
+        720
+      ],
+      "opaque": true,
+      "flatten_rows": [
+        0.16,
+        0.825,
+        0.15,
+        0.9
+      ],
+      "ref": "art/ref/props/background.png",
+      "prompt": "The attached image is the DAY version of this game background. Redraw EXACTLY the same scene and layout (same tree on the left with the round burrow door, same canopy band on top, same open lawn in the center with no objects, same winding dirt path on the right, same mossy root strip at the bottom) but at NIGHT: deep blue and teal moonlit colors, a soft moon glow from the top right, a warm glowing lantern hanging by the burrow door, a few small glowing fireflies only in the canopy and the path area (none on the lawn), the lawn darker blue-green but still clearly readable. Same art style, thick outlines. No characters, no text, no UI."
     }
   }
 }

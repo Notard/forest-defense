@@ -129,14 +129,13 @@ def main() -> None:
     elif len(args) == 2 and args[0] == "prop":
         name = args[1]
         prop = PROMPTS["props"][name]
-        style = ROOT / "art" / "ref" / "fox.png"
+        style = ROOT / prop["ref"] if "ref" in prop else ROOT / "art" / "ref" / "fox.png"
         lines = [PROMPTS["style"]]
         if not prop.get("opaque"):
             lines.append(PROMPTS["background"])
-        lines += [
-            "The attached image is a character from the same game, given only as the art-style reference. Match its style, do not draw the fox.",
-            prop["prompt"],
-        ]
+        if "ref" not in prop:
+            lines.append("The attached image is a character from the same game, given only as the art-style reference. Match its style, do not draw the fox.")
+        lines.append(prop["prompt"])
         w, h = prop["size"]
         # 최종 크기를 알려 주면 Codex가 그 크기로 줄여 저장해 원본 해상도를 잃는다 (WORKLOG 3-g). 줄이기는 prep_props.py가 한다.
         lines.append("It will be shown small in the game, so keep shapes bold and readable. Save the image at full generated resolution; do not resize it."
