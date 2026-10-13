@@ -1,0 +1,33 @@
+{
+  "character": "slime_helmet",
+  "anchor": [
+    159.9,
+    287.9
+  ],
+  "actions": {
+    "walk": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "eat": {
+      "frames": 6,
+      "fps": 12,
+      "loop": true,
+      "event": 3
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    96.0,
+    212.3
+  ],
+  "frame": [
+    320,
+    320
+  ]
+}

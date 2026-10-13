@@ -1,0 +1,38 @@
+{
+  "character": "wisp",
+  "anchor": [
+    148.6,
+    252.9
+  ],
+  "actions": {
+    "walk": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "eat": {
+      "frames": 6,
+      "fps": 12,
+      "loop": true,
+      "event": 3
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    92.9,
+    189.9
+  ],
+  "frame": [
+    320,
+    320
+  ]
+}

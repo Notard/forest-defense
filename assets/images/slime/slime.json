@@ -1,0 +1,38 @@
+{
+  "character": "slime",
+  "anchor": [
+    161.0,
+    287.4
+  ],
+  "actions": {
+    "walk": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "eat": {
+      "frames": 6,
+      "fps": 12,
+      "loop": true,
+      "event": 3
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    99.1,
+    218.8
+  ],
+  "frame": [
+    320,
+    320
+  ]
+}

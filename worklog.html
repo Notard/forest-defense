@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 12:34</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 12:38</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -649,7 +649,42 @@ article td img{margin:0 auto}
 <td>폭발 4번째 프레임부터는 게임의 쓰러짐 연기 효과가 덮는다</td>
 </tr>
 </tbody>
-</table></article>
+</table>
+<h3>3-f. 몬스터 3종 (2026-10-13)</h3>
+<table>
+<thead>
+<tr>
+<th>몬스터</th>
+<th>부위</th>
+<th>동작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>슬라임</td>
+<td>몸 하나 (한 덩어리라 늘었다 줄기만으로 충분)</td>
+<td>이동 12 (움츠렸다 통통 뛰고 착지에 찌그러짐) · 갉아먹기 6 (앞으로 숙여 3번째에 깨묾 = 피해) · 피격 4 · 쓰러짐 8 (녹아 퍼짐)</td>
+</tr>
+<tr>
+<td>투구 슬라임</td>
+<td>몸 → 투구</td>
+<td>이동 · 갉아먹기 · 피격 (투구가 몸보다 한 박자 늦게 흔들림, 맞으면 투구가 '땡' 튐). 쓰러짐은 없고 투구가 깨지면 슬라임 시트로 바뀐다</td>
+</tr>
+<tr>
+<td>도깨비불</td>
+<td>몸 → 불꽃 꼬리</td>
+<td>떠다니기 12 · 갉아먹기 6 (앞으로 돌진) · 피격 4 · 쓰러짐 8 (일렁이며 작아져 사라짐)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>몬스터는 왼쪽을 보므로 "앞으로 숙이기"는 rot −, "앞으로"는 dx −다</li>
+<li><strong>투구가 깨질 때 시트가 튀지 않게</strong> 투구 슬라임 캔버스를 슬라임 몸 폭 비율(950/1200 = 0.79)로 맞췄다. 두 시트의 발 위치가 [161.0, 287.4]와 [159.9, 287.9]로 1px 안에서 같다. 뛰는 높이도 같은 비율로 줄였다</li>
+<li>이동은 게임이 하고 시트는 제자리에서 움직인다</li>
+</ul>
+<p><strong>발생한 문제와 해결</strong>
+1. 슬라임 쓰러짐에서 1.6배로 퍼지니 프레임 밖으로 잘렸다 → 1.3배로 줄였다
+2. 도깨비불 쓰러짐을 발(아래 끝) 기준으로 빙글 돌리니 원을 그리며 프레임 밖으로 나갔다 → 회전 대신 일렁이며 작아져 위로 사라지게 바꿨다</p></article>
 </div>
 </body>
 </html>
