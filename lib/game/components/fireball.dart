@@ -13,7 +13,7 @@ class Fireball extends SpriteComponent with HasGameReference<ForestGame> {
       : super(position: position, size: Vector2(36, 48), anchor: Anchor.center, priority: row * 10 + 8);
 
   static const double speed = 420;
-  static const double damage = 20;
+  static const double damage = 25; // 20 → 25 (7-1단계): 슬라임 8발
 
   final int row;
   double _t = 0;

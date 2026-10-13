@@ -54,7 +54,7 @@ abstract class UnitComponent extends Actor {
 class Squirrel extends UnitComponent {
   Squirrel({required super.cell, required super.art}) : super._(type: UnitType.squirrel);
 
-  static const double firstDelay = 7, interval = 24;
+  static const double firstDelay = 5, interval = 18; // 7·24 → 5·18 (7-1단계)
   double _next = firstDelay;
   final _random = Random();
 

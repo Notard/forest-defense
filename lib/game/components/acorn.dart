@@ -35,7 +35,7 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
   Vector2? _velocity;
 
   static const double displaySize = 46;
-  static const double lifetime = 8;
+  static const double lifetime = 10; // 8 → 10 (7-1단계: 줍기 전에 사라지는 일이 잦았다)
   static const double blinkTime = 2;
 
   final double landY;
@@ -109,7 +109,7 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
 class SkyAcornSpawner extends Component with HasGameReference<ForestGame> {
   SkyAcornSpawner({Random? random, this.firstDelay = 4}) : _random = random ?? Random();
 
-  static const double minGap = 7, maxGap = 10;
+  static const double minGap = 5, maxGap = 8; // 7~10 → 5~8 (7-1단계)
 
   final Random _random;
   final double firstDelay;

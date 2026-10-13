@@ -8,8 +8,8 @@ enum PlaceResult { placed, notEnoughAcorns, coolingDown, occupied }
 class Garden {
   Garden({this.acorns = startAcorns});
 
-  /// 시작 도토리 (plan.md 4단계).
-  static const int startAcorns = 150;
+  /// 시작 도토리 (plan.md 4단계). 150 → 200: 처음 하는 사람에게 너무 어려웠다 (7-1단계).
+  static const int startAcorns = 200;
 
   /// 하늘에서 떨어지는 도토리·다람쥐가 만드는 도토리 하나의 값.
   static const int acornValue = 25;

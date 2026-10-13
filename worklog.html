@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 15:36</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 15:45</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -1120,6 +1120,147 @@ article td img{margin:0 auto}
 <h3>발생한 문제와 해결</h3>
 <ul>
 <li>큰 문제는 없었다. 효과음 실제 느낌은 사용자가 들어 보고 확인할 항목으로 남겼다</li>
+</ul>
+<h2>7-1. 난이도 조정 (2026-10-13)</h2>
+<h3>왜</h3>
+<p>8단계를 마친 뒤 사용자가 "난이도가 어려워서 못하겠다"고 했다 (7단계 직후에는 "어렵지만 몇 번 더 해보면 좋겠다"). 감각으로 숫자를 낮추면 너무 쉬워졌는지 알 수 없어서, <strong>자동 플레이 봇으로 먼저 재고</strong> 고친 뒤 다시 쟀다.</p>
+<h3>자동 플레이 봇 (<code>test/balance_test.dart</code>)</h3>
+<p>보통 사람이 두는 순서를 흉내 낸다: 도토리 줍기 → 몬스터가 들어온 레인에 여우 → 다람쥐 → 모든 레인에 여우 → 몬스터가 많은 레인에 거북이·여우 하나 더 → 도토리가 남으면 레인마다 여우 둘째 줄. 스컨크는 쓰지 않는다.</p>
+<table>
+<thead>
+<tr>
+<th>수준</th>
+<th>반응 간격</th>
+<th>도토리 줍기</th>
+<th>다람쥐</th>
+<th>여우를 놓는 때</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>익숙함</td>
+<td>0.5초</td>
+<td>모두</td>
+<td>4마리</td>
+<td>몬스터가 나타나면</td>
+</tr>
+<tr>
+<td>처음</td>
+<td>1.5초</td>
+<td>60%</td>
+<td>2마리</td>
+<td>몬스터가 잔디밭에 들어와야</td>
+</tr>
+<tr>
+<td>서툼</td>
+<td>2.5초</td>
+<td>40%</td>
+<td>1마리</td>
+<td>몬스터가 잔디밭에 들어와야</td>
+</tr>
+</tbody>
+</table>
+<h3>결과 (시드 3개씩)</h3>
+<table>
+<thead>
+<tr>
+<th>수준</th>
+<th>조정 전</th>
+<th>조정 후</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>익숙함</td>
+<td>3/3 승리 (통나무 4~5개 남음)</td>
+<td>3/3 승리 (통나무 5개, 도토리 700개 이상 남음)</td>
+</tr>
+<tr>
+<td>처음</td>
+<td><strong>0/3</strong> (웨이브 3~4, 145~177초에 패배, 도토리 0~25)</td>
+<td><strong>3/3</strong> 승리 (통나무 5개 남음)</td>
+</tr>
+<tr>
+<td>서툼</td>
+<td>(재지 않음)</td>
+<td>1/3 승리, 2번은 마지막 큰 무리에서 패배</td>
+</tr>
+</tbody>
+</table>
+<p>→ 처음 하는 사람도 깰 수 있고, 마지막 큰 무리는 여전히 조금 신경 써야 한다.</p>
+<h3>바꾼 수치</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>전</th>
+<th>후</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시작 도토리</td>
+<td>150</td>
+<td>200</td>
+<td>첫 30초에 다람쥐 둘 + 여우 하나를 놓을 수 있게</td>
+</tr>
+<tr>
+<td>하늘 도토리</td>
+<td>7~10초마다, 8초 유지</td>
+<td>5~8초마다, 10초 유지</td>
+<td>처음엔 줍기 전에 사라지는 일이 잦다</td>
+</tr>
+<tr>
+<td>다람쥐</td>
+<td>첫 7초, 이후 24초</td>
+<td>첫 5초, 이후 18초</td>
+<td>처음 하는 봇이 늘 도토리 0~25로 굶었다</td>
+</tr>
+<tr>
+<td>여우불</td>
+<td>20</td>
+<td>25</td>
+<td>슬라임 10발 → 8발</td>
+</tr>
+<tr>
+<td>슬라임 속도·갉아먹기</td>
+<td>칸당 4.7초, 초당 100</td>
+<td>5.5초, 70</td>
+<td>반응할 시간</td>
+</tr>
+<tr>
+<td>도깨비불</td>
+<td>2.3초, 60</td>
+<td>3.0초, 45</td>
+<td>빨라서 손쓸 틈이 없었다</td>
+</tr>
+<tr>
+<td>투구</td>
+<td>370</td>
+<td>280</td>
+<td></td>
+</tr>
+<tr>
+<td>웨이브</td>
+<td>41마리 (3·5·8·11·14)</td>
+<td>33마리 (2·4·6·9·12)</td>
+<td>초반을 가볍게</td>
+</tr>
+<tr>
+<td>웨이브 간격</td>
+<td>첫 20초, 다 잡으면 5초, 최대 14초</td>
+<td>30초, 7초, 18초</td>
+<td>준비할 시간</td>
+</tr>
+</tbody>
+</table>
+<p>한 판 길이: 다 잡을 때 약 193초, 못 잡을 때 약 237초 (테스트로 확인).</p>
+<h3>테스트 고침</h3>
+<p>여러 테스트가 옛 숫자(150, 200, 4.7초, 41마리…)를 직접 적고 있어서 19개가 깨졌다. 숫자를 새로 적는 대신 <strong>게임 상수(<code>Garden.startAcorns</code>, <code>MonsterType.*</code>, <code>stageWaves</code>, <code>WaveDirector.*</code>)를 읽게</strong> 바꿔 다음 조정 때 깨지지 않게 했다. 전체 <strong>59/59</strong> (봇 9판 포함, 테스트 전체 약 7초).</p>
+<h3>남은 것</h3>
+<ul>
+<li>사용자가 다시 플레이해 보고 판단한다. 여전히 어려우면 봇 수준을 "서툼"까지 이기게 맞춘다</li>
 </ul></article>
 </div>
 </body>

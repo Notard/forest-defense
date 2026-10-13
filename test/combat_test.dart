@@ -93,9 +93,10 @@ void main() {
     '마지막 웨이브까지 모두 쓰러뜨리면 클리어 판이 뜬다',
     setUp: waitForLoad,
     verify: (game, tester) async {
-      // 웨이브 5가 다 나올 때까지 (20초 + 14마리 × 0.9초), 나오는 대로 쓰러뜨린다
+      // 웨이브 5가 다 나올 때까지, 나오는 대로 쓰러뜨린다
+      final until = WaveDirector.firstDelay + stageWaves.last.gap * stageWaves.last.monsters.length + 3;
       await tester.runAsync(() async {
-        for (var t = 0.0; t < 40; t += 1 / 30) {
+        for (var t = 0.0; t < until; t += 1 / 30) {
           game.update(1 / 30);
           for (final m in game.monsters.toList()) {
             m.takeDamage(10000);

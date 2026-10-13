@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/components/acorn.dart';
 import 'package:forest_defense/game/components/unit.dart';
 import 'package:forest_defense/game/forest_game.dart';
+import 'package:forest_defense/game/garden.dart';
 import 'package:forest_defense/game/grid.dart';
 import 'package:forest_defense/game/hud/layout.dart';
 import 'package:forest_defense/game/units.dart';
@@ -39,7 +40,7 @@ void main() {
         await settle(game, tester);
       });
       expect(game.garden.unitAt(cell), UnitType.fox);
-      expect(game.garden.acorns, 50);
+      expect(game.garden.acorns, Garden.startAcorns - UnitType.fox.cost);
       expect(game.selectedUnit, isNull);
       expect(game.garden.isReady(UnitType.fox), isFalse);
       final unit = game.unitComponents[cell]!;
@@ -60,7 +61,7 @@ void main() {
       await tapWorld(tester, card(UnitType.turtle));
       await tapWorld(tester, Grid.center(cell));
       expect(game.garden.unitAt(cell), UnitType.squirrel);
-      expect(game.garden.acorns, 100);
+      expect(game.garden.acorns, Garden.startAcorns - UnitType.squirrel.cost);
       expect(game.selectedUnit, UnitType.turtle, reason: '실패하면 고른 카드는 그대로');
       await tapWorld(tester, card(UnitType.turtle));
       expect(game.selectedUnit, isNull);
@@ -83,7 +84,7 @@ void main() {
       expect(game.garden.unitAt(cell), isNull);
       expect(game.unitComponents.containsKey(cell), isFalse);
       expect(game.shovelMode, isFalse);
-      expect(game.garden.acorns, 100, reason: '치워도 도토리는 돌려주지 않는다');
+      expect(game.garden.acorns, Garden.startAcorns - UnitType.turtle.cost, reason: '치워도 도토리는 돌려주지 않는다');
     },
   );
 
@@ -112,7 +113,7 @@ void main() {
         game.update(1 / 60); // 실제 화면처럼 한 프레임씩 (날아가는 효과 0.45초)
       }
       await tester.pump();
-      expect(game.garden.acorns, 175);
+      expect(game.garden.acorns, Garden.startAcorns + Garden.acornValue);
       expect(acorn.isMounted, isFalse);
     },
   );

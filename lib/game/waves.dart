@@ -19,12 +19,13 @@ class Wave {
 const _s = MonsterType.slime, _h = MonsterType.helmetSlime, _w = MonsterType.wisp;
 
 /// 데모 스테이지의 웨이브 5개 (plan.md 6단계). 약 3~4분 분량.
+/// 7-1단계에서 쉽게: 41마리 → 33마리, 초반을 가볍게, 간격을 넓게.
 const List<Wave> stageWaves = [
-  Wave([_s, _s, _s], gap: 8),
-  Wave([_s, _s, _h, _s, _s], gap: 6),
-  Wave([_s, _w, _s, _h, _s, _w, _h, _s], gap: 5),
-  Wave([_s, _h, _w, _s, _s, _w, _h, _s, _w, _h, _s], gap: 4),
-  Wave([_s, _s, _h, _w, _s, _h, _w, _s, _h, _w, _s, _s, _h, _w], gap: 0.9, big: true),
+  Wave([_s, _s], gap: 12),
+  Wave([_s, _s, _s, _s], gap: 9),
+  Wave([_s, _s, _h, _s, _w, _s], gap: 7),
+  Wave([_s, _h, _s, _w, _s, _h, _s, _w, _s], gap: 6),
+  Wave([_s, _s, _h, _w, _s, _h, _s, _w, _s, _h, _s, _s], gap: 1.2, big: true),
 ];
 
 /// 웨이브 진행에서 일어나는 일.
@@ -60,7 +61,8 @@ class WaveDirector {
     _spawnedTotal = waves.take(_next).fold(0, (sum, w) => sum + w.monsters.length);
   }
 
-  static const double firstDelay = 20, clearDelay = 5, maxWait = 14, warningTime = 3;
+  // 7-1단계: 첫 웨이브 20 → 30초, 다 잡은 뒤 5 → 7초, 최대 14 → 18초
+  static const double firstDelay = 30, clearDelay = 7, maxWait = 18, warningTime = 3;
 
   final List<Wave> waves;
   final Random _random;

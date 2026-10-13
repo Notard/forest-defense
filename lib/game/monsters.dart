@@ -1,8 +1,9 @@
 /// 몬스터 종류와 수치 (plan.md 6단계 표). 이동·갉아먹기는 6단계에서 쓴다.
 enum MonsterType {
-  slime(sheet: 'slime', hp: 200, secondsPerCell: 4.7, biteDps: 100, displayHeight: 68),
-  helmetSlime(sheet: 'slime_helmet', hp: 200, helmetHp: 370, secondsPerCell: 4.7, biteDps: 100, displayHeight: 68),
-  wisp(sheet: 'wisp', hp: 120, secondsPerCell: 2.3, biteDps: 60, displayHeight: 76, floatHeight: 16);
+  // 7-1단계에서 쉽게: 속도 4.7 → 5.5초/칸(도깨비불 2.3 → 3.0), 갉아먹기 100 → 70(도깨비불 60 → 45), 투구 370 → 280
+  slime(sheet: 'slime', hp: 200, secondsPerCell: 5.5, biteDps: 70, displayHeight: 68),
+  helmetSlime(sheet: 'slime_helmet', hp: 200, helmetHp: 280, secondsPerCell: 5.5, biteDps: 70, displayHeight: 68),
+  wisp(sheet: 'wisp', hp: 120, secondsPerCell: 3.0, biteDps: 45, displayHeight: 76, floatHeight: 16);
 
   const MonsterType({
     required this.sheet,

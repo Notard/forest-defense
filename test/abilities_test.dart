@@ -65,23 +65,23 @@ void main() {
       await runAsync(game, tester, 1.0); // 날아가 맞힘
       final near = game.monsters.firstWhere((m) => m.row == 2 && m.position.x > 400 && m.position.x < 800);
       final far = game.monsters.firstWhere((m) => m.row == 2 && m.position.x > 900);
-      expect(near.hp, 200 - Fireball.damage);
-      expect(far.hp, 200, reason: '여우불은 처음 닿는 몬스터 하나만 맞힌다');
+      expect(near.hp, MonsterType.slime.hp - Fireball.damage);
+      expect(far.hp, MonsterType.slime.hp, reason: '여우불은 처음 닿는 몬스터 하나만 맞힌다');
       final other = game.monsters.firstWhere((m) => m.row == 1);
-      expect(other.hp, 200);
+      expect(other.hp, MonsterType.slime.hp);
     },
   );
 
   GameTester(testGame).testGameWidget(
-    '다람쥐는 놓고 7초 뒤 도토리를 만들어 옆에 떨어뜨린다',
+    '다람쥐는 놓고 firstDelay초 뒤 도토리를 만들어 옆에 떨어뜨린다',
     setUp: waitForLoad,
     verify: (game, tester) async {
       final squirrel = await place(game, tester, UnitType.squirrel, (row: 1, col: 2));
       await tester.runAsync(() async => game.update(0)); // 도토리 그림 읽기용
-      run(game, 6.9);
+      run(game, Squirrel.firstDelay - 0.1);
       expect(count<Acorn>(game), 0);
       await tester.runAsync(() async {
-        run(game, 0.6); // 만들기 5번째 프레임 = 7.33초
+        run(game, 0.6); // 만들기 5번째 프레임 = 첫 생산 + 0.33초
         await Future<void>.delayed(const Duration(milliseconds: 50));
         game.update(0);
       });
@@ -141,16 +141,17 @@ void main() {
     verify: (game, tester) async {
       await addMonster(game, tester, MonsterType.helmetSlime, (row: 1, col: 6));
       final m = game.monsters.single;
-      m.takeDamage(300);
-      expect(m.hp, 200);
+      final helmet = MonsterType.helmetSlime.helmetHp, body = MonsterType.helmetSlime.hp;
+      m.takeDamage(helmet - 30.0);
+      expect(m.hp, body);
       expect(m.hasHelmet, isTrue);
       await tester.runAsync(() async {
-        m.takeDamage(100); // 투구 남은 70 + 몸 30
+        m.takeDamage(100); // 투구 남은 30 + 몸 70
         await Future<void>.delayed(const Duration(milliseconds: 50));
         game.update(0);
       });
       expect(m.hasHelmet, isFalse);
-      expect(m.hp, 170);
+      expect(m.hp, body - 70);
       expect(m.art.name, 'slime');
       expect(count<FlyingHelmet>(game), 1);
     },

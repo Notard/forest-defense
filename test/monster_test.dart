@@ -38,35 +38,38 @@ void main() {
   }
 
   GameTester(testGame).testGameWidget(
-    '슬라임은 한 칸을 4.7초에, 도깨비불은 2.3초에 걷는다',
+    '몬스터는 종류마다 정한 속도(초/칸)로 걷는다',
     setUp: waitForLoad,
     verify: (game, tester) async {
       final slime = await spawn(game, tester, MonsterType.slime, 1, 1000);
       final wisp = await spawn(game, tester, MonsterType.wisp, 3, 1000);
-      run(game, 4.7);
+      final s = MonsterType.slime.secondsPerCell;
+      run(game, s);
       expect(1000 - slime.position.x, closeTo(GameConfig.cellWidth, 2));
-      expect(1000 - wisp.position.x, closeTo(GameConfig.cellWidth * 4.7 / 2.3, 3));
+      expect(1000 - wisp.position.x, closeTo(GameConfig.cellWidth * s / MonsterType.wisp.secondsPerCell, 3));
       expect(slime.current, 'walk');
     },
   );
 
   GameTester(testGame).testGameWidget(
-    '앞에 동물이 있으면 멈춰 갉아먹고(초당 100), 동물이 없어지면 다시 걷는다',
+    '앞에 동물이 있으면 멈춰 갉아먹고, 동물이 없어지면 다시 걷는다',
     setUp: waitForLoad,
     verify: (game, tester) async {
       const cell = (row: 2, col: 3);
       final turtle = await place(game, tester, UnitType.turtle, cell);
       final slime = await spawn(game, tester, MonsterType.slime, 2, turtle.position.x + 130);
-      // 130 - 52(biteReach) = 78px 걸어 닿는 데 약 3.8초
-      run(game, 3.5);
+      // 130 - 52(biteReach) = 78px 걸어 닿는 데 걸리는 시간
+      final reach = (130 - Monster.biteReach) / slime.speed;
+      run(game, reach - 0.3);
       expect(slime.eating, isNull);
-      run(game, 0.5);
+      run(game, 0.6);
       expect(slime.eating, same(turtle));
       expect(slime.current, 'eat');
       final stoppedAt = slime.position.x;
       run(game, 2.0);
       expect(slime.position.x, stoppedAt, reason: '먹는 동안은 걷지 않는다');
-      expect(4000 - turtle.hp, closeTo(200, 50), reason: '2초 × 초당 100 (한 입 50)');
+      final bite = MonsterType.slime.biteDps;
+      expect(UnitType.turtle.maxHp - turtle.hp, closeTo(2 * bite, bite / 2 + 1), reason: '2초 × 초당 피해 (한 입은 0.5초 몫)');
 
       // 삽으로 치운 것처럼 직접 치우면 다시 걷는다
       game.garden.remove(cell);
@@ -85,10 +88,11 @@ void main() {
       const cell = (row: 0, col: 2);
       final squirrel = await place(game, tester, UnitType.squirrel, cell);
       final wisp = await spawn(game, tester, MonsterType.wisp, 0, squirrel.position.x + 40);
-      // 다람쥐 HP 300 / 초당 60 = 5초
-      run(game, 4.5);
+      // 다람쥐 HP / 도깨비불 초당 피해 = 쓰러지기까지 걸리는 시간
+      final seconds = UnitType.squirrel.maxHp / MonsterType.wisp.biteDps;
+      run(game, seconds - 0.6);
       expect(squirrel.alive, isTrue);
-      run(game, 1.2);
+      run(game, 1.4);
       expect(squirrel.alive, isFalse);
       expect(game.garden.unitAt(cell), isNull);
       run(game, 0.5);
