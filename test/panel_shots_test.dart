@@ -4,7 +4,6 @@ library;
 import 'package:flame/game.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/progress.dart';

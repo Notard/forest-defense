@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 20:52</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 21:10</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -1692,6 +1692,111 @@ article td img{margin:0 auto}
 <ol>
 <li>결과 판 확인 중 미리보기 창 배율이 바뀌어 화면이 확대된 채 굳음 → 진짜 폰트 그림 테스트로 확인. 이 현상은 15단계 "배율이 다른 모니터로 창을 옮겨도" 항목에서 함께 본다</li>
 <li>그림 테스트가 기본 <code>flutter test</code>에 섞이면 화면을 조금만 바꿔도 실패한다 → <code>dart_test.yaml</code>에서 <code>shots</code> 태그를 기본으로 건너뛰고, 그림 파일(<code>test/shots/</code>)은 저장소에 넣지 않음</li>
+</ol>
+<h2>12-3. 배경음악 (2026-10-13)</h2>
+<blockquote>
+<p>사용자: "배경음악은 어떻게 만들까?" → 네 가지 방법(A 직접 작곡 + 실제 악기 소리 / B 직접 합성 / C AI 음악 서비스 / D 무료 음원)을 비교해 드렸고 <strong>A</strong>로 정함. 처음 기획(0단계)은 "효과음만"이었다.</p>
+</blockquote>
+<h3>결과 요약</h3>
+<table>
+<thead>
+<tr>
+<th>곡</th>
+<th>쓰는 곳</th>
+<th>조·박자·빠르기</th>
+<th>악기</th>
+<th>길이</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>숲속 아침</td>
+<td>메인 화면·지도·상점</td>
+<td>F장조 3/4 왈츠, 100</td>
+<td>오르골 멜로디, 하프 분산화음, 현 바탕, 피치카토, 뒤 8마디 플루트</td>
+<td>16마디 28.8초</td>
+</tr>
+<tr>
+<td>도토리 행진</td>
+<td>낮 숲 (1-1~1-4)</td>
+<td>C장조 4/4, 116</td>
+<td>마림바 A → 플루트 B → 마림바 + 플루트 3도 화음, 피치카토 뒷박, 베이스, 셰이커·우드블록</td>
+<td>24마디 49.7초</td>
+</tr>
+<tr>
+<td>달빛 숲</td>
+<td>밤 숲 (2-1~2-4)</td>
+<td>A단조 4/4, 92</td>
+<td>첼레스타 멜로디, 하프 오르내림, 낮은 현·콘트라베이스, 콩가, 트라이앵글, 뒤 8마디 합창</td>
+<td>16마디 41.7초</td>
+</tr>
+<tr>
+<td>왕 슬라임</td>
+<td>보스 (1-5, 2-5)</td>
+<td>D단조 4/4, 140</td>
+<td>호른 + 실로폰(한 옥타브 위), 현 8분음표 반복, 튜바, 팀파니, 드럼</td>
+<td>16마디 27.4초</td>
+</tr>
+</tbody>
+</table>
+<p>MP3 112 kbps, 4곡 합계 약 2 MB. 사람이 들어 볼 수 있는 악보 MIDI는 <code>art/music/*.mid</code>.</p>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tools/make_bgm.py</code></td>
+<td>악보(멜로디는 손으로, 반주는 화음 진행에서 규칙으로) → MIDI(직접 씀) → FluidSynth 녹음 → 반복 구간 → 음량 → MP3</td>
+</tr>
+<tr>
+<td><code>lib/game/music.dart</code></td>
+<td><code>Track</code>(4곡, 스테이지별 곡), <code>Jukebox</code>(앱에 하나: 같은 곡이면 이어 감, 멈춤·이어 듣기·끝, 끄기, 웹 자동 재생 차단 대비)</td>
+</tr>
+<tr>
+<td><code>lib/main.dart</code></td>
+<td><code>Jukebox</code> 하나를 메뉴·판에 넘김, 소리·음악 설정 저장</td>
+</tr>
+<tr>
+<td><code>forest_game.dart</code></td>
+<td>시작 때 곡, 일시정지 = 음악 멈춤, 이기거나 지면 음악을 멈추고 효과음만, <code>toggleSound</code>·<code>toggleMusic</code></td>
+</tr>
+<tr>
+<td><code>hud.dart</code>, <code>layout.dart</code></td>
+<td>음악 버튼(음표 두 개, 끄면 흐리게 + X), 소리 버튼 왼쪽</td>
+</tr>
+<tr>
+<td><code>progress.dart</code></td>
+<td><code>soundOn</code>·<code>musicOn</code> 저장 (예전 저장에는 없으니 켜짐)</td>
+</tr>
+</tbody>
+</table>
+<h3>진행 방식</h3>
+<ul>
+<li><strong>도구</strong>: FluidSynth 2.6.1(2.7 MB, 공식 GitHub, 만들 때만 씀)과 GeneralUser GS(32 MB, 지은이 공식 GitHub)를 사용자 확인 후 받아 <code>tools/.cache/</code>에 둠 (저장소 밖). GeneralUser GS 라이선스: 개인·상업 음악 제작에 제한 없이 사용, 표기 의무 없음. 다만 지은이가 "모든 샘플의 출처를 100% 확신할 수는 없다"고 적어 두었다 (상업 소프트웨어에서 문제 된 적은 없다고 함)</li>
+<li><strong>형식</strong>: Windows의 기본 재생기(Media Foundation)는 OGG를 못 읽어서 MP3. 웹·안드로이드도 MP3를 읽는다</li>
+<li><strong>끊김 없는 반복</strong>: 곡을 두 번 이어 녹음해 <strong>두 번째 바퀴</strong>를 잘라 쓴다 (첫머리에 앞 바퀴의 울림이 이미 겹쳐 있음). 그리고 끝 80 ms를 녹음에서 두 번째 바퀴 바로 앞에 있던 소리로 서서히 바꿔, 마지막 샘플 → 첫 샘플이 원래 녹음처럼 이어지게 했다</li>
+<li><strong>음량</strong>: 곡마다 RMS −19 dB로 맞추고 봉우리는 −1 dB 안으로 부드럽게 눌렀다. 게임 안 음악 크기는 0.45 (효과음이 묻히지 않게)</li>
+<li><strong>이어 듣기</strong>: 화면(메뉴 게임·판 게임)은 바뀔 때마다 새로 만들지만 <code>Jukebox</code>는 앱에 하나라서, 메인 화면 → 지도 → 상점에서 곡이 끊기지 않는다. 같은 스테이지를 다시 해도 곡이 이어진다</li>
+</ul>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>97/97</strong> (그림 테스트 1개 파일 건너뜀)</li>
+<li><code>music_test</code> 8개: 같은 곡은 다시 시작 안 함, 멈춤·이어 듣기·끝, 꺼 둔 동안 바뀐 곡을 켜면 그 곡, 스테이지별 곡, 설정 저장·예전 저장 호환, 판(보스 곡·일시정지·음악·소리 버튼 → 앱 저장·이기면 멈춤), 효과음 꺼짐이 새 판에도 이어짐, 메뉴 세 화면에서 곡 하나</li>
+<li><code>panel_layout_test</code>에 판 닫기 버그 테스트 추가</li>
+<li>곡 자체(들을 수 없어서 숫자로 확인): 4곡 모두 RMS −19.7 dB·봉우리 −5~−6 dB, <strong>반복 이음새의 샘플 변화가 곡 안 평소 변화(99% 지점)보다 작음</strong>(이음새 딸깍 없음), 스펙트로그램으로 악기·구성 확인</li>
+<li>웹(브라우저의 재생 함수를 가로채 확인): 메인 화면에서 <code>title.mp3</code> 반복 재생 → 게임 시작·지도로 가도 다시 시작하지 않고 이어짐 → 1-1에서 <code>day.mp3</code> → 음악 버튼으로 멈춤·저장(<code>music:false</code>) → 다시 켜면 멈춘 자리(10.6초)부터 이어짐. 확인 뒤 시험 저장은 지움</li>
+<li><strong>사용자가 직접 들어 봐야 할 것</strong>: 곡 분위기, 음량, 반복 이음새 (preview.html에서 바로 들을 수 있음)</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>반복 이음새가 맞지 않았다 (계산한 한 바퀴 길이로 자르면 두 바퀴 끝이 −1 ~ −8 dB만큼 다름). 처음엔 FluidSynth가 음을 64샘플 단위로 시작시키니 길이만 맞추면 된다고 보고 가장 잘 맞는 길이를 찾게 했지만 그대로였다 — 음마다 따로 몇 샘플씩 어긋나기 때문. "숲속 아침"만 한 바퀴가 정확히 64의 배수(1,270,080샘플)라 완전히 같았다 → 끝 80 ms 섞기로 해결</li>
+<li><strong>판 닫기 버그</strong>: 같은 프레임에 판을 띄웠다 닫으면(예: 일시정지 직후 바로 풀기) Flame은 add를 다음 프레임에 처리하므로 <code>world.children</code>에 판이 아직 없어 닫히지 않았다. 그 뒤 보이지 않게(상태는 진행 중) 붙어 누름을 가로채, 첫 누름 뒤로는 버튼이 먹지 않았다. 음악 테스트에서 찾음 → 판 참조를 들고 있다가 지우고, 새 판을 띄울 때도 먼저 닫음. 사람 손으로는 같은 프레임에 두 번 누르기 어렵지만, 지는 순간 일시정지 같은 경우에 실제로 날 수 있다</li>
+<li>효과음 끄기가 판마다 새 <code>SoundBoard</code>라 "다시 하기"를 누르면 다시 켜지던 것 → 설정을 저장하고 새 판에 넘김</li>
+<li>받은 파일 크기를 GitHub API 값과 맞춰 확인 (2,727,529 / 32,319,396 바이트)</li>
 </ol></article>
 </div>
 </body>

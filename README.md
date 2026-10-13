@@ -80,7 +80,8 @@ tools/gen_art.py            Codex CLI로 캐릭터 기준 그림 그리기
 tools/rigs/<캐릭터>.json     컷아웃 리그: 부위 자르는 선, 기준점, 동작 키프레임
 tools/build_sprites.sh      기준 그림 → 부위 조각 → Blender 렌더 → 스프라이트 시트 → 미리보기
 tools/prep_props.py         효과·배경 정지 그림 정리 (배경 잔디 줄무늬 지우기 포함)
-tools/make_sfx.py           효과음 12종 합성 (외부 음원 없음)
+tools/make_sfx.py           효과음 합성 (외부 음원 없음)
+tools/make_bgm.py           배경음악 4곡: 악보 → MIDI → 악기 소리로 녹음 → 반복용 MP3
 art/ref/                    캐릭터 기준 그림
 preview/                    단계별 캡처 (preview.html에서 모아 봄)
 ```
@@ -122,6 +123,19 @@ bash tools/build_sprites.sh fox
 python tools/gen_art.py ref fox
 ```
 
+## 배경음악 다시 만들기
+
+곡은 `tools/make_bgm.py` 안의 악보에서 만들어요. 아래 두 파일을 `tools/.cache/`에 받아 두고(저장소에는 넣지 않아요) [ffmpeg](https://ffmpeg.org/)가 있어야 해요.
+
+- [FluidSynth 2.6.1](https://github.com/FluidSynth/fluidsynth/releases) Windows x64 압축 파일 → `tools/.cache/fluidsynth/`에 풀기
+- [GeneralUser GS](https://github.com/mrbumpy409/GeneralUser-GS) `GeneralUser-GS.sf2` → `tools/.cache/`
+
+```bash
+python tools/make_bgm.py        # 4곡 모두
+python tools/make_bgm.py boss   # 한 곡만
+```
+
 ## 라이선스
 
 - 폰트: [Gaegu](https://github.com/google/fonts/tree/main/ofl/gaegu) — Copyright 2018 The Gaegu Project Authors, SIL Open Font License 1.1 ([assets/fonts/OFL.txt](assets/fonts/OFL.txt))
+- 배경음악: 이 저장소에서 직접 작곡. 악기 소리는 S. Christian Collins의 [GeneralUser GS](https://github.com/mrbumpy409/GeneralUser-GS) (음악 제작에 제한 없이 사용 가능), 녹음은 [FluidSynth](https://www.fluidsynth.org/) (LGPL, 만들 때만 쓰고 게임에는 들어가지 않음)

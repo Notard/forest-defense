@@ -79,6 +79,7 @@ flutter:
     - assets/images/wisp/
     # 효과음 (tools/make_sfx.py)
     - assets/audio/
+    - assets/audio/music/
   fonts:
     - family: Gaegu
       fonts:

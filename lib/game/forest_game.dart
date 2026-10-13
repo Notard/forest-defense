@@ -15,6 +15,7 @@ import 'components/unit.dart';
 import 'components/wave_runner.dart';
 import 'config.dart';
 import 'garden.dart';
+import 'music.dart';
 import 'upgrades.dart';
 import 'grid.dart';
 import 'hud/frozen.dart';
@@ -32,6 +33,9 @@ import 'units.dart';
 enum GameState { countdown, playing, paused, won, lost }
 
 /// 판이 끝나거나 멈춘 뒤 어디로 갈지 (앱이 정한다, main.dart).
+/// 소리·음악 켜기를 바꿨을 때 (앱이 저장한다).
+typedef SettingsHandler = void Function({required bool sound, required bool music});
+
 enum GameExit { retry, map, next }
 
 /// 판이 끝났을 때 앱에 알리는 결과. 앱이 진행에 기록하고 보상을 돌려준다.
@@ -59,12 +63,15 @@ class ForestGame extends FlameGame {
     bool sound = true,
     this.intro = true,
     this.boosts = Boosts.none,
+    this.music,
+    bool muted = false,
+    this.onSettings,
   })  : units = units ?? UnitType.values,
         _random = random ?? Random(),
         skyAcorns = skyAcorns ?? stage.skyAcorns,
         garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns, cooldownOf: boosts.cooldownOf),
         wavesOn = waves ?? !practice,
-        sfx = SoundBoard(enabled: sound),
+        sfx = SoundBoard(enabled: sound)..muted = muted,
         super(
           camera: CameraComponent.withFixedResolution(
             width: GameConfig.width,
@@ -134,6 +141,26 @@ class ForestGame extends FlameGame {
   /// 효과음 (테스트에서는 끈다).
   final SoundBoard sfx;
 
+  /// 앱 전체의 배경음악 (없으면 음악 없음, 12-3단계).
+  final Jukebox? music;
+
+  /// 소리·음악 버튼을 눌렀을 때 앱이 설정을 저장한다.
+  final SettingsHandler? onSettings;
+
+  void toggleSound() {
+    sfx.muted = !sfx.muted;
+    _settingsChanged();
+  }
+
+  void toggleMusic() {
+    final m = music;
+    if (m == null) return;
+    m.muted = !m.muted;
+    _settingsChanged();
+  }
+
+  void _settingsChanged() => onSettings?.call(sound: !sfx.muted, music: !(music?.muted ?? false));
+
   /// 내보내기로 했지만 그림을 읽느라 아직 목록에 들어오지 않은 몬스터 수 (클리어 판정용).
   int _pendingSpawns = 0;
 
@@ -188,6 +215,7 @@ class ForestGame extends FlameGame {
       _logsAtStart = logs.length;
     }
     if (intro) startCountdown();
+    music?.play(Track.forStage(stage));
   }
 
   /// 3 · 2 · 1 · 시작! 동안 게임 시계는 멈춰 있다.
@@ -215,9 +243,10 @@ class ForestGame extends FlameGame {
     if (state == GameState.lost || state == GameState.won) return;
     _closePanel();
     state = GameState.lost;
+    music?.stop();
     sfx.play(Sfx.lose);
     _finish(false);
-    world.add(CenterPanel(
+    _showPanel(CenterPanel(
       title: Strings.gameOver,
       lines: [Strings.result(defeated: defeated, logsLeft: logs.length)],
       buttons: [PanelButton(Strings.toMap, () => exit(GameExit.map)), PanelButton(Strings.retry, restart)],
@@ -227,10 +256,11 @@ class ForestGame extends FlameGame {
   void win() {
     if (state != GameState.playing) return;
     state = GameState.won;
+    music?.stop();
     sfx.play(Sfx.win);
     final r = _finish(true);
     final hasNext = nextStage(stage) != null && onFinish != null;
-    world.add(CenterPanel(
+    _showPanel(CenterPanel(
       title: Strings.cleared,
       titleColor: const Color(0xFFFFE066),
       stars: r.stars,
@@ -251,7 +281,8 @@ class ForestGame extends FlameGame {
   void togglePause() {
     if (state == GameState.playing) {
       state = GameState.paused;
-      world.add(CenterPanel(
+      music?.pause();
+      _showPanel(CenterPanel(
         title: Strings.paused,
         buttons: [
           PanelButton(Strings.resume, togglePause),
@@ -262,13 +293,24 @@ class ForestGame extends FlameGame {
     } else if (state == GameState.paused) {
       _closePanel();
       state = GameState.playing;
+      music?.resume();
     }
   }
 
+  /// 지금 떠 있는(또는 다음 프레임에 붙을) 가운데 판.
+  CenterPanel? _panel;
+
+  void _showPanel(CenterPanel panel) {
+    _closePanel();
+    world.add(_panel = panel);
+  }
+
+  /// 판을 닫는다. Flame은 add를 다음 프레임에 처리하므로, 같은 프레임에 띄웠다 닫으면
+  /// world.children에는 아직 없다 → 들고 있는 참조로 지운다 (안 그러면 보이지 않는 판이 누름을 막는다, 12-3단계).
   void _closePanel() {
-    for (final p in world.children.whereType<CenterPanel>().toList()) {
-      p.removeFromParent();
-    }
+    final panel = _panel;
+    _panel = null;
+    if (panel != null && panel.parent != null) panel.removeFromParent();
   }
 
   /// 같은 스테이지를 카운트다운부터 다시.

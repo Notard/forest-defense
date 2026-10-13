@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'game/config.dart';
 import 'game/forest_game.dart';
+import 'game/music.dart';
 import 'game/progress.dart';
 import 'game/stages.dart';
 import 'menu/menu_game.dart';
@@ -29,6 +30,9 @@ class ForestApp extends StatefulWidget {
 
 class _ForestAppState extends State<ForestApp> {
   Progress? _progress;
+
+  /// 화면이 바뀌어도 이어지는 배경음악.
+  final _music = Jukebox();
   FlameGame? _screen;
   int _round = 0;
 
@@ -41,6 +45,7 @@ class _ForestAppState extends State<ForestApp> {
     super.initState();
     Progress.load().then((p) {
       _progress = p;
+      _music.muted = !p.musicOn;
       if (_devPlay) {
         _play(stageById(_query['stage'] ?? 'demo'), dev: true);
       } else {
@@ -54,7 +59,14 @@ class _ForestAppState extends State<ForestApp> {
         _screen = game;
       });
 
-  void _menu(MenuPage page) => _show(MenuGame(progress: _progress!, onPlay: _play, startPage: page));
+  void _menu(MenuPage page) => _show(MenuGame(progress: _progress!, onPlay: _play, startPage: page, music: _music));
+
+  void _saveSettings({required bool sound, required bool music}) {
+    final p = _progress!;
+    p.soundOn = sound;
+    p.musicOn = music;
+    p.save();
+  }
 
   void _play(StageDef stage, {bool dev = false}) {
     final p = _progress!;
@@ -67,6 +79,9 @@ class _ForestAppState extends State<ForestApp> {
       timeScale: (double.tryParse(_query['speed'] ?? '') ?? 1).clamp(1.0, 4.0),
       intro: _query['intro'] != '0',
       boosts: p.boosts,
+      music: _music,
+      muted: !p.soundOn,
+      onSettings: _saveSettings,
       onFinish: stage == demoStage
           ? null
           : ({required won, required usedLog, required lostUnit}) {

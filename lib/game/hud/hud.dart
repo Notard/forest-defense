@@ -56,6 +56,7 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
       shovel,
       PauseButton(),
       SoundButton(),
+      if (game.music != null) MusicButton(),
       _waveLabel,
     ]);
   }
@@ -290,5 +291,49 @@ class SoundButton extends PositionComponent with TapCallbacks, HasGameReference<
   }
 
   @override
-  void onTapDown(TapDownEvent event) => game.sfx.muted = !game.sfx.muted;
+  void onTapDown(TapDownEvent event) => game.toggleSound();
+}
+
+/// 배경음악 버튼: 음표 두 개, 끄면 X (12-3단계).
+class MusicButton extends PositionComponent with TapCallbacks, HasGameReference<ForestGame> {
+  MusicButton() : super(position: HudLayout.music.topLeft.toVector2(), size: HudLayout.music.size.toVector2());
+
+  final _bg = Paint()..color = _panel;
+  final _fill = Paint()..color = _cream;
+  final _dim = Paint()..color = _cream.withValues(alpha: 0.45);
+  final _line = Paint()
+    ..color = _cream
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 4
+    ..strokeCap = StrokeCap.round;
+
+  bool get muted => game.music?.muted ?? true;
+
+  @override
+  void render(Canvas canvas) {
+    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(14)), _bg);
+    final paint = muted ? _dim : _fill;
+    final cx = size.x / 2 - (muted ? 8 : 0), cy = size.y / 2;
+    // 이어진 8분음표 두 개: 머리 둘, 기둥 둘, 위 띠
+    canvas.drawOval(Rect.fromCenter(center: Offset(cx - 9, cy + 11), width: 13, height: 10), paint);
+    canvas.drawOval(Rect.fromCenter(center: Offset(cx + 11, cy + 8), width: 13, height: 10), paint);
+    canvas.drawRect(Rect.fromLTWH(cx - 4.5, cy - 13, 3.5, 24), paint);
+    canvas.drawRect(Rect.fromLTWH(cx + 15.5, cy - 16, 3.5, 24), paint);
+    canvas.drawPath(
+      Path()
+        ..moveTo(cx - 4.5, cy - 13)
+        ..lineTo(cx + 19, cy - 16)
+        ..lineTo(cx + 19, cy - 10)
+        ..lineTo(cx - 4.5, cy - 7)
+        ..close(),
+      paint,
+    );
+    if (muted) {
+      canvas.drawLine(Offset(cx + 22, cy - 2), Offset(cx + 34, cy + 10), _line);
+      canvas.drawLine(Offset(cx + 34, cy - 2), Offset(cx + 22, cy + 10), _line);
+    }
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) => game.toggleMusic();
 }

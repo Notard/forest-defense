@@ -12,6 +12,7 @@ import '../game/art.dart';
 import '../game/config.dart';
 import '../game/hud/panel.dart';
 import '../game/hud/title.dart';
+import '../game/music.dart';
 import '../game/progress.dart';
 import '../game/sfx.dart';
 import '../game/stages.dart';
@@ -22,8 +23,8 @@ enum MenuPage { title, map, shop }
 
 /// 판 밖의 화면: 메인 화면, 숲 지도, 강화 상점 (plan.md 확장). 판은 ForestGame이 따로 그린다.
 class MenuGame extends FlameGame {
-  MenuGame({required this.progress, required this.onPlay, this.startPage = MenuPage.title, bool sound = true})
-      : sfx = SoundBoard(enabled: sound),
+  MenuGame({required this.progress, required this.onPlay, this.startPage = MenuPage.title, bool sound = true, this.music})
+      : sfx = SoundBoard(enabled: sound)..muted = !progress.soundOn,
         super(camera: CameraComponent.withFixedResolution(width: GameConfig.width, height: GameConfig.height));
 
   final Progress progress;
@@ -32,6 +33,9 @@ class MenuGame extends FlameGame {
   final void Function(StageDef) onPlay;
   final MenuPage startPage;
   final SoundBoard sfx;
+
+  /// 앱 전체의 배경음악. 메뉴 화면은 모두 '숲속 아침'.
+  final Jukebox? music;
   MenuPage? page;
 
   @override
@@ -47,6 +51,8 @@ class MenuGame extends FlameGame {
 
   Future<void> show(MenuPage p) async {
     page = p;
+    // 웹은 첫 누름 전 자동 재생을 막는다: 메인 화면에서 막혔다면 '게임 시작'을 누를 때(→ 지도) 다시 시작된다
+    music?.play(Track.title);
     world.removeAll(world.children);
     await world.add(switch (p) {
       MenuPage.title => TitleScreen(onStart: () {

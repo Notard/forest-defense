@@ -3,6 +3,7 @@ import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/config.dart';
 import 'package:forest_defense/game/forest_game.dart';
+import 'package:forest_defense/game/hud/layout.dart';
 import 'package:forest_defense/game/hud/panel.dart';
 import 'package:forest_defense/game/progress.dart';
 import 'package:forest_defense/game/stages.dart';
@@ -91,6 +92,27 @@ void main() {
     verify: (game, tester) async {
       game.win();
       checkLayout(await shown(game, tester));
+    },
+  );
+
+  GameTester(testGame).testGameWidget(
+    '같은 프레임에 일시정지했다 풀어도 판이 남지 않고, 그 뒤 누름이 모두 들어간다 (12-3단계에서 찾은 버그)',
+    setUp: waitForLoad,
+    verify: (game, tester) async {
+      game.togglePause();
+      game.togglePause();
+      await tester.runAsync(() async {
+        game.update(0);
+        await Future<void>.delayed(Duration.zero);
+      });
+      expect(game.world.children.whereType<CenterPanel>(), isEmpty);
+      final sound = HudLayout.sound.center;
+      final states = <bool>[];
+      for (var i = 0; i < 3; i++) {
+        await tapWorld(tester, Vector2(sound.dx, sound.dy));
+        states.add(game.sfx.muted);
+      }
+      expect(states, [true, false, true]);
     },
   );
 }

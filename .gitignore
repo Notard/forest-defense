@@ -54,3 +54,6 @@ art/parts/
 
 # 판 그림 (panel_shots_test, 확인용)
 test/shots/
+
+# 음악 도구 (FluidSynth, SoundFont) — 저장소에 넣지 않음
+tools/.cache/

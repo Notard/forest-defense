@@ -23,7 +23,7 @@ class Reward {
 
 /// 진행: 스테이지별 최고 별, 솔방울, 강화 단계. 기기에 저장한다 (plan.md 확장).
 class Progress {
-  Progress({Map<String, int>? stars, this.pinecones = 0, Map<String, int>? upgrades})
+  Progress({Map<String, int>? stars, this.pinecones = 0, Map<String, int>? upgrades, this.soundOn = true, this.musicOn = true})
       : stars = stars ?? {},
         upgrades = upgrades ?? {};
 
@@ -35,6 +35,10 @@ class Progress {
 
   /// 강화 이름(`Upgrade.name`) → 단계 0~3 (12단계).
   final Map<String, int> upgrades;
+
+  /// 효과음·배경음악 켜기 (12-3단계). 판을 다시 시작해도 그대로.
+  bool soundOn;
+  bool musicOn;
 
   int levelOf(Upgrade u) => upgrades[u.name] ?? 0;
 
@@ -92,12 +96,15 @@ class Progress {
     return Reward(stars: earned, newStars: newStars, pinecones: gained, unlocked: firstClear ? s.unlocks : null);
   }
 
-  Map<String, Object> toJson() => {'stars': stars, 'pinecones': pinecones, 'upgrades': upgrades};
+  Map<String, Object> toJson() =>
+      {'stars': stars, 'pinecones': pinecones, 'upgrades': upgrades, 'sound': soundOn, 'music': musicOn};
 
   factory Progress.fromJson(Map<String, dynamic> j) => Progress(
         stars: (j['stars'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
         pinecones: (j['pinecones'] as num? ?? 0).toInt(),
         upgrades: (j['upgrades'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
+        soundOn: j['sound'] as bool? ?? true,
+        musicOn: j['music'] as bool? ?? true,
       );
 
   /// 저장된 진행을 읽는다. 없거나 깨졌으면 새로 시작.
