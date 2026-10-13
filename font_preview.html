@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>숲 지키기 폰트 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8f2;--card:#fff;--ink:#22301a;--muted:#5f6b57;--line:#dfe6d4;--leaf:#5f8f3a;--leaf-soft:#e6efd9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a11;--card:#1d2618;--ink:#e6eedd;--muted:#a3b097;--line:#2f3b28;--leaf:#8cc461;--leaf-soft:#26331c}}
+:root[data-theme="dark"]{--bg:#141a11;--card:#1d2618;--ink:#e6eedd;--muted:#a3b097;--line:#2f3b28;--leaf:#8cc461;--leaf-soft:#26331c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,"Malgun Gothic",sans-serif}
+main{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+h1{margin:0 0 4px;font-size:1.7rem}
+h2{font-size:1.2rem;margin:36px 0 12px;padding-top:18px;border-top:2px solid var(--leaf);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-weight:400;color:var(--muted);font-size:.85rem}
+.muted{color:var(--muted);font-size:.92rem}
+a{color:var(--leaf)}
+.pick{background:var(--leaf);color:#fff;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:700}
+
+/* 게임 화면 흉내: HUD 띠 + 잔디 + 결과 배너 */
+.scene{border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.hud{background:#4A3220;display:flex;gap:8px;padding:10px;align-items:stretch;flex-wrap:wrap}
+.slot{background:#6E4E33;border-radius:10px;color:#fff;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:76px}
+.slot .big{font-size:1.9rem;line-height:1.1}
+.slot .cost{font-size:1rem;color:#FFE08A}
+.slot .name{font-size:.95rem}
+.field{background:repeating-linear-gradient(90deg,#8CC461 0 70px,#79B352 70px 140px);padding:26px 20px;display:flex;flex-direction:column;gap:14px;align-items:center}
+.banner{background:rgba(31,58,26,.82);color:#fff;border-radius:16px;padding:14px 28px;text-align:center}
+.banner .title{font-size:2.6rem;line-height:1.15}
+.banner .sub{font-size:1.05rem;opacity:.92}
+.btn{background:#FFE08A;color:#4A3220;border-radius:999px;padding:8px 26px;font-size:1.15rem}
+.wave{background:#4A3220;color:#fff;padding:8px 14px;font-size:1rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.tip{background:var(--card);border:1px solid var(--line);border-radius:0 0 12px 12px;padding:10px 14px;font-size:1rem;color:var(--ink)}
+
+.noto{font-family:"Noto Sans KR",sans-serif}
+.noto .title,.noto .big{font-weight:900}
+.noto .slot .name,.noto .btn,.noto .cost{font-weight:700}
+.jua{font-family:"Jua",sans-serif}
+.gaegu{font-family:"Gaegu",sans-serif;font-weight:700}
+.gaegu .slot .name,.gaegu .tip{font-size:1.15rem}
+
+.weights{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.weights div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:1.3rem}
+.weights small{display:block;font-size:.8rem;color:var(--muted);font-family:system-ui,sans-serif}
+@media (max-width:640px){.weights{grid-template-columns:1fr}}
+
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:.92rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--leaf-soft)}
+.wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+code{background:var(--leaf-soft);padding:1px 6px;border-radius:4px;font-size:.88em}
+</style>
+</head>
+<body>
+<main>
+  <h1>🌰 숲 지키기 · 폰트 비교</h1>
+  <p class="muted">게임에 실제로 들어갈 문구를 HUD·결과 화면 모양 위에 세 폰트로 그려 본 페이지예요. 이 페이지는 비교용이라 Google Fonts에서 바로 불러와요. 게임에는 고른 폰트 파일을 넣어요.</p>
+
+  <!-- Noto Sans KR -->
+  <h2>Noto Sans KR <span class="pick">선택</span> <small>깔끔한 고딕 · 굵기 100~900 · 한글 11,172자 전부</small></h2>
+  <div class="scene noto">
+    <div class="hud">
+      <div class="slot"><span class="big">🌰 150</span></div>
+      <div class="slot"><span class="name">다람쥐</span><span class="cost">50</span></div>
+      <div class="slot"><span class="name">여우</span><span class="cost">100</span></div>
+      <div class="slot"><span class="name">거북이</span><span class="cost">50</span></div>
+      <div class="slot"><span class="name">스컨크</span><span class="cost">150</span></div>
+      <div class="slot"><span class="name">삽</span></div>
+    </div>
+    <div class="field">
+      <div class="banner"><div class="title">큰 무리가 몰려와요!</div><div class="sub">마지막 웨이브예요. 통나무를 아껴 두세요.</div></div>
+      <div class="banner"><div class="title">숲을 지켰어요!</div><div class="sub">쓰러뜨린 슬라임 42마리 · 남은 통나무 3개</div></div>
+      <span class="btn">다시 하기</span>
+    </div>
+    <div class="wave"><span>웨이브 2 / 5</span><span>일시정지 · 소리 켜기</span></div>
+  </div>
+  <div class="tip noto">💡 다람쥐는 24초마다 도토리를 25개 만들어요. 여우는 같은 줄 앞에 슬라임이 있을 때만 여우불을 쏴요.</div>
+  <div class="weights noto">
+    <div style="font-weight:400">숲을 지켜요 0123<small>Regular 400 · 설명 문장</small></div>
+    <div style="font-weight:700">숲을 지켜요 0123<small>Bold 700 · 카드 이름, 버튼</small></div>
+    <div style="font-weight:900">숲을 지켜요 0123<small>Black 900 · 큰 제목, 숫자</small></div>
+  </div>
+
+  <!-- Jua -->
+  <h2>Jua (주아체) <small>둥글고 귀여운 제목체 · 굵기 1종</small></h2>
+  <div class="scene jua">
+    <div class="hud">
+      <div class="slot"><span class="big">🌰 150</span></div>
+      <div class="slot"><span class="name">다람쥐</span><span class="cost">50</span></div>
+      <div class="slot"><span class="name">여우</span><span class="cost">100</span></div>
+      <div class="slot"><span class="name">거북이</span><span class="cost">50</span></div>
+      <div class="slot"><span class="name">스컨크</span><span class="cost">150</span></div>
+      <div class="slot"><span class="name">삽</span></div>
+    </div>
+    <div class="field">
+      <div class="banner"><div class="title">큰 무리가 몰려와요!</div><div class="sub">마지막 웨이브예요. 통나무를 아껴 두세요.</div></div>
+      <span class="btn">다시 하기</span>
+    </div>
+    <div class="wave"><span>웨이브 2 / 5</span><span>일시정지 · 소리 켜기</span></div>
+  </div>
+  <div class="tip jua">💡 다람쥐는 24초마다 도토리를 25개 만들어요. 여우는 같은 줄 앞에 슬라임이 있을 때만 여우불을 쏴요.</div>
+
+  <!-- Gaegu -->
+  <h2>Gaegu (개구체) <small>손글씨 느낌 · 굵기 3종</small></h2>
+  <div class="scene gaegu">
+    <div class="hud">
+      <div class="slot"><span class="big">🌰 150</span></div>
+      <div class="slot"><span class="name">다람쥐</span><span class="cost">50</span></div>
+      <div class="slot"><span class="name">여우</span><span class="cost">100</span></div>
+      <div class="slot"><span class="name">거북이</span><span class="cost">50</span></div>
+      <div class="slot"><span class="name">스컨크</span><span class="cost">150</span></div>
+      <div class="slot"><span class="name">삽</span></div>
+    </div>
+    <div class="field">
+      <div class="banner"><div class="title">큰 무리가 몰려와요!</div><div class="sub">마지막 웨이브예요. 통나무를 아껴 두세요.</div></div>
+      <span class="btn">다시 하기</span>
+    </div>
+    <div class="wave"><span>웨이브 2 / 5</span><span>일시정지 · 소리 켜기</span></div>
+  </div>
+  <div class="tip gaegu">💡 다람쥐는 24초마다 도토리를 25개 만들어요. 여우는 같은 줄 앞에 슬라임이 있을 때만 여우불을 쏴요.</div>
+
+  <h2>라이선스와 파일 크기 <small>google/fonts 저장소의 원본 기준, 2026-10-13 확인</small></h2>
+  <div class="wrap">
+  <table>
+    <tr><th>폰트</th><th>라이선스</th><th>저작권 표기</th><th>원본 파일</th></tr>
+    <tr><td>Noto Sans KR</td><td>SIL OFL 1.1</td><td>Copyright 2014-2021 Adobe, 예약 이름 'Source'</td><td><code>NotoSansKR[wght].ttf</code> 10.4 MB (가변 굵기 1개)</td></tr>
+    <tr><td>Jua</td><td>SIL OFL 1.1</td><td>Copyright 2018 The Jua Project Authors</td><td><code>Jua-Regular.ttf</code> 2.1 MB</td></tr>
+    <tr><td>Gaegu</td><td>SIL OFL 1.1</td><td>Copyright 2018 The Gaegu Project Authors</td><td>Light·Regular·Bold 각 3.0~3.2 MB</td></tr>
+  </table>
+  </div>
+  <p class="muted">OFL 1.1이면 게임에 넣어 무료·유료로 배포해도 돼요. 조건은 라이선스 전문(OFL.txt)과 저작권 표기를 함께 넣는 것, 폰트 파일만 따로 떼어 팔지 않는 것이에요. 글자를 줄이는 것(서브셋)도 수정에 해당하지만, 예약 이름('Source')을 새 폰트 이름에 쓰지 않으면 괜찮아요.</p>
+</main>
+</body>
+</html>
