@@ -1,0 +1,34 @@
+{
+  "character": "hedgehog",
+  "anchor": [
+    178.4,
+    287.0
+  ],
+  "actions": {
+    "idle": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "frame": [
+    320,
+    320
+  ],
+  "bbox": [
+    45,
+    73,
+    279,
+    292
+  ]
+}

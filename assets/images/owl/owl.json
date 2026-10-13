@@ -1,0 +1,44 @@
+{
+  "character": "owl",
+  "anchor": [
+    192.0,
+    269.9
+  ],
+  "actions": {
+    "idle": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "hoot": {
+      "frames": 8,
+      "fps": 12,
+      "loop": false,
+      "event": 4
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    172.8,
+    136.5
+  ],
+  "frame": [
+    320,
+    320
+  ],
+  "bbox": [
+    79,
+    63,
+    245,
+    276
+  ]
+}

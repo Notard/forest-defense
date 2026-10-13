@@ -17,7 +17,10 @@ enum Sfx {
   lose('lose', 0.8),
   helmet('helmet', 0.6, minGap: 0.05),
   tick('tick', 0.7),
-  go('go', 0.8);
+  go('go', 0.8),
+  hoot('hoot', 0.6, minGap: 0.3),
+  swipe('swipe', 0.6, minGap: 0.08),
+  spine('spine', 0.35, pooled: true, minGap: 0.1);
 
   const Sfx(this.file, this.volume, {this.pooled = false, this.minGap = 0});
 

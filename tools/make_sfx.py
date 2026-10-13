@@ -161,6 +161,33 @@ def go():  # 카운트다운 시작!: 밝은 두 음 "띵-딩"
     return pad(notes([1046.5, 1568.0], 0.5, 0.1, 6, bell=True), 0.7)
 
 
+def hoot():  # 부엉이 감속: 낮고 둥근 "부-엉" (10단계)
+    out = np.zeros(int(RATE * 0.62))
+    for start, f0, f1, dur in ((0.0, 420, 400, 0.18), (0.24, 470, 360, 0.36)):
+        x = t(dur)
+        f = np.linspace(f0, f1, len(x)) * (1 + 0.02 * np.sin(2 * np.pi * 6 * x))
+        ph = 2 * np.pi * np.cumsum(f) / RATE
+        s = np.sin(ph) + 0.25 * np.sin(2 * ph) + 0.08 * np.sin(3 * ph)
+        e = np.clip(x / 0.04, 0, 1) * np.clip((dur - x) / 0.08, 0, 1)
+        i = int(RATE * start)
+        out[i:i + len(x)] += s * e
+    return out
+
+
+def swipe():  # 곰 앞발 내려치기: "휙" + "쿵" (10단계)
+    n = int(RATE * 0.3)
+    x = t(0.3)
+    whoosh = lowpass(noise(0.3), 2200) * np.exp(-((x - 0.08) / 0.05) ** 2) * 1.2
+    thud = (sweep(140, 60, 0.3) * 0.9 + lowpass(noise(0.3), 500) * 0.8) * env(n, 0.002, 18) * (x > 0.1)
+    return whoosh + thud
+
+
+def spine():  # 고슴도치 가시에 찔림: 짧고 높은 "칙" (10단계)
+    n = int(RATE * 0.09)
+    hiss = noise(0.09) - lowpass(noise(0.09), 3000)
+    return hiss * env(n, 0.001, 55) * 1.5 + tone(2400, 0.09) * env(n, 0.001, 70) * 0.3
+
+
 SOUNDS = {
     "pickup": (pickup, "도토리 줍기"),
     "place": (place, "동물 놓기"),
@@ -176,6 +203,9 @@ SOUNDS = {
     "helmet": (helmet, "투구 깨짐"),
     "tick": (tick, "카운트다운"),
     "go": (go, "시작!"),
+    "hoot": (hoot, "부엉이 감속"),
+    "swipe": (swipe, "곰 내려치기"),
+    "spine": (spine, "가시 찔림"),
 }
 
 

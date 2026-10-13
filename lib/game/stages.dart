@@ -45,7 +45,7 @@ const List<StageDef> stages = [
     Wave([_s, _s], gap: 10),
     Wave([_s, _s, _s], gap: 6, big: true),
   ]),
-  StageDef(id: '1-2', region: Region.day, waves: [
+  StageDef(id: '1-2', region: Region.day, unlocks: UnitType.hedgehog, waves: [
     Wave([_s, _s], gap: 12),
     Wave([_s, _s, _h], gap: 9),
     Wave([_s, _h, _s, _s], gap: 7),
@@ -57,8 +57,8 @@ const List<StageDef> stages = [
     Wave([_s, _h, _w, _s], gap: 7),
     Wave([_s, _w, _h, _s, _w, _s, _h], gap: 1.6, big: true),
   ]),
-  StageDef(id: '1-4', region: Region.day, waves: stageWaves),
-  StageDef(id: '1-5', region: Region.day, boss: true, waves: stageWaves),
+  StageDef(id: '1-4', region: Region.day, unlocks: UnitType.owl, waves: stageWaves),
+  StageDef(id: '1-5', region: Region.day, boss: true, unlocks: UnitType.bear, waves: stageWaves),
   StageDef(id: '2-1', region: Region.night, startAcorns: 250, waves: stageWaves),
   StageDef(id: '2-2', region: Region.night, startAcorns: 250, waves: stageWaves),
   StageDef(id: '2-3', region: Region.night, startAcorns: 250, waves: stageWaves),

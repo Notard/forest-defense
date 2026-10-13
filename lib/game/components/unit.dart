@@ -10,6 +10,8 @@ import '../units.dart';
 import 'acorn.dart';
 import 'actor.dart';
 import 'fireball.dart';
+import 'hoot_wave.dart';
+import 'monster.dart';
 import 'smoke.dart';
 
 /// 칸에 놓인 동물. 발이 칸 바닥에 오도록 세운다. 능력은 동물별 하위 클래스에 있다 (plan.md 5단계).
@@ -29,6 +31,9 @@ abstract class UnitComponent extends Actor {
         UnitType.fox => Fox(cell: cell, art: art),
         UnitType.turtle => Turtle(cell: cell, art: art),
         UnitType.skunk => Skunk(cell: cell, art: art),
+        UnitType.hedgehog => Hedgehog(cell: cell, art: art),
+        UnitType.owl => Owl(cell: cell, art: art),
+        UnitType.bear => Bear(cell: cell, art: art),
       };
 
   final UnitType type;
@@ -48,6 +53,9 @@ abstract class UnitComponent extends Actor {
     game.garden.remove(cell);
     game.unitComponents.remove(cell);
   }
+
+  /// 몬스터가 한 입 깨문 뒤 (고슴도치 가시). 기본은 아무것도 안 함.
+  void onBitten(Monster by) {}
 
   /// 몬스터에게 쓰러짐 (★★★를 잃는다). 스컨크가 스스로 터지는 것은 die를 거치지 않는다.
   @override
@@ -155,5 +163,82 @@ class Skunk extends UnitComponent {
     hp = 0; // 반복 동작으로 돌아가지 않게
     onDeath();
     removeFromParent();
+  }
+}
+
+/// 고슴도치: HP 2500으로 막고, 깨물 때마다 가시로 그 몬스터에게 [spineDamage]를 돌려준다 (10단계).
+class Hedgehog extends UnitComponent {
+  Hedgehog({required super.cell, required super.art}) : super._(type: UnitType.hedgehog);
+
+  static const double spineDamage = 20;
+
+  @override
+  void onBitten(Monster by) {
+    game.sfx.play(Sfx.spine);
+    by.takeDamage(spineDamage);
+  }
+}
+
+/// 부엉이: 같은 레인 앞에 몬스터가 있으면 [interval]초마다 부엉! 레인 앞쪽 몬스터 모두를 [slowSeconds]초 동안 반 속도로 (10단계).
+/// 부엉 4번째 프레임(날개를 펼칠 때)에 소리 물결이 퍼진다.
+class Owl extends UnitComponent {
+  Owl({required super.cell, required super.art}) : super._(type: UnitType.owl);
+
+  static const double interval = 4, slowSeconds = 3;
+  double _reload = 0.5;
+
+  Iterable<Monster> get _ahead => game.monsters.where((m) => m.alive && m.row == cell.row && m.position.x > position.x - 20 && m.onScreen);
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!alive) return;
+    _reload -= dt;
+    if (_reload <= 0 && !busy && _ahead.isNotEmpty) {
+      _reload = interval;
+      play('hoot', onEvent: _hoot);
+    }
+  }
+
+  void _hoot() {
+    game.sfx.play(Sfx.hoot);
+    game.world.add(HootWave(from: framePointToWorld(art.muzzle!), row: cell.row));
+    for (final m in _ahead.toList()) {
+      m.slow(slowSeconds);
+    }
+  }
+}
+
+/// 곰: 바로 앞 [reachCells]칸 안에 몬스터가 오면 [interval]초마다 앞발로 내려쳐 그 안의 몬스터 모두에게 [damage] (10단계).
+/// 내려치기 5번째 프레임에 맞는다.
+class Bear extends UnitComponent {
+  Bear({required super.cell, required super.art}) : super._(type: UnitType.bear);
+
+  static const double interval = 1.8, damage = 90, reachCells = 1.2;
+  double _reload = 0;
+
+  bool _inReach(Monster m) {
+    final dx = m.position.x - position.x;
+    return m.alive && m.row == cell.row && dx >= -GameConfig.cellWidth * 0.3 && dx <= GameConfig.cellWidth * reachCells;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!alive) return;
+    _reload -= dt;
+    if (_reload <= 0 && !busy && game.monsters.any(_inReach)) {
+      _reload = interval;
+      play('attack', onEvent: _swipe);
+    }
+  }
+
+  void _swipe() {
+    game.sfx.play(Sfx.swipe);
+    final paw = framePointToWorld(art.muzzle!);
+    game.world.add(Smoke(position: Vector2(paw.x, position.y - 14), size: GameConfig.cellWidth * 0.8, duration: 0.35));
+    for (final m in game.monsters.where(_inReach).toList()) {
+      m.takeDamage(damage);
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 
 import '../art.dart';
@@ -63,6 +65,20 @@ class Monster extends Actor {
   /// 지금 갉아먹는 동물 (없으면 null).
   UnitComponent? eating;
 
+  /// 부엉이 감속이 남은 시간 (10단계). 그동안 걸음과 갉아먹기(애니메이션 시계)가 [slowFactor]배로 느려진다.
+  double slowTime = 0;
+  static const double slowFactor = 0.5;
+  bool get slowed => slowTime > 0;
+
+  void slow(double seconds) {
+    if (seconds > slowTime) slowTime = seconds;
+  }
+
+  static final _slowTint = ColorFilter.mode(const Color(0x664FA8FF), BlendMode.srcATop);
+
+  @override
+  ColorFilter? get standingTint => slowed ? _slowTint : null;
+
   @override
   String get restAction => 'walk';
 
@@ -88,6 +104,10 @@ class Monster extends Actor {
 
   @override
   void update(double dt) {
+    if (slowed) {
+      slowTime -= dt;
+      dt *= slowFactor;
+    }
     super.update(dt);
     if (!alive || !moving) return;
     final target = _blocker();
@@ -97,7 +117,9 @@ class Monster extends Actor {
         play('eat', onEvent: () {
           if (eating?.alive ?? false) {
             game.sfx.play(Sfx.bite);
-            eating!.takeDamage(biteDamage);
+            final bitten = eating!;
+            bitten.takeDamage(biteDamage);
+            bitten.onBitten(this);
           }
         });
       }

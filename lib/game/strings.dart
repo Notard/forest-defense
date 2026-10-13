@@ -40,6 +40,9 @@ abstract final class Strings {
         UnitType.fox => '여우',
         UnitType.turtle => '거북이',
         UnitType.skunk => '스컨크',
+        UnitType.hedgehog => '고슴도치',
+        UnitType.owl => '부엉이',
+        UnitType.bear => '곰',
       };
 
   // ── 결과·일시정지 화면 ──

@@ -1,0 +1,44 @@
+{
+  "character": "bear",
+  "anchor": [
+    143.1,
+    290.8
+  ],
+  "actions": {
+    "idle": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "attack": {
+      "frames": 8,
+      "fps": 12,
+      "loop": false,
+      "event": 5
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    227.8,
+    197.6
+  ],
+  "frame": [
+    320,
+    320
+  ],
+  "bbox": [
+    66,
+    75,
+    258,
+    296
+  ]
+}

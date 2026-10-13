@@ -87,6 +87,9 @@ abstract class Actor extends SpriteAnimationGroupComponent<String> with HasGameR
     }
   }
 
+  /// 깜빡임이 없을 때 늘 입히는 색 (감속된 몬스터는 푸르다). 기본은 없음.
+  ColorFilter? get standingTint => null;
+
   /// 피해 뒤 처리 (거북이 금 간 등껍질 등). 기본은 아무것도 안 함.
   void onHurt() {}
 
@@ -113,9 +116,7 @@ abstract class Actor extends SpriteAnimationGroupComponent<String> with HasGameR
   @override
   void update(double dt) {
     super.update(dt);
-    if (_flash > 0) {
-      _flash -= dt;
-      paint.colorFilter = _flash > 0 ? _flashFilter : null;
-    }
+    if (_flash > 0) _flash -= dt;
+    paint.colorFilter = _flash > 0 ? _flashFilter : standingTint;
   }
 }

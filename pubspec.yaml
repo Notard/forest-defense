@@ -71,6 +71,9 @@ flutter:
     - assets/images/squirrel/
     - assets/images/turtle/
     - assets/images/skunk/
+    - assets/images/hedgehog/
+    - assets/images/owl/
+    - assets/images/bear/
     - assets/images/slime/
     - assets/images/slime_helmet/
     - assets/images/wisp/

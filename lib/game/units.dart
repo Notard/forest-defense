@@ -28,6 +28,29 @@ enum UnitType {
     cooldown: 50,
     maxHp: 300,
     displayHeight: 84,
+  ),
+  // ── 10단계: 새 친구 셋 ──
+  hedgehog(
+    sheet: 'hedgehog',
+    cost: 75,
+    cooldown: 25,
+    maxHp: 2500,
+    // 동그랗고 옆으로 넓다
+    displayHeight: 70,
+  ),
+  owl(
+    sheet: 'owl',
+    cost: 125,
+    cooldown: 15,
+    maxHp: 300,
+    displayHeight: 88,
+  ),
+  bear(
+    sheet: 'bear',
+    cost: 175,
+    cooldown: 20,
+    maxHp: 800,
+    displayHeight: 100,
   );
 
   const UnitType({
