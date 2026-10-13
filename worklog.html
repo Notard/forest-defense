@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 23:23</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 23:37</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -2355,6 +2355,67 @@ article td img{margin:0 auto}
 <li><strong>밤이 너무 어려움.</strong> 계획대로 하늘 도토리를 없애자 "처음" 봇이 밤 스테이지를 0~1판밖에 못 깼다. 낮은 하늘 도토리만 분당 약 230개, 밤은 다람쥐 한 마리당 분당 약 83개 → 밤에도 드물게(10~14초) 떨어지게 하고 계획서도 고침</li>
 <li>그래도 남은 2-1·2-3·2-4의 "처음" 패배: 판을 다시 돌려 보니 박쥐가 여우를 넘어 통나무를 쓴 뒤, 도토리가 모자라 그 레인에 여우를 다시 놓지 못했다 → 밤 시작 도토리 250 → 300, 2-1 박쥐 첫 웨이브와 2-3·2-4 중반 웨이브를 가볍게, 2-4 마지막 큰 무리의 골렘 하나를 슬라임으로</li>
 <li>봇 결과가 판마다 아주 조금 다르다: 캐릭터 그림을 이미 읽어 두었는지에 따라 몬스터가 붙는 프레임이 달라서. 같은 판을 따로 돌리면 이기던 판이 묶어 돌리면 질 수 있었다 → 기준을 넉넉히 맞추고 전체 테스트를 두 번 돌려 확인</li>
+</ol>
+<h2>16. 웹 공개: GitHub Pages (2026-10-13)</h2>
+<blockquote>
+<p>사용자: "이제 배포하면 돼?" → 웹·Store 상황을 설명드렸고 "지금은 깃허브만 우선하자". Store는 직접 플레이·다듬기 뒤로.</p>
+</blockquote>
+<h3>결과 요약</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주소</td>
+<td><strong>https://notard.github.io/forest-defense/</strong></td>
+</tr>
+<tr>
+<td>자동 배포</td>
+<td><code>.github/workflows/pages.yml</code>: main 푸시 → Flutter 3.44.1 → 테스트(그림·봇 제외) → <code>flutter build web --release --base-href /forest-defense/ --no-web-resources-cdn</code> → <code>tools/make_sw.py</code> → Pages</td>
+</tr>
+<tr>
+<td>오프라인</td>
+<td><code>tools/make_sw.py</code>가 빌드 뒤 <code>sw.js</code>를 만든다: 게임 파일 120개(약 11 MB)를 설치 때 미리 저장, 그래픽 엔진(canvaskit)은 처음 받을 때 저장, 페이지는 인터넷 먼저(업데이트가 바로 보이게), 빌드가 바뀌면 새 캐시·예전 캐시 삭제</td>
+</tr>
+<tr>
+<td>그래픽 엔진</td>
+<td><code>--no-web-resources-cdn</code>: 기본은 Google 서버(gstatic)에서 받는데, 서비스 워커는 자기 사이트 파일만 저장할 수 있어서 함께 올림</td>
+</tr>
+<tr>
+<td>Flutter 기본 워커</td>
+<td>3.44의 <code>flutter_service_worker.js</code>는 스스로를 지우는 빈 껍데기("곧 없어짐") → <code>web/flutter_bootstrap.js</code>를 직접 두어 등록하지 않음</td>
+</tr>
+<tr>
+<td>설치 버튼</td>
+<td>메인 화면 왼쪽 위 <strong>앱으로 설치</strong>: 브라우저가 설치를 제안할 때(<code>beforeinstallprompt</code>)만 보인다. <code>lib/platform/install*.dart</code> (웹만 실제 동작, 나머지는 언제나 숨김)</td>
+</tr>
+<tr>
+<td>로딩 안내</td>
+<td>첫 화면이 그려질 때까지 아이콘 + "숲으로 가는 중…" (<code>flutter-first-frame</code>에 걷힘)</td>
+</tr>
+<tr>
+<td>로컬 확인</td>
+<td><code>tools/serve_web.py 8790 --base /forest-defense/</code> (Pages와 같은 하위 경로)</td>
+</tr>
+</tbody>
+</table>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>206/206</strong>, 배포 빌드와 같은 <code>--exclude-tags shots,balance</code> <strong>106/106</strong></li>
+<li><code>install_test</code> 2개: 웹이 아니면 설치 불가 / 제안이 오면 버튼이 나타나고 사라지면 숨는다</li>
+<li>로컬(하위 경로 빌드, 미리보기 창 음소거): 로딩 안내 → 첫 화면, 서비스 워커 활성, 캐시 122개(게임 파일 + 엔진 2개) → <strong>서버를 끄고(접속 불가 확인) 새로 고침해도 메인 화면이 뜸</strong></li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>Git Bash가 <code>--base-href /forest-defense/</code>를 Windows 경로로 바꿔 빌드가 실패(그 뒤 서비스 워커가 예전 빌드로 만들어짐) → <code>MSYS_NO_PATHCONV=1</code>. GitHub(리눅스)에서는 생기지 않는다</li>
+<li>로컬 서버에서 엔진·서비스 워커가 거부됨: Windows 파이썬이 <code>.js</code>를 <code>text/plain</code>으로 보냄 → <code>serve_web.py</code>에서 웹 파일 형식을 직접 지정 (GitHub Pages는 원래 맞게 보낸다)</li>
+<li>미리보기 서버 포트 8780이 Windows 예약 범위에 걸려 8790으로</li>
+<li>봇 난이도 테스트는 컴퓨터 속도에 따라 아주 조금 흔들릴 수 있어 배포를 막지 않도록 <code>balance</code> 태그로 묶어 배포 빌드에서는 뺐다 (내 PC의 <code>flutter test</code>에서는 그대로 돈다)</li>
+<li>새 문구("앱으로 설치")로 폰트 다시 만듦</li>
 </ol></article>
 </div>
 </body>

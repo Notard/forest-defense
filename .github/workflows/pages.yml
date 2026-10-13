@@ -1,0 +1,47 @@
+# 웹 빌드를 GitHub Pages에 올린다 (16단계). main에 푸시할 때마다 자동으로.
+# 주소: https://notard.github.io/forest-defense/
+name: 웹 배포 (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.1
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      # 봇 난이도 테스트(balance)는 내 PC에서 돌린다 (dart_test.yaml 참고)
+      - run: flutter test --exclude-tags shots,balance
+      # 그래픽 엔진도 함께 올려야(--no-web-resources-cdn) 오프라인 캐시가 엔진까지 저장할 수 있다
+      - run: flutter build web --release --base-href /forest-defense/ --no-web-resources-cdn
+      - run: python3 tools/make_sw.py
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

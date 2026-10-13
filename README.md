@@ -17,6 +17,12 @@
 
 ![여우 애니메이션: 기본, 공격, 피격, 쓰러짐](preview/03_fox_all.gif)
 
+## 바로 해 보기
+
+**https://notard.github.io/forest-defense/** — 브라우저에서 바로 (PC·폰). 한 번 열면 인터넷 없이도 된다.
+Chrome·Edge에서는 메인 화면 왼쪽 위 **앱으로 설치**로 홈 화면·바탕화면에 앱처럼 둘 수 있다.
+main 브랜치에 푸시하면 GitHub Actions가 자동으로 다시 올린다 (`.github/workflows/pages.yml`).
+
 ## 실행하기
 
 Flutter 3.44 이상이 필요해요.
@@ -44,6 +50,12 @@ flutter clean && flutter build web --release && python tools/serve_web.py
 ```
 
 → http://localhost:8770 . 음악은 웹 정책상 첫 클릭("게임 시작") 뒤에 나와요.
+
+GitHub Pages와 같은 하위 경로·오프라인 캐시로 확인하려면 (Git Bash에서는 경로가 바뀌지 않게 `MSYS_NO_PATHCONV=1`을 앞에):
+
+```bash
+flutter build web --release --base-href /forest-defense/ --no-web-resources-cdn && python tools/make_sw.py && python tools/serve_web.py 8790 --base /forest-defense/
+```
 
 확인용 주소 옵션 (웹 빌드):
 
@@ -90,7 +102,8 @@ tools/rigs/<캐릭터>.json     컷아웃 리그: 부위 자르는 선, 기준�
 tools/build_sprites.sh      기준 그림 → 부위 조각 → Blender 렌더 → 스프라이트 시트 → 미리보기
 tools/prep_props.py         효과·배경 정지 그림 정리 (배경 잔디 줄무늬 지우기 포함)
 tools/make_sfx.py           효과음 합성 (외부 음원 없음)
-tools/serve_web.py          웹 빌드 개발 서버 (캐시 안 함, 포트 겹침 막기)
+tools/serve_web.py          웹 빌드 개발 서버 (캐시 안 함, 포트 겹침 막기, --base 하위 경로)
+tools/make_sw.py            웹 빌드에 오프라인 캐시 서비스 워커(sw.js) 만들기
 tools/make_bgm.py           배경음악 4곡: 악보 → MIDI → 악기 소리로 녹음 → 반복용 MP3
 art/ref/                    캐릭터 기준 그림
 preview/                    단계별 캡처 (preview.html에서 모아 봄)

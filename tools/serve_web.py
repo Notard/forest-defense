@@ -2,6 +2,8 @@
 
     python tools/serve_web.py          → http://localhost:8770
     python tools/serve_web.py 8771
+    python tools/serve_web.py 8780 --base /forest-defense/   → GitHub Pages처럼 하위 경로로 (16단계)
+      (빌드도 같은 경로로: flutter build web --release --base-href /forest-defense/ --no-web-resources-cdn)
 
 `python -m http.server`와 다른 점:
 - 브라우저가 파일을 저장해 두지 않게 한다 (Cache-Control: no-store). 새로 빌드해도 예전 main.dart.js를
@@ -23,6 +25,29 @@ WEB = ROOT / "build" / "web"
 
 
 class NoStoreHandler(http.server.SimpleHTTPRequestHandler):
+    base = "/"
+
+    # Windows의 파이썬은 형식을 레지스트리에서 읽어 .js를 text/plain으로 보내기도 한다 → 브라우저가 엔진(canvaskit.js)과
+    # 서비스 워커(sw.js)를 거부했다 (16단계). 웹 빌드에 나오는 형식은 직접 정한다.
+    extensions_map = {
+        **http.server.SimpleHTTPRequestHandler.extensions_map,
+        ".js": "text/javascript",
+        ".mjs": "text/javascript",
+        ".wasm": "application/wasm",
+        ".json": "application/json",
+        ".webp": "image/webp",
+        ".mp3": "audio/mpeg",
+        ".wav": "audio/wav",
+        ".ttf": "font/ttf",
+        ".otf": "font/otf",
+    }
+
+    def translate_path(self, path: str) -> str:
+        # 하위 경로(/forest-defense/...)로 오면 앞부분을 떼고 build/web에서 찾는다
+        if self.base != "/" and path.startswith(self.base):
+            path = "/" + path[len(self.base):]
+        return super().translate_path(path)
+
     def end_headers(self) -> None:
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
@@ -53,7 +78,14 @@ def port_in_use(port: int) -> bool:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8770
+    args = sys.argv[1:]
+    base = "/"
+    if "--base" in args:
+        i = args.index("--base")
+        base = args[i + 1]
+        del args[i:i + 2]
+    port = int(args[0]) if args else 8770
+    NoStoreHandler.base = base
     if not (WEB / "index.html").exists():
         sys.exit(f"{WEB} 에 빌드가 없습니다. 먼저: flutter build web --release")
     if port_in_use(port):
@@ -64,7 +96,7 @@ def main() -> None:
         server = ExclusiveServer(("::", port), handler)
     except OSError as e:
         sys.exit(f"포트 {port}를 열 수 없습니다: {e}")
-    print(f"숲 지키기 웹 빌드: http://localhost:{port}  (끄기: Ctrl+C)")
+    print(f"숲 지키기 웹 빌드: http://localhost:{port}{base}  (끄기: Ctrl+C)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

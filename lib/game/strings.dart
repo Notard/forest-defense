@@ -52,6 +52,9 @@ abstract final class Strings {
 
   // ── 도움말 (12-4단계) ──
   static const help = '도움말';
+
+  /// 웹에서 홈 화면·바탕화면에 앱으로 설치 (16단계).
+  static const install = '앱으로 설치';
   static const close = '닫기';
   static const helpHowTo = '놀이 방법';
   static const helpFriends = '친구들';

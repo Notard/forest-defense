@@ -4,3 +4,6 @@ tags:
   #   flutter test --run-skipped --tags shots --update-goldens test/panel_shots_test.dart
   shots:
     skip: "그림 남기기용 (--run-skipped --tags shots --update-goldens)"
+  # 자동 플레이 봇 난이도 확인 (7-1·13단계). 내 PC에서는 그대로 돌고, GitHub 배포 빌드에서는 뺀다
+  # (컴퓨터 속도에 따라 봇 결과가 아주 조금 흔들릴 수 있어 배포를 막지 않게): --exclude-tags shots,balance
+  balance:

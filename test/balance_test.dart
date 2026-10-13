@@ -1,3 +1,6 @@
+@Tags(['balance'])
+library;
+
 import 'dart:math';
 
 import 'package:flame_test/flame_test.dart';

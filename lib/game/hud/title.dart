@@ -15,6 +15,7 @@ import '../sfx.dart';
 import '../strings.dart';
 import '../units.dart';
 import 'frozen.dart';
+import '../../platform/install.dart' as install;
 import 'panel.dart';
 
 TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
@@ -79,6 +80,7 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
     if (help != null) {
       final button = PanelButton(Strings.help, help);
       add(button..position = Vector2(GameConfig.width - 24 - button.size.x, 26));
+      add(InstallButton());
     }
   }
 
@@ -109,6 +111,36 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
   /// 메인 화면이 떠 있는 동안 아래 게임 화면으로 탭이 가지 않게 막는다.
   @override
   void onTapDown(TapDownEvent event) {}
+}
+
+/// 왼쪽 위 "앱으로 설치" (웹에서 브라우저가 설치를 제안할 때만 보인다, 16단계).
+/// 브라우저의 제안은 화면이 뜬 뒤에 올 수도 있어서 0.5초마다 다시 본다.
+class InstallButton extends PositionComponent {
+  InstallButton({this.canInstall = install.canInstall, this.prompt = install.promptInstall}) : super(position: Vector2(24, 26));
+
+  final bool Function() canInstall;
+  final Future<bool> Function() prompt;
+  PanelButton? _button;
+  double _check = 0;
+
+  bool get shown => _button != null;
+
+  @override
+  void update(double dt) {
+    _check -= dt;
+    if (_check > 0) return;
+    _check = 0.5;
+    final can = canInstall();
+    if (can && _button == null) {
+      add(_button = PanelButton(Strings.install, () async {
+        await prompt();
+        _check = 0; // 설치했든 닫았든 버튼 상태를 바로 다시 본다
+      }));
+    } else if (!can && _button != null) {
+      _button!.removeFromParent();
+      _button = null;
+    }
+  }
 }
 
 /// 큰 나무 버튼. 숨 쉬듯 커졌다 작아진다.

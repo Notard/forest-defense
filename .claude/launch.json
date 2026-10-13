@@ -4,14 +4,42 @@
     {
       "name": "web",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8766", "--bind", "127.0.0.1", "--directory", "C:/forest_defense/build/web"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8766",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "C:/forest_defense/build/web"
+      ],
       "port": 8766
     },
     {
       "name": "docs",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8767", "--bind", "127.0.0.1", "--directory", "C:/forest_defense"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8767",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "C:/forest_defense"
+      ],
       "port": 8767
+    },
+    {
+      "name": "web-pages",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:/forest_defense/tools/serve_web.py",
+        "8790",
+        "--base",
+        "/forest-defense/"
+      ],
+      "port": 8790,
+      "url": "http://localhost:8790"
     }
   ]
 }
