@@ -12,6 +12,7 @@
 좌표: 기준 그림 1px = 0.01m. 그림의 x → 월드 X, 그림의 y(아래 +) → 월드 -Z.
 카메라는 -Y에서 +Y를 보는 직교 카메라. 앞 부위일수록 카메라 쪽(-Y)으로 0.01m씩 당긴다.
 회전 rot(도)은 화면 기준 시계 방향 + 이며 월드 Y축 회전과 같다.
+동작에 "textures": {"body": "body_cracked"}가 있으면 그 동작에서만 부위 그림을 바꾼다 (변형은 cut_parts.py가 만듦).
 """
 import json
 import math
@@ -147,6 +148,18 @@ def make_camera(box: list[float], frame_px: int) -> None:
     scene.render.resolution_percentage = 100
 
 
+def set_textures(character: str, parts_meta: dict, action: dict) -> None:
+    """동작의 textures({부위: 변형 이름})대로 부위 그림을 바꾸고, 없으면 원래 그림으로 되돌린다."""
+    swap = action.get("textures", {})
+    for part in parts_meta["parts"]:
+        image_name = swap.get(part["name"], part["name"])
+        tex = next(n for n in bpy.data.materials[part["name"]].node_tree.nodes if n.type == "TEX_IMAGE")
+        path = str(ROOT / "art" / "parts" / character / f"{image_name}.png")
+        if tex.image.filepath != path:
+            tex.image = bpy.data.images.load(path, check_existing=True)
+            tex.image.alpha_mode = "STRAIGHT"
+
+
 def key_action(pivots: dict, action: dict) -> None:
     for empty in pivots.values():
         empty.animation_data_clear()
@@ -179,6 +192,7 @@ def main() -> None:
     for name, action in rig["actions"].items():
         if wanted and name not in wanted:
             continue
+        set_textures(character, parts_meta, action)
         key_action(pivots, action)
         scene.render.fps = action["fps"]
         scene.frame_start, scene.frame_end = 1, action["frames"]

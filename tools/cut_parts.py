@@ -14,6 +14,8 @@
   - color_key "flame": 다각형 안에서 채도 높은 주황·노랑 픽셀 + 그 테두리 안쪽(밝은 불꽃 속)을 불꽃으로 본다.
     불꽃 속(253,253,222)과 앞발 크림색(253,247,232)은 색이 거의 같아서 색만으로는 못 나눈다
   - 다각형 경계에서 떨어져 나온 작은 섬(부위 픽셀의 2% 미만)은 가장 많이 맞닿은 부위에 넘긴다
+  - variants: 부위 조각 위에 선을 그려 바꿔 끼울 그림을 만든다 (예: 금 간 등껍질).
+    {"name": "body_cracked", "base": "body", "lines": [[[x, y], …], …], "width": 10}  좌표는 기준 그림 기준
   - 뒤 부위는 앞 부위에 가려진 곳을 fill_band 너비까지, 가려진 곳 바로 옆 그 부위 털 색(외곽선 뺀 중앙값)으로 채운다.
     단 캐릭터 전체 실루엣의 바깥 테두리에서 INSET px 안쪽만 채운다.
     움직일 때 틈으로 살짝 보이는 곳이라 무늬를 흉내 내는 것보다 깨끗한 단색이 낫다
@@ -143,6 +145,20 @@ def main() -> None:
         rebuild.alpha_composite(Image.fromarray(piece))
         overlay[own, :3] = COLORS[i % len(COLORS)]
         overlay[own, 3] = 255
+
+    for var in rig.get("variants", []):
+        base = next(p for p in meta["parts"] if p["name"] == var["base"])
+        img = Image.open(out_dir / f"{var['base']}.png").convert("RGBA")
+        d = ImageDraw.Draw(img)
+        ox, oy = base["offset"]
+        w = var.get("width", 10)
+        for line in var["lines"]:
+            pts = [(x - ox, y - oy) for x, y in line]
+            d.line(pts, fill=(0x3A, 0x24, 0x14, 255), width=w, joint="curve")  # 외곽선과 같은 진한 갈색
+            d.line([(x + w // 3, y + w // 3) for x, y in pts], fill=(255, 255, 255, 70), width=max(2, w // 3), joint="curve")  # 아래쪽 밝은 결
+        img.save(out_dir / f"{var['name']}.png")
+        meta.setdefault("variants", []).append({"name": var["name"], "base": var["base"]})
+        print(f"변형 {var['name']} ← {var['base']} (선 {len(var['lines'])}개)")
 
     (out_dir / "rig.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
