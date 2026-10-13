@@ -11,7 +11,8 @@ ForestGame testGame() => ForestGame(skyAcorns: false);
 
 /// 그림을 실제로 읽어 들이는 동안(가짜 시계가 아닌 실제 시간) 필드와 HUD가 붙을 때까지 기다린다.
 Future<void> waitForLoad(ForestGame game, WidgetTester tester) async {
-  for (var i = 0; i < 300 && !(game.field.isMounted && game.hud.isMounted && game.hud.cards.every((c) => c.isMounted)); i++) {
+  bool ready() => game.isLoaded && game.field.isMounted && game.hud.isMounted && game.hud.cards.every((c) => c.isMounted);
+  for (var i = 0; i < 300 && !ready(); i++) {
     await Future<void>.delayed(const Duration(milliseconds: 10));
     await tester.pump();
   }

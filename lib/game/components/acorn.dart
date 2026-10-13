@@ -10,13 +10,28 @@ import '../forest_game.dart';
 import '../garden.dart';
 import '../grid.dart';
 
-/// 주울 수 있는 도토리. 하늘에서 떨어지거나(4단계) 다람쥐가 만든다(5단계).
+/// 주울 수 있는 도토리. 하늘에서 떨어지거나(4단계) 다람쥐가 만든다(5단계, [Acorn.popped]).
 ///
 /// 떨어지는 동안 살랑 흔들리고, 내려앉은 뒤 [lifetime]초가 지나면 사라진다.
 /// 마지막 [blinkTime]초는 깜빡인다. 누르면 HUD 도토리 칸으로 날아가 +25.
 class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGame> {
   Acorn({required Vector2 from, required this.landY, this.fallSpeed = 60})
       : super(position: from, size: Vector2.all(displaySize), anchor: Anchor.center, priority: 500);
+
+  /// 다람쥐가 만든 도토리: [from]에서 위로 튀었다가 포물선을 그리며 [toX], [landY]에 떨어진다.
+  Acorn.popped({required Vector2 from, required double toX, required this.landY})
+      : fallSpeed = 0,
+        super(position: from, size: Vector2.all(displaySize), anchor: Anchor.center, priority: 500) {
+    // 위로 0.35초 튀어 오르는 속도와, 그 뒤 landY에 닿을 때까지 걸리는 시간으로 가로 속도를 정한다
+    const up = 0.35;
+    final vy = -gravity * up;
+    final rise = gravity * up * up / 2;
+    final fallTime = sqrt(2 * (landY - from.y + rise) / gravity);
+    _velocity = Vector2((toX - from.x) / (up + fallTime), vy);
+  }
+
+  static const double gravity = 1400;
+  Vector2? _velocity;
 
   static const double displaySize = 46;
   static const double lifetime = 8;
@@ -28,7 +43,7 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
   double _landedFor = 0;
   bool _collecting = false;
 
-  bool get landed => position.y >= landY;
+  bool get landed => _velocity == null && position.y >= landY;
 
   @override
   Future<void> onLoad() async {
@@ -44,6 +59,17 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
     super.update(dt);
     if (_collecting) return;
     _age += dt;
+    final v = _velocity;
+    if (v != null) {
+      v.y += gravity * dt;
+      position += v * dt;
+      angle += dt * 8;
+      if (v.y > 0 && position.y >= landY) {
+        position.y = landY;
+        _velocity = null;
+      }
+      return;
+    }
     if (!landed) {
       position.y = min(landY, position.y + fallSpeed * dt);
       angle = sin(_age * 3) * 0.25;
