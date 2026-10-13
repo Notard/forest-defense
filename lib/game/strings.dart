@@ -15,6 +15,12 @@ abstract final class Strings {
   /// 마지막 큰 무리 웨이브 경고.
   static const bigWave = '큰 무리가 몰려와요!';
 
+  // ── 메인 화면·카운트다운 ──
+  static const subtitle = '숲속 친구들과 함께 둥지를 지켜요';
+  static const start = '게임 시작';
+  static const go = '시작!';
+  static const toTitle = '처음으로';
+
   // ── 결과·일시정지 화면 ──
   static const cleared = '숲을 지켰어요!';
   static const gameOver = '둥지가 뚫렸어요';

@@ -1,0 +1,217 @@
+import 'dart:math';
+
+import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
+import 'package:flame/events.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/painting.dart';
+
+import '../art.dart';
+import '../config.dart';
+import '../forest_game.dart';
+import '../monsters.dart';
+import '../sfx.dart';
+import '../strings.dart';
+import '../units.dart';
+import 'frozen.dart';
+import 'panel.dart';
+
+TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
+      style: TextStyle(
+        fontFamily: GameConfig.fontFamily,
+        fontWeight: FontWeight.w700,
+        fontSize: size,
+        color: color,
+        shadows: [
+          Shadow(color: const Color(0xDD2E1A0A), offset: Offset(0, shadow)),
+          Shadow(color: const Color(0x66000000), offset: Offset(0, shadow + 2), blurRadius: 8),
+        ],
+      ),
+    );
+
+/// 메인 화면: 숲 배경, 제목, 마주 선 동물과 몬스터, 게임 시작 버튼 (7-2단계).
+class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<ForestGame>, RunsWhileFrozen {
+  TitleScreen() : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+
+  late final Sprite _background;
+  final _shade = Paint()..color = const Color(0x59000000);
+  double _t = 0;
+  late final TextComponent _title;
+
+  @override
+  Future<void> onLoad() async {
+    _background = Sprite(await game.images.load('fx/background.webp'));
+    _title = TextComponent(
+      text: Strings.title,
+      textRenderer: _text(132, const Color(0xFFFFF4DC), shadow: 7),
+      anchor: Anchor.center,
+      position: Vector2(GameConfig.width / 2, 178),
+    );
+    add(_title);
+    add(TextComponent(
+      text: Strings.subtitle,
+      textRenderer: _text(36, const Color(0xFFFFE6A8), shadow: 3),
+      anchor: Anchor.center,
+      position: Vector2(GameConfig.width / 2, 278),
+    ));
+
+    // 왼쪽 동물들은 오른쪽을, 오른쪽 몬스터들은 왼쪽을 본다 (시트 방향 그대로)
+    const ground = 610.0;
+    final animals = [(UnitType.squirrel, 120.0), (UnitType.fox, 255.0), (UnitType.turtle, 405.0), (UnitType.skunk, 555.0)];
+    for (final (type, x) in animals) {
+      final art = await CharacterArt.load(game, type.sheet);
+      add(_actor(art, type == UnitType.skunk ? 'arm' : 'idle', x, ground, type.displayHeight * 1.4));
+    }
+    final monsters = [(MonsterType.slime, 'walk', 800.0), (MonsterType.helmetSlime, 'walk', 945.0), (MonsterType.wisp, 'walk', 1095.0)];
+    for (final (type, action, x) in monsters) {
+      final art = await CharacterArt.load(game, type.sheet);
+      add(_actor(art, action, x, ground - type.floatHeight * 1.4, type.displayHeight * 1.4));
+    }
+    add(StartButton(position: Vector2(GameConfig.width / 2, 438), onPressed: game.startGame));
+  }
+
+  SpriteAnimationComponent _actor(CharacterArt art, String action, double x, double footY, double height) {
+    final s = art.scaleForHeight(height);
+    final anim = art.animation(action);
+    return SpriteAnimationComponent(
+      animation: art.loops(action) ? anim : anim.clone()..loop = true,
+      size: art.frameSize * s,
+      anchor: Anchor(art.anchor.x / art.frameSize.x, art.anchor.y / art.frameSize.y),
+      position: Vector2(x, footY),
+    );
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _t += dt;
+    _title.position.y = 178 + sin(_t * 1.6) * 6; // 제목이 천천히 둥실
+  }
+
+  @override
+  void render(Canvas canvas) {
+    _background.render(canvas, size: size);
+    canvas.drawRect(size.toRect(), _shade);
+  }
+
+  /// 메인 화면이 떠 있는 동안 아래 게임 화면으로 탭이 가지 않게 막는다.
+  @override
+  void onTapDown(TapDownEvent event) {}
+}
+
+/// 큰 나무 버튼. 숨 쉬듯 커졌다 작아진다.
+class StartButton extends PositionComponent with TapCallbacks {
+  StartButton({required super.position, required this.onPressed}) : super(size: Vector2(300, 96), anchor: Anchor.center);
+
+  final void Function() onPressed;
+  final _bg = Paint()..color = const Color(0xFFFFD866);
+  final _rim = Paint()
+    ..color = const Color(0xFF4A3220)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 5;
+  final _shadow = Paint()..color = const Color(0x66000000);
+  final _label = _text(48, const Color(0xFF4A3220), shadow: 0);
+  double _t = 0;
+  bool _down = false;
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    scale = Vector2.all(_down ? 0.96 : 1 + sin(_t * 3) * 0.035);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final r = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(24));
+    canvas.drawRRect(r.shift(const Offset(0, 6)), _shadow);
+    canvas.drawRRect(r, _bg);
+    canvas.drawRRect(r.deflate(2.5), _rim);
+    _label.render(canvas, Strings.start, size / 2, anchor: Anchor.center);
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) => _down = true;
+
+  @override
+  void onTapCancel(TapCancelEvent event) => _down = false;
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    _down = false;
+    onPressed();
+  }
+}
+
+/// 3 → 2 → 1 → 시작! 숫자가 튀어나왔다 줄어든다. 끝나면 [onDone].
+class Countdown extends PositionComponent with TapCallbacks, HasGameReference<ForestGame>, RunsWhileFrozen {
+  Countdown({required this.onDone}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+
+  static const int from = 3;
+  static const double step = 1.0, goTime = 0.7;
+
+  final void Function() onDone;
+  final _dim = Paint()..color = const Color(0x40000000);
+  final _badge = Paint()..color = const Color(0xE0473020);
+  final _badgeRim = Paint()
+    ..color = const Color(0xFFE9D3A6)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 6;
+  double _t = 0;
+  int _shown = -1;
+
+  /// 숫자 뒤 둥근 판 크기: 숫자가 바뀔 때마다 통 튀었다 가라앉는다.
+  double get _badgeScale {
+    final local = _t < from * step ? _t % step : _t - from * step;
+    return 1 + 0.25 * exp(-local * 9);
+  }
+
+  /// 끝날 때까지 걸리는 시간 (테스트용).
+  static double get total => from * step + goTime;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _t += dt;
+    final index = _t < from * step ? (_t / step).floor() : from;
+    if (index != _shown) {
+      _shown = index;
+      final last = index == from;
+      game.sfx.play(last ? Sfx.go : Sfx.tick);
+      removeAll(children.whereType<TextComponent>());
+      add(TextComponent(
+        text: last ? Strings.go : '${from - index}',
+        textRenderer: _text(last ? 130 : 180, last ? const Color(0xFFFFE066) : const Color(0xFFFFF4DC), shadow: 8),
+        anchor: Anchor.center,
+        position: size / 2,
+        scale: Vector2.all(1.8),
+      )..add(ScaleEffect.to(Vector2.all(1), EffectController(duration: 0.35, curve: Curves.easeOutBack))));
+    }
+    if (_t >= total) {
+      removeFromParent();
+      onDone();
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    canvas.drawRect(size.toRect(), _dim);
+    final center = Offset(size.x / 2, size.y / 2);
+    final r = (_shown == from ? 150.0 : 120.0) * _badgeScale;
+    if (_shown == from) {
+      // 시작!은 가로로 긴 판
+      final rect = Rect.fromCenter(center: center, width: r * 3.1, height: r * 1.6);
+      canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(r * 0.8)), _badge);
+      canvas.drawRRect(RRect.fromRectAndRadius(rect.deflate(10), Radius.circular(r * 0.7)), _badgeRim);
+    } else {
+      canvas.drawCircle(center, r, _badge);
+      canvas.drawCircle(center, r - 10, _badgeRim);
+    }
+  }
+
+  /// 카운트다운 동안 탭을 막는다.
+  @override
+  void onTapDown(TapDownEvent event) {}
+}
+
+/// 결과·일시정지 판에 넣는 "처음으로" 버튼을 만든다.
+PanelButton toTitleButton(ForestGame game) => PanelButton(Strings.toTitle, () => game.restart(title: true));

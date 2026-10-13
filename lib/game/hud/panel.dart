@@ -5,6 +5,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
 import '../config.dart';
+import 'frozen.dart';
 
 const _ink = Color(0xFF4A3220);
 const _cream = Color(0xFFFFF4DC);
@@ -22,7 +23,7 @@ TextPaint _text(double size, Color color) => TextPaint(
 ///
 /// 판이 떠 있는 동안 게임 시계는 멈춘다(ForestGame.frozen). 판 자신의 등장 효과는
 /// 멈춘 시계와 상관없이 [update]에서 실제 시간으로 돌린다.
-class CenterPanel extends PositionComponent with TapCallbacks {
+class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
   CenterPanel({required this.title, this.subtitle, required this.buttons, this.titleColor = _cream})
       : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 2000);
 
@@ -31,7 +32,7 @@ class CenterPanel extends PositionComponent with TapCallbacks {
   final Color titleColor;
   final List<PanelButton> buttons;
 
-  static const Size _panel = Size(560, 300);
+  static const Size _panel = Size(640, 300);
   final _dim = Paint()..color = const Color(0x99000000);
 
   late final _PanelBox _box;
@@ -98,7 +99,7 @@ class _PanelBox extends PositionComponent {
 class PanelButton extends PositionComponent with TapCallbacks {
   PanelButton(this.label, this.onPressed) : super(size: buttonSize);
 
-  static final Vector2 buttonSize = Vector2(190, 70);
+  static final Vector2 buttonSize = Vector2(180, 70);
 
   final String label;
   final void Function() onPressed;

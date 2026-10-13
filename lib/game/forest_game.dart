@@ -17,14 +17,16 @@ import 'config.dart';
 import 'garden.dart';
 import 'grid.dart';
 import 'hud/hud.dart';
+import 'hud/frozen.dart';
 import 'hud/panel.dart';
+import 'hud/title.dart';
 import 'monsters.dart';
 import 'sfx.dart';
 import 'strings.dart';
 import 'units.dart';
 
 /// 판 상태.
-enum GameState { playing, paused, won, lost }
+enum GameState { title, countdown, playing, paused, won, lost }
 
 /// 숲 지키기 게임 루트. 월드 좌표는 왼쪽 위 (0, 0) ~ 오른쪽 아래 (1280, 720).
 ///
@@ -42,6 +44,8 @@ class ForestGame extends FlameGame {
     this.logsOn = true,
     this.onRestart,
     bool sound = true,
+    this.intro = true,
+    this.showTitle = true,
   })
       : _random = random ?? Random(),
         garden = Garden(acorns: startAcorns ?? Garden.startAcorns),
@@ -88,8 +92,14 @@ class ForestGame extends FlameGame {
   GameState state = GameState.playing;
   bool get frozen => state != GameState.playing;
 
-  /// 다시 하기: 앱이 게임을 새로 만든다 (main.dart).
-  final void Function()? onRestart;
+  /// 다시 하기·처음으로: 앱이 게임을 새로 만든다 (main.dart). [title]이면 메인 화면부터.
+  final void Function({required bool title})? onRestart;
+
+  /// 시작할 때 메인 화면·카운트다운을 보일지 (테스트·`?intro=0`에서는 바로 시작).
+  final bool intro;
+
+  /// intro일 때 메인 화면부터 보일지 (다시 하기는 카운트다운부터).
+  final bool showTitle;
 
   /// 효과음 (테스트에서는 끈다).
   final SoundBoard sfx;
@@ -138,6 +148,27 @@ class ForestGame extends FlameGame {
         await world.add(log);
       }
     }
+    if (intro && showTitle) {
+      state = GameState.title;
+      await world.add(TitleScreen());
+    } else if (intro) {
+      startCountdown();
+    }
+  }
+
+  /// 메인 화면의 게임 시작 버튼.
+  void startGame() {
+    if (state != GameState.title) return;
+    for (final t in world.children.whereType<TitleScreen>().toList()) {
+      t.removeFromParent();
+    }
+    startCountdown();
+  }
+
+  /// 3 · 2 · 1 · 시작! 동안 게임 시계는 멈춰 있다.
+  void startCountdown() {
+    state = GameState.countdown;
+    world.add(Countdown(onDone: () => state = GameState.playing));
   }
 
   /// 몬스터가 둥지 앞에 닿았다. 그 레인 통나무가 남아 있으면 굴리고, 없으면 게임오버.
@@ -159,7 +190,7 @@ class ForestGame extends FlameGame {
     world.add(CenterPanel(
       title: Strings.gameOver,
       subtitle: Strings.result(defeated: defeated, logsLeft: logs.length),
-      buttons: [PanelButton(Strings.retry, restart)],
+      buttons: [PanelButton(Strings.retry, restart), toTitleButton(this)],
     ));
   }
 
@@ -171,7 +202,7 @@ class ForestGame extends FlameGame {
       title: Strings.cleared,
       titleColor: const Color(0xFFFFE066),
       subtitle: Strings.result(defeated: defeated, logsLeft: logs.length),
-      buttons: [PanelButton(Strings.retry, restart)],
+      buttons: [PanelButton(Strings.retry, restart), toTitleButton(this)],
     ));
   }
 
@@ -181,7 +212,7 @@ class ForestGame extends FlameGame {
       state = GameState.paused;
       world.add(CenterPanel(
         title: Strings.paused,
-        buttons: [PanelButton(Strings.resume, togglePause), PanelButton(Strings.retry, restart)],
+        buttons: [PanelButton(Strings.resume, togglePause), PanelButton(Strings.retry, restart), toTitleButton(this)],
       ));
     } else if (state == GameState.paused) {
       _closePanel();
@@ -195,7 +226,8 @@ class ForestGame extends FlameGame {
     }
   }
 
-  void restart() => onRestart?.call();
+  /// [title]이면 메인 화면부터, 아니면 카운트다운부터 새 게임.
+  void restart({bool title = false}) => onRestart?.call(title: title);
 
   /// 모든 웨이브를 내보냈고 살아 있는 몬스터가 없으면 클리어.
   bool get _cleared =>
@@ -225,10 +257,10 @@ class ForestGame extends FlameGame {
   @override
   void update(double dt) {
     if (frozen) {
-      // 게임은 멈추고(붙이기·떼기만 처리) 가운데 판의 등장 효과만 실제 시간으로 돌린다
+      // 게임은 멈추고(붙이기·떼기만 처리) 메인 화면·카운트다운·판만 실제 시간으로 돌린다
       super.update(0);
-      for (final p in world.children.whereType<CenterPanel>()) {
-        p.updateTree(dt);
+      for (final c in world.children.whereType<RunsWhileFrozen>().toList()) {
+        c.updateTree(dt);
       }
       return;
     }

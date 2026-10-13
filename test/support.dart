@@ -7,7 +7,7 @@ import 'package:forest_defense/game/forest_game.dart';
 Offset toScreen(Vector2 world) => Offset(world.x * 0.625, 75 + world.y * 0.625);
 
 /// 테스트용 게임: 하늘 도토리와 웨이브를 끈다 (무작위·시간에 따라 결과가 흔들린다). 테스트에는 오디오 플러그인이 없어 소리도 끈다.
-ForestGame testGame() => ForestGame(skyAcorns: false, waves: false, sound: false);
+ForestGame testGame() => ForestGame(skyAcorns: false, waves: false, sound: false, intro: false);
 
 /// 그림을 실제로 읽어 들이는 동안(가짜 시계가 아닌 실제 시간) 필드와 HUD가 붙을 때까지 기다린다.
 Future<void> waitForLoad(ForestGame game, WidgetTester tester) async {

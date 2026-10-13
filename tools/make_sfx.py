@@ -152,6 +152,15 @@ def helmet():  # 투구 깨짐: 쇳소리 "땡"
     return s * env(n, 0.001, 9)
 
 
+def tick():  # 카운트다운 3·2·1: 나무 토막 "톡"
+    n = int(RATE * 0.12)
+    return tone(1046.5, 0.12, (1, 2.4, 4.1), (1, 0.4, 0.2)) * env(n, 0.001, 38) + lowpass(noise(0.12), 3000) * env(n, 0.0005, 120) * 0.4
+
+
+def go():  # 카운트다운 시작!: 밝은 두 음 "띵-딩"
+    return pad(notes([1046.5, 1568.0], 0.5, 0.1, 6, bell=True), 0.7)
+
+
 SOUNDS = {
     "pickup": (pickup, "도토리 줍기"),
     "place": (place, "동물 놓기"),
@@ -165,6 +174,8 @@ SOUNDS = {
     "win": (win, "클리어"),
     "lose": (lose, "게임오버"),
     "helmet": (helmet, "투구 깨짐"),
+    "tick": (tick, "카운트다운"),
+    "go": (go, "시작!"),
 }
 
 

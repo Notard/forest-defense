@@ -60,11 +60,11 @@ th{color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>🌰 숲 지키기 · 할 일 목록</h1>
-  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 15:45</p>
+  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 15:56</p>
 
   <div class="hero">
-    <div class="big">79% <small>106 / 134 완료</small></div>
-    <div class="bar"><i style="width:79%"></i></div>
+    <div class="big">80% <small>113 / 141 완료</small></div>
+    <div class="bar"><i style="width:80%"></i></div>
   </div>
 
   
@@ -167,6 +167,15 @@ th{color:var(--muted)}
   <div class="sbar"><i style="width:83%"></i></div>
   <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">자동 플레이 봇 <code>test/balance_test.dart</code>: 익숙함·처음·서툼 세 수준 × 시드 3개</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">조정 전 측정: 익숙함 3/3 승리, 처음 0/3 (웨이브 3~4에서 패배, 145~177초)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">수치 조정: 시작 도토리 200, 하늘 도토리 5~8초·10초 유지, 다람쥐 5초·18초, 여우불 25, 몬스터 느리고 약하게, 투구 280, 웨이브 33마리·첫 웨이브 30초</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">조정 후 측정: 익숙함 3/3, 처음 3/3 (통나무도 안 씀), 서툼 1/3 (마지막 큰 무리에서 2번 패배)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">테스트가 숫자 대신 게임 상수를 읽도록 고침 (다음 조정 때 깨지지 않게), 전체 59/59</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">사용자 다시 플레이<span class="tag">완료 기준</span></span></li></ul>
 </section>
+<section class="stage complete">
+  <div class="shead">
+    <span class="n">7-2</span>
+    <h2>메인 화면·카운트다운 (사용자 요청)</h2>
+    <span class="cnt">7 / 7</span>
+  </div>
+  <div class="sbar"><i style="width:100%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">메인 화면: 숲 배경, 제목 &quot;숲 지키기&quot;(천천히 둥실), 부제, 마주 선 동물 4 · 몬스터 3, 숨 쉬는 &quot;게임 시작&quot; 버튼</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">카운트다운: 3 · 2 · 1 · 시작! (둥근 나무판 위 숫자가 튀어나옴, 숫자마다 &quot;톡&quot;, 시작에 &quot;띵&quot;), 그동안 게임 시계 멈춤</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">다시 하기는 카운트다운부터, 일시정지·결과 판에 &quot;처음으로&quot; 추가 (메인 화면부터)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">상태에 메인 화면·카운트다운 추가, 멈춘 동안 움직이는 화면 표시(<code>RunsWhileFrozen</code>)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">효과음 2종 추가 (14종, 352 KB), 폰트 글자 추가 (123 KB), 확인 옵션 <code>?intro=0</code></span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">테스트 3개 (<code>title_test.dart</code>), 전체 62/62</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">웹 확인: 메인 화면, 카운트다운 3 · 1, 일시정지 판 세 버튼, 처음으로<span class="tag">완료 기준</span></span></li></ul>
+</section>
 <section class="stage active">
   <div class="shead">
     <span class="n">8</span>
@@ -205,7 +214,7 @@ th{color:var(--muted)}
 </section>
 
   <h3>완료 기록</h3>
-  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계를 Spriteflow 방식 프레임 애니메이션으로 다시 계획</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계 제작 방식을 Blender 2D 컷아웃으로 변경, 여우 시범 4동작</td></tr><tr><td>2026-10-13</td><td>7-1. 난이도 조정</td><td>자동 플레이 봇으로 측정, 처음 하는 수준 0/3 → 3/3 승리, 테스트 59/59</td></tr><tr><td>2026-10-13</td><td>8. 효과음</td><td>합성 효과음 12종, 소리 버튼, 테스트 50/50</td></tr><tr><td>2026-10-13</td><td>7. 전투·통나무·승패</td><td>통나무, 게임오버·클리어·일시정지·다시 하기, 다듬기 3가지, 테스트 47/47</td></tr><tr><td>2026-10-13</td><td>6. 몬스터와 웨이브</td><td>이동·갉아먹기, 웨이브 5개·큰 무리 경고, 진행 바, 테스트 43/43</td></tr><tr><td>2026-10-13</td><td>그림 WebP 변환</td><td>11 MB → 2.4 MB, 웹 첫 화면 약 7초 → 3초</td></tr><tr><td>2026-10-13</td><td>5. 유닛 능력</td><td>다람쥐 생산·여우 공격·거북이 금·스컨크 폭발, 연습 상대, 테스트 32/32</td></tr><tr><td>2026-10-13</td><td>4. 자원과 유닛 배치</td><td>도토리·카드·쿨다운·삽·미리보기, 테스트 27/27, 웹에서 직접 플레이 확인</td></tr><tr><td>2026-10-13</td><td>3. 아트와 애니메이션</td><td>캐릭터 7종 컷아웃(시트 25장), 효과 5종, 배경, 필드를 배경에 맞춤, 사용자 승인</td></tr></table>
+  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr><tr><td>2026-10-13</td><td>2-1. 한글 폰트</td><td>Gaegu Bold 78 KB, 빠진 글자 테스트, 테스트 13/13</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계를 Spriteflow 방식 프레임 애니메이션으로 다시 계획</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>3단계 제작 방식을 Blender 2D 컷아웃으로 변경, 여우 시범 4동작</td></tr><tr><td>2026-10-13</td><td>7-2. 메인 화면·카운트다운</td><td>메인 화면, 3·2·1·시작!, 처음으로 버튼, 테스트 62/62</td></tr><tr><td>2026-10-13</td><td>7-1. 난이도 조정</td><td>자동 플레이 봇으로 측정, 처음 하는 수준 0/3 → 3/3 승리, 테스트 59/59</td></tr><tr><td>2026-10-13</td><td>8. 효과음</td><td>합성 효과음 12종, 소리 버튼, 테스트 50/50</td></tr><tr><td>2026-10-13</td><td>7. 전투·통나무·승패</td><td>통나무, 게임오버·클리어·일시정지·다시 하기, 다듬기 3가지, 테스트 47/47</td></tr><tr><td>2026-10-13</td><td>6. 몬스터와 웨이브</td><td>이동·갉아먹기, 웨이브 5개·큰 무리 경고, 진행 바, 테스트 43/43</td></tr><tr><td>2026-10-13</td><td>그림 WebP 변환</td><td>11 MB → 2.4 MB, 웹 첫 화면 약 7초 → 3초</td></tr><tr><td>2026-10-13</td><td>5. 유닛 능력</td><td>다람쥐 생산·여우 공격·거북이 금·스컨크 폭발, 연습 상대, 테스트 32/32</td></tr><tr><td>2026-10-13</td><td>4. 자원과 유닛 배치</td><td>도토리·카드·쿨다운·삽·미리보기, 테스트 27/27, 웹에서 직접 플레이 확인</td></tr><tr><td>2026-10-13</td><td>3. 아트와 애니메이션</td><td>캐릭터 7종 컷아웃(시트 25장), 효과 5종, 배경, 필드를 배경에 맞춤, 사용자 승인</td></tr></table>
 </div>
 </body>
 </html>

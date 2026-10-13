@@ -15,7 +15,9 @@ enum Sfx {
   warning('warning', 0.6),
   win('win', 0.8),
   lose('lose', 0.8),
-  helmet('helmet', 0.6, minGap: 0.05);
+  helmet('helmet', 0.6, minGap: 0.05),
+  tick('tick', 0.7),
+  go('go', 0.8);
 
   const Sfx(this.file, this.volume, {this.pooled = false, this.minGap = 0});
 

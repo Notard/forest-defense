@@ -91,7 +91,7 @@ final levels = {
 void main() {
   for (final MapEntry(key: level, value: spec) in levels.entries) {
     for (final seed in [1, 2, 3]) {
-      GameTester(() => ForestGame(skyAcorns: true, waves: true, sound: false, random: Random(seed))).testGameWidget(
+      GameTester(() => ForestGame(skyAcorns: true, waves: true, sound: false, intro: false, random: Random(seed))).testGameWidget(
         '자동 플레이 ($level, 시드 $seed): 끝까지 막는다',
         verify: (game, tester) async {
           final bot = spec.make(game, seed);
