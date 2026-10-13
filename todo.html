@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>숲 지키기 할 일</title>
+<style>
+:root{
+  --bg:#faf6f0; --surface:#fff; --ink:#2b2420; --muted:#7a6d64; --line:#eadfd3;
+  --fox:#5f8f3a; --fox-soft:#e6efd9; --ok:#4f9a34; --ok-soft:#e3f1da;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1715; --surface:#252020; --ink:#f1e9e2; --muted:#b0a39a; --line:#3a322d;
+    --fox-soft:#26331c; --ok:#7cc55c; --ok-soft:#24331c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1715; --surface:#252020; --ink:#f1e9e2; --muted:#b0a39a; --line:#3a322d;
+  --fox-soft:#26331c; --ok:#7cc55c; --ok-soft:#24331c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+  font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:1.9rem;margin:0 0 4px;letter-spacing:-.02em}
+.muted{color:var(--muted);font-size:.9rem}
+a{color:var(--fox)}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 28px}
+.hero .big{font-size:2.4rem;font-weight:800;font-variant-numeric:tabular-nums}
+.hero .big small{font-size:1rem;color:var(--muted);font-weight:500}
+.bar{height:14px;background:var(--fox-soft);border-radius:999px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--fox);border-radius:999px}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.stage.complete{border-color:var(--ok)}
+.shead{display:flex;align-items:center;gap:10px}
+.shead h2{font-size:1.08rem;margin:0;flex:1}
+.n{background:var(--fox);color:#fff;min-width:28px;height:28px;border-radius:6px;display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
+.stage.complete .n{background:var(--ok)}
+.cnt{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem}
+.sbar{height:4px;background:var(--fox-soft);border-radius:4px;margin:10px 0 6px;overflow:hidden}
+.sbar i{display:block;height:100%;background:var(--fox)}
+.stage.complete .sbar i{background:var(--ok)}
+ul{list-style:none;margin:0;padding:0}
+.item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
+.item:last-child{border-bottom:0}
+.box{flex:none;width:18px;height:18px;border:2px solid var(--line);border-radius:5px;margin-top:2px;display:grid;place-items:center}
+.item.done .box{background:var(--ok);border-color:var(--ok)}
+.item.done .box::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.item.done .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.item.gate .txt{font-weight:600}
+.tag{display:inline-block;margin-left:8px;font-size:.72rem;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--ok-soft);color:var(--ok);text-decoration:none}
+code{background:var(--fox-soft);padding:1px 6px;border-radius:4px;font-size:.86em}
+h3{margin:36px 0 12px;font-size:1.1rem}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.92rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🌰 숲 지키기 · 할 일 목록</h1>
+  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 11:28</p>
+
+  <div class="hero">
+    <div class="big">18% <small>11 / 60 완료</small></div>
+    <div class="bar"><i style="width:18%"></i></div>
+  </div>
+
+  
+<section class="stage complete">
+  <div class="shead">
+    <span class="n">0</span>
+    <h2>기획</h2>
+    <span class="cnt">3 / 3</span>
+  </div>
+  <div class="sbar"><i style="width:100%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">장르·엔진·테마·범위 결정 (Flutter + Flame, 동물 vs 슬라임, 작은 데모)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">유닛 4종 확정 (다람쥐·여우·거북이·스컨크), 고슴도치·부엉이는 다음으로</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">계획서 <a href="plan.html">plan.md</a> 작성</span></li></ul>
+</section>
+<section class="stage complete">
+  <div class="shead">
+    <span class="n">1</span>
+    <h2>프로젝트 생성</h2>
+    <span class="cnt">6 / 6</span>
+  </div>
+  <div class="sbar"><i style="width:100%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>C:\forest_defense</code>에 Flutter 프로젝트 생성 (windows · web · android)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>flame</code>, <code>flame_audio</code> 패키지 추가</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>flame_test</code> 개발 의존성 추가</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">폴더 구조 생성 (<code>lib/game</code>, <code>assets/images</code>, <code>assets/audio</code>, <code>tools</code>)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>main.dart</code>를 빈 <code>ForestGame</code>(1280×720 고정 카메라)으로 교체</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">Windows와 웹에서 빈 화면이 에러 없이 뜨는지 확인<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage active">
+  <div class="shead">
+    <span class="n">1-1</span>
+    <h2>Git 저장소</h2>
+    <span class="cnt">2 / 3</span>
+  </div>
+  <div class="sbar"><i style="width:67%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>git init</code> (기본 브랜치 <code>main</code>), <code>.gitignore</code> 확인</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">첫 커밋</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">GitHub 저장소 <code>Notard/forest-defense</code> 생성 후 push (사용자 확인 후)<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">2</span>
+    <h2>화면과 그리드</h2>
+    <span class="cnt">0 / 6</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>config.dart</code>: 그리드 크기, 칸 크기, 필드 위치 상수</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>grid.dart</code>: 칸 ↔ 화면 좌표 변환 + 단위 테스트</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">임시 배경(레인 줄무늬)과 HUD·진행 바 자리 그리기</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">마우스 올림/탭 시 칸 강조</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">레터박스 확인 (16:9, 4:3, 19.5:9)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기: 웹 빌드 캡처 → <a href="preview.html">preview.html</a><span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">3</span>
+    <h2>아트 (Codex 생성)</h2>
+    <span class="cnt">0 / 7</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/gen_art.sh</code>: 공통 스타일 프롬프트 + 스프라이트별 프롬프트</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">배경 <code>bg_forest.png</code> 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">유닛 4종 생성 (다람쥐, 여우, 거북이, 스컨크)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">몬스터 3종 생성 (슬라임, 투구 슬라임, 도깨비불)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">소품 생성 (도토리, 여우불, 통나무, 폭발 구름, 카드 틀)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/prep_sprites.py</code>: 여백 자르기·크기 맞추기 → <code>assets/images/</code></span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기 <a href="art_preview.html">art_preview.html</a>, 사용자 톤 승인<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">4</span>
+    <h2>자원과 유닛 배치</h2>
+    <span class="cnt">0 / 7</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">하늘에서 떨어지는 도토리 (주기, 수명, 줍기 애니메이션)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">HUD 도토리 수 표시 (시작 150)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">카드 바: 비용, 쿨다운, 사용 불가 시 어둡게</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">카드 선택 → 빈 칸에 배치, 같은 칸 중복 금지</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">삽으로 유닛 제거</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">단위 테스트: 비용 차감, 쿨다운, 중복 배치 거부</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기 갱신, 네 유닛 모두 배치·제거 확인<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">5</span>
+    <h2>유닛 능력</h2>
+    <span class="cnt">0 / 6</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">공통: 숨쉬기 트윈, 피격 깜빡임, HP</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">다람쥐: 도토리 생산</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">여우: 레인에 몬스터가 있을 때 여우불 발사</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">거북이: 높은 HP 방어벽</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">스컨크: 1.2초 뒤 3×3 폭발</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">단위 테스트: 생산 주기, 발사 조건, 폭발 범위<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">6</span>
+    <h2>몬스터와 웨이브</h2>
+    <span class="cnt">0 / 6</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">공통: 통통 튀며 이동, 유닛 앞에서 멈추고 갉아먹기</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">슬라임 · 투구 슬라임(투구 깨짐) · 도깨비불</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>waves.dart</code>: 웨이브 5개 정의, &quot;큰 무리&quot; 경고</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">웨이브 진행 바</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">단위 테스트: 웨이브 순서, 투구 HP 처리</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기 갱신<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">7</span>
+    <h2>전투·통나무·승패</h2>
+    <span class="cnt">0 / 5</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">여우불 ↔ 몬스터 충돌, 쓰러짐 연출</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">레인별 통나무 (1회)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">GAME OVER / CLEAR 화면, 다시 하기</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">일시정지 버튼</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">처음부터 끝까지 플레이: 승리와 패배 모두 확인<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">8</span>
+    <h2>효과음</h2>
+    <span class="cnt">0 / 3</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/make_sfx.py</code>: 효과음 11종 합성 → <code>assets/audio/</code></span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">사건별 재생 연결, 소리 켜기/끄기</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">웹에서 첫 클릭 이후 재생 확인<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">9</span>
+    <h2>플랫폼 빌드</h2>
+    <span class="cnt">0 / 6</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">앱 이름 &quot;숲 지키기&quot;, Codex 아이콘 적용</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/build_all.sh</code> (Windows · 웹 · APK)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Windows exe 실행 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">웹 빌드 GitHub Pages 배포 (사용자 확인 후)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Android APK 설치·터치 확인 (사용자 기기)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">사용자 플레이 테스트<span class="tag">완료 기준</span></span></li></ul>
+</section>
+<section class="stage ">
+  <div class="shead">
+    <span class="n">10</span>
+    <h2>마무리</h2>
+    <span class="cnt">0 / 2</span>
+  </div>
+  <div class="sbar"><i style="width:0%"></i></div>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">README (소개, 플레이 GIF, 조작법, 빌드 방법)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">결과 보고서 REPORT.md<span class="tag">완료 기준</span></span></li></ul>
+</section>
+
+  <h3>완료 기록</h3>
+  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr></table>
+</div>
+</body>
+</html>
