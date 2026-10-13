@@ -49,7 +49,7 @@ class Fireball extends SpriteComponent with HasGameReference<ForestGame> {
     Monster? hit;
     for (final m in game.monsters) {
       if (m.row != row || !m.alive) continue;
-      if (position.x >= m.position.x - Monster.hitHalfWidth && position.x <= m.position.x + Monster.hitHalfWidth * 2) {
+      if (position.x >= m.position.x - m.type.hitHalfWidth && position.x <= m.position.x + m.type.hitHalfWidth * 2) {
         if (hit == null || m.position.x < hit.position.x) hit = m;
       }
     }

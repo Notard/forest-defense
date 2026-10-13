@@ -1,0 +1,44 @@
+{
+  "character": "golem",
+  "anchor": [
+    156.2,
+    251.3
+  ],
+  "actions": {
+    "walk": {
+      "frames": 12,
+      "fps": 10,
+      "loop": true
+    },
+    "eat": {
+      "frames": 8,
+      "fps": 10,
+      "loop": true,
+      "event": 5
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    75.3,
+    193.9
+  ],
+  "frame": [
+    320,
+    273
+  ],
+  "bbox": [
+    55,
+    45,
+    276,
+    253
+  ]
+}

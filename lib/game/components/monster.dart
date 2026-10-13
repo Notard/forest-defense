@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -7,9 +8,11 @@ import '../config.dart';
 import '../forest_game.dart';
 import '../grid.dart';
 import '../monsters.dart';
+import '../stages.dart';
 import '../sfx.dart';
 import 'actor.dart';
 import 'flyers.dart';
+import 'smoke.dart';
 import 'unit.dart';
 
 /// 레인을 따라 오는 몬스터. 왼쪽을 보고 걸어오다 앞에 동물이 있으면 멈춰 갉아먹는다 (plan.md 6단계).
@@ -23,10 +26,11 @@ class Monster extends Actor {
     required this.slimeArt,
     required super.scale,
     required double x,
+    required super.maxHp,
     this.moving = true,
   })  : helmetHp = type.helmetHp.toDouble(),
+        groundY = UnitComponent.footOf((row: row, col: 0)).y - type.floatHeight,
         super(
-          maxHp: type.hp,
           startAction: 'walk',
           position: Vector2(x, UnitComponent.footOf((row: row, col: 0)).y - type.floatHeight),
           priority: row * 10 + 5,
@@ -37,9 +41,11 @@ class Monster extends Actor {
     final art = await CharacterArt.load(game, type.sheet);
     final slime = await CharacterArt.load(game, MonsterType.slime.sheet);
     // 투구 슬라임 시트는 몸이 슬라임 시트와 같은 크기로 보이도록 캔버스를 맞춰 두었다 (WORKLOG 3-f).
-    // 그래서 같은 배율을 쓴다.
-    final scale = type == MonsterType.wisp ? art.scaleForHeight(type.displayHeight) : slime.scaleForHeight(type.displayHeight);
-    return Monster._(type: type, row: row, art: art, slimeArt: slime, scale: scale, x: x, moving: moving);
+    // 그래서 슬라임·투구 슬라임은 슬라임 배율, 나머지는 제 그림 배율.
+    final sharesSlime = type == MonsterType.slime || type == MonsterType.helmetSlime;
+    final scale = (sharesSlime ? slime : art).scaleForHeight(type.displayHeight);
+    final hp = type.boss && game.stage.region == Region.night ? MonsterType.nightBossHp : type.hp;
+    return Monster._(type: type, row: row, art: art, slimeArt: slime, scale: scale, x: x, maxHp: hp, moving: moving);
   }
 
   final MonsterType type;
@@ -50,8 +56,11 @@ class Monster extends Actor {
   double helmetHp;
   bool get hasHelmet => helmetHp > 0;
 
-  /// 맞는 범위의 반폭 (논리 px). 여우불이 x - hitHalfWidth에 닿으면 맞는다.
+  /// 슬라임의 맞는 범위 반폭 (논리 px). 종류별 값은 [MonsterType.hitHalfWidth].
   static const double hitHalfWidth = 30;
+
+  /// 땅(떠 있는 몬스터는 떠 있는 높이)의 y. 박쥐가 뛰어넘을 때 여기서 위로 호를 그린다.
+  final double groundY;
 
   /// 걷는지 (false면 연습 상대).
   final bool moving;
@@ -59,8 +68,20 @@ class Monster extends Actor {
   /// 걷는 속도 (논리 px/초).
   double get speed => GameConfig.cellWidth / type.secondsPerCell;
 
-  /// 동물 발 x에서 이만큼 오른쪽까지 다가오면 멈춰 갉아먹는다.
+  /// 슬라임이 멈춰 갉아먹는 거리 (동물 발 x에서 오른쪽으로). 종류별 값은 [MonsterType.biteReach].
   static const double biteReach = 52;
+
+  // ── 박쥐 뛰어넘기 (11단계) ──
+  /// 이미 한 번 뛰어넘었는지 (한 마리만 넘는다).
+  bool jumped = false;
+  double? _jumpFrom, _jumpTo;
+  double _jumpT = 0;
+  static const double jumpTime = 0.6, jumpHeight = 70;
+  bool get jumping => _jumpTo != null;
+
+  // ── 보스 소환 (11단계) ──
+  /// 지금까지 소환한 횟수 (HP 75%·50%·25%에서 한 번씩).
+  int summons = 0;
 
   /// 지금 갉아먹는 동물 (없으면 null).
   UnitComponent? eating;
@@ -91,7 +112,7 @@ class Monster extends Actor {
     for (final u in game.unitComponents.values) {
       if (u.cell.row != row || !u.alive) continue;
       final gap = position.x - u.position.x;
-      if (gap >= -10 && gap <= biteReach && (found == null || u.position.x > found.position.x)) found = u;
+      if (gap >= -10 && gap <= type.biteReach && (found == null || u.position.x > found.position.x)) found = u;
     }
     return found;
   }
@@ -110,7 +131,15 @@ class Monster extends Actor {
     }
     super.update(dt);
     if (!alive || !moving) return;
+    if (jumping) {
+      _flyOver(dt);
+      return;
+    }
     final target = _blocker();
+    if (target != null && type.jumpsOver && !jumped && !slowed) {
+      _startJump(target);
+      return;
+    }
     if (target != null) {
       if (eating != target || current != 'eat') {
         eating = target;
@@ -133,6 +162,42 @@ class Monster extends Actor {
     if (position.x < reachedHomeX) game.onMonsterReachedHome(this);
   }
 
+  /// 박쥐: 앞 동물 너머(왼쪽 0.75칸)로 호를 그리며 날아간다. 부엉이로 느려졌으면 못 넘는다.
+  void _startJump(UnitComponent over) {
+    jumped = true;
+    eating = null;
+    _jumpFrom = position.x;
+    _jumpTo = over.position.x - GameConfig.cellWidth * 0.75;
+    _jumpT = 0;
+    play('walk');
+  }
+
+  void _flyOver(double dt) {
+    _jumpT = (_jumpT + dt / jumpTime).clamp(0.0, 1.0);
+    position.x = _jumpFrom! + (_jumpTo! - _jumpFrom!) * _jumpT;
+    position.y = groundY - math.sin(math.pi * _jumpT) * jumpHeight;
+    if (_jumpT >= 1) {
+      position.y = groundY;
+      _jumpFrom = _jumpTo = null;
+    }
+    if (position.x < reachedHomeX) game.onMonsterReachedHome(this);
+  }
+
+  /// 보스: HP가 25%씩 줄 때마다 슬라임 둘을 위아래 레인(없으면 같은 레인 뒤)에 불러낸다.
+  void _summonIfNeeded() {
+    while (alive && summons < 3 && hp <= maxHp * (1 - 0.25 * (summons + 1))) {
+      summons++;
+      game.sfx.play(Sfx.warning);
+      final rows = [row - 1, row + 1].where(game.laneOpen).toList();
+      final spots = rows.length == 2 ? [(rows[0], 0.0), (rows[1], 0.0)] : [(row, 70.0), (row, 140.0)];
+      for (final (r, back) in spots) {
+        final x = position.x + 40 + back;
+        game.world.add(Smoke(position: Vector2(x, UnitComponent.footOf((row: r, col: 0)).y - 30), size: 80, duration: 0.4));
+        game.addMonster(MonsterType.slime, row: r, x: x);
+      }
+    }
+  }
+
   /// 이 x보다 왼쪽에 닿으면 둥지에 닿은 것 (그 레인 통나무를 이미 썼으면 게임오버).
   static const double reachedHomeX = GameConfig.logColumnX - 60;
 
@@ -151,6 +216,7 @@ class Monster extends Actor {
       }
     }
     super.takeDamage(amount);
+    if (type.boss) _summonIfNeeded();
   }
 
   void _loseHelmet() {
@@ -168,6 +234,10 @@ class Monster extends Actor {
     game.monsters.remove(this);
     game.defeated++;
     game.sfx.play(Sfx.slimeDie);
+    // 버섯 포자: 작은 버섯으로 나뉜다 (addMonster는 부르자마자 대기 수를 올려서, 이 사이에 클리어로 판정되지 않는다)
+    for (var i = 0; i < type.splitsInto; i++) {
+      game.addMonster(MonsterType.miniMushroom, row: row, x: position.x - 24 + i * 52);
+    }
   }
 
   /// 이 몬스터가 있는 칸 (필드 밖이면 null).

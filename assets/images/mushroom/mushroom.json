@@ -1,0 +1,44 @@
+{
+  "character": "mushroom",
+  "anchor": [
+    155.2,
+    267.6
+  ],
+  "actions": {
+    "walk": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "eat": {
+      "frames": 6,
+      "fps": 12,
+      "loop": true,
+      "event": 3
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    97.0,
+    174.5
+  ],
+  "frame": [
+    320,
+    291
+  ],
+  "bbox": [
+    57,
+    52,
+    266,
+    270
+  ]
+}

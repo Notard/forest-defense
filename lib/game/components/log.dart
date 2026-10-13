@@ -3,6 +3,8 @@ import 'package:flame/components.dart';
 import '../config.dart';
 import '../forest_game.dart';
 import '../sfx.dart';
+import '../monsters.dart';
+import 'smoke.dart';
 import 'unit.dart';
 
 /// 레인마다 하나씩 둥지 앞에 놓인 통나무 (plan.md 7단계).
@@ -40,13 +42,21 @@ class RollingLog extends SpriteComponent with HasGameReference<ForestGame> {
   void update(double dt) {
     super.update(dt);
     if (!rolling) {
-      if (game.monsters.any((m) => m.row == row && m.alive && m.position.x <= triggerX)) roll();
+      // 몸 앞쪽 끝 기준 (보스처럼 몸이 크면 발보다 앞이 먼저 닿는다)
+      if (game.monsters.any((m) => m.row == row && m.alive && m.position.x - (m.type.hitHalfWidth - 30) <= triggerX)) roll();
       return;
     }
     position.x += speed * dt;
     angle += speed / (displaySize / 2) * dt; // 미끄러지지 않고 구르는 회전 속도
     for (final m in game.monsters.toList()) {
-      if (m.row == row && m.alive && (m.position.x - position.x).abs() < displaySize * 0.8) {
+      if (m.row == row && m.alive && (m.position.x - position.x).abs() < displaySize * 0.8 + m.type.hitHalfWidth - 30) {
+        if (m.type.boss) {
+          // 보스는 버틴다: 1000만 받고 통나무가 부서진다 (11단계)
+          m.takeDamage(MonsterType.logDamageToBoss);
+          game.world.add(Smoke(position: position.clone(), size: displaySize * 1.6, duration: 0.5));
+          removeFromParent();
+          return;
+        }
         m.takeDamage(m.hp + m.helmetHp);
       }
     }

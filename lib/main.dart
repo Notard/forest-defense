@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'game/config.dart';
 import 'game/forest_game.dart';
+import 'game/monsters.dart';
 import 'game/music.dart';
 import 'game/progress.dart';
 import 'game/stages.dart';
@@ -21,6 +22,7 @@ void main() {
 ///   ?speed=2      게임 시계 배속 (1~4)
 ///   ?intro=0      카운트다운 없이 바로 시작
 ///   ?stage=1-3    그 스테이지 (없으면 예전 데모 한 판). 이때는 모든 유닛을 쓸 수 있다
+///   ?enemy=golem,bat  연습 상대 종류 (?practice=1과 함께, MonsterType 이름)
 class ForestApp extends StatefulWidget {
   const ForestApp({super.key});
 
@@ -37,7 +39,7 @@ class _ForestAppState extends State<ForestApp> {
   int _round = 0;
 
   static final _query = Uri.base.queryParameters;
-  static const _devKeys = ['acorns', 'practice', 'wave', 'speed', 'intro', 'stage'];
+  static const _devKeys = ['acorns', 'practice', 'wave', 'speed', 'intro', 'stage', 'enemy'];
   bool get _devPlay => _devKeys.any(_query.containsKey);
 
   @override
@@ -75,6 +77,7 @@ class _ForestAppState extends State<ForestApp> {
       units: dev ? null : p.unlockedUnits,
       startAcorns: int.tryParse(_query['acorns'] ?? ''),
       practice: _query['practice'] == '1',
+      practiceKinds: _query['enemy']?.split(',').map((n) => MonsterType.values.where((m) => m.name == n.trim()).firstOrNull).nonNulls.toList(),
       startWave: int.tryParse(_query['wave'] ?? '') ?? 1,
       timeScale: (double.tryParse(_query['speed'] ?? '') ?? 1).clamp(1.0, 4.0),
       intro: _query['intro'] != '0',

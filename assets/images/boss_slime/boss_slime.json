@@ -1,0 +1,44 @@
+{
+  "character": "boss_slime",
+  "anchor": [
+    158.8,
+    282.1
+  ],
+  "actions": {
+    "walk": {
+      "frames": 12,
+      "fps": 10,
+      "loop": true
+    },
+    "eat": {
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "event": 3
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 10,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    83.0,
+    225.2
+  ],
+  "frame": [
+    320,
+    303
+  ],
+  "bbox": [
+    40,
+    68,
+    273,
+    284
+  ]
+}

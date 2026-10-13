@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 22:03</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 22:18</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -1875,6 +1875,131 @@ article td img{margin:0 auto}
 <li>웹에서 친구들 탭이 몇 초 동안 비어 있었다: 처음 보는 친구(고슴도치·부엉이·곰) 시트를 <strong>차례로</strong> 읽고, 카드를 모두 읽은 <strong>뒤에</strong> 한꺼번에 붙였기 때문 → 카드는 바로 붙이고 그림 7장을 동시에 읽어 준비되는 대로 채움</li>
 <li>테스트가 멈춤: 메인 화면이 그림을 읽는 동안 가짜 시계만 흘러 끝나지 않았다 → 기다리는 동안 실제 시간을 흘림(<code>tester.runAsync</code>)</li>
 <li>새 문구로 폰트 다시 만듦 (227 KB, 260자)</li>
+</ol>
+<h2>11. 새 적: 돌 골렘 · 박쥐 · 버섯 포자 · 슬라임 왕 (2026-10-13)</h2>
+<blockquote>
+<p>사용자가 "11 → 12-2 → 13" 추천 순서에 동의.</p>
+</blockquote>
+<h3>결과 요약</h3>
+<table>
+<thead>
+<tr>
+<th>적</th>
+<th>HP</th>
+<th>칸당</th>
+<th>초당 갉아먹기</th>
+<th>능력</th>
+<th>키(px)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>돌 골렘</td>
+<td>900</td>
+<td>8초</td>
+<td>90</td>
+<td>느리고 아주 단단함. 앞 주먹으로 내려친다</td>
+<td>112</td>
+</tr>
+<tr>
+<td>박쥐</td>
+<td>100</td>
+<td>2.8초</td>
+<td>40</td>
+<td>처음 만난 동물 하나를 <strong>호를 그리며 뛰어넘는다</strong>(0.75칸 너머, 0.6초). 부엉이로 느려졌으면 못 넘고 깨문다</td>
+<td>64 (30 떠 있음)</td>
+</tr>
+<tr>
+<td>버섯 포자</td>
+<td>160</td>
+<td>5.5초</td>
+<td>60</td>
+<td>쓰러지면 <strong>작은 버섯 둘</strong>(조금 떨어져서)</td>
+<td>78</td>
+</tr>
+<tr>
+<td>작은 버섯</td>
+<td>60</td>
+<td>4.5초</td>
+<td>30</td>
+<td>버섯 포자가 나뉘어 생김 (같은 시트를 작게)</td>
+<td>46</td>
+</tr>
+<tr>
+<td>슬라임 왕 (보스)</td>
+<td>3000 · 밤 4500</td>
+<td>10초</td>
+<td>200</td>
+<td>HP 75·50·25%에서 <strong>슬라임 둘</strong>(위아래 레인, 없으면 같은 레인 뒤). 통나무는 <strong>1000만</strong> 주고 부서진다</td>
+<td>156</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tools/rigs/golem.json</code> · <code>bat.json</code> · <code>mushroom.json</code> · <code>boss_slime.json</code></td>
+<td>골렘 앞 팔/뒤 팔/몸, 박쥐 왼 날개/오른 날개/몸, 버섯 갓/몸, 보스 왕관/몸. 동작은 모두 걷기(박쥐는 날갯짓)·갉아먹기(이벤트 프레임)·피격·쓰러짐</td>
+</tr>
+<tr>
+<td><code>assets/images/golem/</code> 등 4폴더</td>
+<td>시트 16장 (WebP)</td>
+</tr>
+<tr>
+<td><code>lib/game/monsters.dart</code></td>
+<td>새 종류 5개 + 종류별 <code>hitHalfWidth</code>(맞는 범위)·<code>biteReach</code>(멈추는 거리)·<code>jumpsOver</code>·<code>splitsInto</code>·<code>boss</code>, <code>nightBossHp</code>, <code>logDamageToBoss</code></td>
+</tr>
+<tr>
+<td><code>lib/game/components/monster.dart</code></td>
+<td>박쥐 뛰어넘기(<code>_startJump</code>·<code>_flyOver</code>), 버섯 나뉨(<code>onDeath</code>), 보스 소환(<code>_summonIfNeeded</code>), 밤 보스 HP, 종류별 배율(슬라임·투구만 슬라임 배율)</td>
+</tr>
+<tr>
+<td><code>lib/game/components/log.dart</code></td>
+<td>몸 앞쪽 끝 기준으로 굴러가기·맞히기, 보스는 1000 + 통나무 부서짐(연기)</td>
+</tr>
+<tr>
+<td><code>fireball.dart</code></td>
+<td>종류별 맞는 범위 (큰 적은 몸 앞쪽에서 맞음)</td>
+</tr>
+<tr>
+<td><code>strings.dart</code></td>
+<td>새 적 이름·설명 (switch라 빠뜨리면 빌드가 안 된다 — 이번에 실제로 막아 줌)</td>
+</tr>
+<tr>
+<td><code>forest_game.dart</code>, <code>main.dart</code></td>
+<td>확인용 주소 <code>?enemy=golem,bat</code> (연습 상대 종류)</td>
+</tr>
+</tbody>
+</table>
+<h3>진행 방식</h3>
+<ul>
+<li>기준 그림은 9단계 때 미리 그려 둔 것. 넷 다 왼쪽을 보고 있어 몬스터로 그대로 썼다</li>
+<li>리그는 <code>rig_helper.py</code> 격자로 경계를 잡았다. 골렘은 두 주먹이 몸 앞에 있어 둘 다 앞 부위, 박쥐 날개는 얼굴에 겹치지 않게 다각형을 얼굴 둘레에서 끊었다</li>
+<li>몸이 큰 적(골렘·보스)은 발 위치만으로 판정하면 여우불이 몸속 깊이 들어가야 맞고, 통나무도 늦게 굴렀다 → 종류별 반폭·멈추는 거리를 두고 여우불·통나무·갉아먹기가 모두 그 값을 쓴다</li>
+<li>버섯이 나뉠 때 <code>addMonster</code>는 부르는 순간 대기 수를 올리므로, 마지막 버섯이 쓰러진 바로 그 프레임에 클리어로 판정되지 않는다</li>
+<li>데모 판(예전 한 판)은 처음 세 종류 그대로. 새 적은 13단계에서 스테이지별 웨이브에 넣는다</li>
+</ul>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>108/108</strong></li>
+<li><code>enemies_test</code> 7개: 골렘 속도·HP / 박쥐가 거북이를 넘어 내려앉고 거북이는 멀쩡, 다음 여우는 깨묾 / 느려진 박쥐는 못 넘고 깨묾 / 버섯 → 작은 버섯 둘(HP 60, 다른 자리) / 보스 77%엔 아직, 73%에 위아래 레인 슬라임 둘, 6%까지 세 번 모두(슬라임 6) / 밤 보스 4500, 통나무 1000 + 부서짐, 소환 안 함 / 여우불이 보스 발보다 50px 넘게 앞에서 맞음</li>
+<li><code>waves_test</code>: 데모 웨이브 종류를 처음 세 종류로 명시</li>
+<li>웹(<code>?practice=1&amp;enemy=golem,bat,mushroom,bossSlime,miniMushroom&amp;intro=0</code>, 미리보기 창은 음소거): 다섯 종류 크기·위치 → <code>preview/11_enemies.jpg</code>. 도움말 몬스터 쪽 8장 → <code>preview/11_help_monsters.jpg</code></li>
+<li>움직임 GIF: <code>preview/03_golem_*.gif</code>, <code>03_bat_*</code>, <code>03_mushroom_*</code>, <code>03_boss_slime_*</code></li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>박쥐 쓰러짐이 160° 돌며 떨어져 시트 칸 아래로 잘림 → 70°까지만 돌고 작아지며 떨어지게</li>
+<li>웹에서 골렘이 다른 적과 비슷해 보여 98 → 112, 보스는 위 레인을 너무 가려 172 → 156</li>
+<li>기존 웨이브 테스트가 "모든 종류가 데모에 나온다"를 확인하고 있어 실패 → 데모는 처음 세 종류라고 명시</li>
+<li>처음 쓴 버섯 테스트의 "그사이 클리어로 판정되지 않는다"는 웨이브를 끈 판이라 아무것도 확인하지 못해 뺐다</li>
+<li>웹 확인 중 미리보기 창 음악이 사용자에게 들려서, 확인할 때는 페이지의 재생 함수를 음소거로 바꿔 두고 끝나면 탭을 닫는다</li>
 </ol></article>
 </div>
 </body>

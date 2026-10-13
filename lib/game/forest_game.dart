@@ -54,6 +54,7 @@ class ForestGame extends FlameGame {
     bool? skyAcorns,
     int? startAcorns,
     this.practice = false,
+    this.practiceKinds,
     bool? waves,
     this.startWave = 1,
     this.timeScale = 1,
@@ -322,10 +323,14 @@ class ForestGame extends FlameGame {
   bool get _cleared =>
       wavesOn && (waveRunner?.director.allSpawned ?? false) && monsters.isEmpty && _pendingSpawns == 0;
 
+  /// 연습 상대 종류 (레인 순서대로 돌려 쓴다). 없으면 슬라임·투구·도깨비불 (`?enemy=golem,bat`).
+  final List<MonsterType>? practiceKinds;
+
   Future<void> _addPracticeTargets() async {
-    const kinds = [MonsterType.slime, MonsterType.helmetSlime, MonsterType.wisp, MonsterType.slime, MonsterType.helmetSlime];
+    final custom = practiceKinds;
+    final kinds = custom != null && custom.isNotEmpty ? custom : const [MonsterType.slime, MonsterType.helmetSlime, MonsterType.wisp, MonsterType.slime, MonsterType.helmetSlime];
     for (final row in stage.lanes) {
-      await addMonster(kinds[row], row: row, x: Grid.center((row: row, col: 7)).x, moving: false);
+      await addMonster(kinds[row % kinds.length], row: row, x: Grid.center((row: row, col: 7)).x, moving: false);
     }
   }
 

@@ -77,6 +77,10 @@ flutter:
     - assets/images/slime/
     - assets/images/slime_helmet/
     - assets/images/wisp/
+    - assets/images/golem/
+    - assets/images/bat/
+    - assets/images/mushroom/
+    - assets/images/boss_slime/
     # 효과음 (tools/make_sfx.py)
     - assets/audio/
     - assets/audio/music/

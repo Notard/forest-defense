@@ -79,12 +79,22 @@ abstract final class Strings {
         MonsterType.slime => '슬라임',
         MonsterType.helmetSlime => '투구 슬라임',
         MonsterType.wisp => '도깨비불',
+        MonsterType.golem => '돌 골렘',
+        MonsterType.bat => '박쥐',
+        MonsterType.mushroom => '버섯 포자',
+        MonsterType.miniMushroom => '작은 버섯',
+        MonsterType.bossSlime => '슬라임 왕',
       };
 
   static String monsterAbility(MonsterType m) => switch (m) {
         MonsterType.slime => '느릿느릿 다가와요',
         MonsterType.helmetSlime => '투구가 먼저 막아요',
         MonsterType.wisp => '빠르게 둥실 와요',
+        MonsterType.golem => '아주 단단해요',
+        MonsterType.bat => '친구를 뛰어넘어요',
+        MonsterType.mushroom => '쓰러지면 둘이 돼요',
+        MonsterType.miniMushroom => '작지만 빨라요',
+        MonsterType.bossSlime => '슬라임을 불러내요',
       };
 
   static const unknown = '???';

@@ -53,6 +53,7 @@ flutter clean && flutter build web --release && python tools/serve_web.py
 - `?speed=2` 게임 시계 배속 (1~4)
 - `?intro=0` 카운트다운 없이 바로 시작
 - `?stage=1-3` 메뉴 없이 그 스테이지 (모든 유닛). 옵션이 하나라도 있으면 메뉴 없이 바로 판
+- `?enemy=golem,bat,mushroom,bossSlime` 연습 상대 종류 (`?practice=1`과 함께, 레인 순서대로)
 - 둘 다: `?acorns=1000&practice=1`
 
 ## 조작

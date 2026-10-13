@@ -1,0 +1,44 @@
+{
+  "character": "bat",
+  "anchor": [
+    159.1,
+    226.7
+  ],
+  "actions": {
+    "walk": {
+      "frames": 8,
+      "fps": 14,
+      "loop": true
+    },
+    "eat": {
+      "frames": 6,
+      "fps": 12,
+      "loop": true,
+      "event": 3
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    118.9,
+    159.1
+  ],
+  "frame": [
+    320,
+    274
+  ],
+  "bbox": [
+    47,
+    43,
+    273,
+    230
+  ]
+}

@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/monsters.dart';
 import 'package:forest_defense/game/waves.dart';
 
+const demoKinds = {MonsterType.slime, MonsterType.helmetSlime, MonsterType.wisp};
+
 void main() {
   /// [seconds]초를 1/60초씩 흘리며 생긴 일을 [log]에 (시각, 일) 순서로 모은다.
   void run(WaveDirector d, double seconds, List<(double, WaveEvent)> log, {required int Function() alive, double start = 0}) {
@@ -23,7 +25,8 @@ void main() {
     expect(stageWaves, hasLength(5));
     expect(stageWaves.where((w) => w.big), [stageWaves.last]);
     expect(WaveDirector().total, total);
-    expect(stageWaves.expand((w) => w.monsters).toSet(), MonsterType.values.toSet());
+    // 데모 웨이브는 처음 세 종류 (11단계 새 적은 13단계 스테이지 웨이브에서 나온다)
+    expect(stageWaves.expand((w) => w.monsters).toSet(), demoKinds);
   });
 
   test('첫 웨이브는 firstDelay초 뒤 시작하고 정한 간격으로 내보낸다', () {
@@ -72,7 +75,7 @@ void main() {
     final spawned = log.map((e) => e.$2).whereType<SpawnMonster>().toList();
     expect(spawned, hasLength(total));
     expect(spawned.every((s) => s.row >= 0 && s.row < 5), isTrue);
-    expect(spawned.map((s) => s.type).toSet(), MonsterType.values.toSet());
+    expect(spawned.map((s) => s.type).toSet(), demoKinds);
   });
 
   test('전체 길이는 다 잡을 때 약 3분, 못 잡을 때 약 4분 (데모 한 판 분량)', () {
