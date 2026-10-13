@@ -107,7 +107,7 @@ class Monster extends Actor {
     if (position.x < reachedHomeX) game.onMonsterReachedHome(this);
   }
 
-  /// 이 x보다 왼쪽에 닿으면 둥지에 닿은 것 (7단계에서 통나무·게임오버를 붙인다).
+  /// 이 x보다 왼쪽에 닿으면 둥지에 닿은 것 (그 레인 통나무를 이미 썼으면 게임오버).
   static const double reachedHomeX = GameConfig.logColumnX - 60;
 
   @override
@@ -137,7 +137,10 @@ class Monster extends Actor {
   CharacterArt get art => hasHelmet || type != MonsterType.helmetSlime ? super.art : slimeArt;
 
   @override
-  void onDeath() => game.monsters.remove(this);
+  void onDeath() {
+    game.monsters.remove(this);
+    game.defeated++;
+  }
 
   /// 이 몬스터가 있는 칸 (필드 밖이면 null).
   Cell? get cell => Grid.cellAt(Vector2(position.x, Grid.laneCenterY(row)));

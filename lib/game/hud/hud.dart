@@ -234,8 +234,8 @@ class ShovelButton extends PositionComponent with TapCallbacks, HasGameReference
   void onTapDown(TapDownEvent event) => game.toggleShovel();
 }
 
-/// 일시정지 버튼 (7단계에서 동작을 붙인다).
-class PauseButton extends PositionComponent {
+/// 일시정지 버튼.
+class PauseButton extends PositionComponent with TapCallbacks, HasGameReference<ForestGame> {
   PauseButton() : super(position: HudLayout.pause.topLeft.toVector2(), size: HudLayout.pause.size.toVector2());
 
   final _bg = Paint()..color = _panel;
@@ -248,4 +248,7 @@ class PauseButton extends PositionComponent {
       canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(x, 16, 7, size.y - 32), const Radius.circular(3)), _bars);
     }
   }
+
+  @override
+  void onTapDown(TapDownEvent event) => game.togglePause();
 }

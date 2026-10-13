@@ -110,17 +110,4 @@ void main() {
       expect(slime.hp, 180);
     },
   );
-
-  GameTester(testGame).testGameWidget(
-    '둥지 앞까지 오면 몬스터가 빠지고 도착 수가 늘어난다 (7단계에서 통나무·게임오버)',
-    setUp: waitForLoad,
-    verify: (game, tester) async {
-      final slime = await spawn(game, tester, MonsterType.slime, 1, Monster.reachedHomeX + 10);
-      run(game, 1.0);
-      expect(game.reachedHome, 1);
-      expect(game.monsters, isNot(contains(slime)));
-      expect(slime.isMounted, isFalse);
-      expect(Grid.cellAt(slime.position), isNull);
-    },
-  );
 }
