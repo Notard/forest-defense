@@ -1,0 +1,28 @@
+{
+  "character": "skunk",
+  "anchor": [
+    182.0,
+    277.0
+  ],
+  "actions": {
+    "arm": {
+      "frames": 12,
+      "fps": 10,
+      "loop": false
+    },
+    "explode": {
+      "frames": 8,
+      "fps": 12,
+      "loop": false,
+      "event": 3
+    }
+  },
+  "muzzle": [
+    180.0,
+    208.0
+  ],
+  "frame": [
+    320,
+    320
+  ]
+}
