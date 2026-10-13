@@ -37,6 +37,14 @@ flutter run -d chrome
 flutter test
 ```
 
+웹 빌드를 브라우저에서 보려면 (브라우저가 예전 파일을 저장해 두지 않고, 같은 포트에 서버가 이미 있으면 알려 줘요):
+
+```bash
+flutter clean && flutter build web --release && python tools/serve_web.py
+```
+
+→ http://localhost:8770 . 음악은 웹 정책상 첫 클릭("게임 시작") 뒤에 나와요.
+
 확인용 주소 옵션 (웹 빌드):
 
 - `?acorns=1000` 도토리 1000개로 시작
@@ -81,6 +89,7 @@ tools/rigs/<캐릭터>.json     컷아웃 리그: 부위 자르는 선, 기준�
 tools/build_sprites.sh      기준 그림 → 부위 조각 → Blender 렌더 → 스프라이트 시트 → 미리보기
 tools/prep_props.py         효과·배경 정지 그림 정리 (배경 잔디 줄무늬 지우기 포함)
 tools/make_sfx.py           효과음 합성 (외부 음원 없음)
+tools/serve_web.py          웹 빌드 개발 서버 (캐시 안 함, 포트 겹침 막기)
 tools/make_bgm.py           배경음악 4곡: 악보 → MIDI → 악기 소리로 녹음 → 반복용 MP3
 art/ref/                    캐릭터 기준 그림
 preview/                    단계별 캡처 (preview.html에서 모아 봄)

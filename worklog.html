@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 21:10</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 21:26</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -1797,6 +1797,11 @@ article td img{margin:0 auto}
 <li><strong>판 닫기 버그</strong>: 같은 프레임에 판을 띄웠다 닫으면(예: 일시정지 직후 바로 풀기) Flame은 add를 다음 프레임에 처리하므로 <code>world.children</code>에 판이 아직 없어 닫히지 않았다. 그 뒤 보이지 않게(상태는 진행 중) 붙어 누름을 가로채, 첫 누름 뒤로는 버튼이 먹지 않았다. 음악 테스트에서 찾음 → 판 참조를 들고 있다가 지우고, 새 판을 띄울 때도 먼저 닫음. 사람 손으로는 같은 프레임에 두 번 누르기 어렵지만, 지는 순간 일시정지 같은 경우에 실제로 날 수 있다</li>
 <li>효과음 끄기가 판마다 새 <code>SoundBoard</code>라 "다시 하기"를 누르면 다시 켜지던 것 → 설정을 저장하고 새 판에 넘김</li>
 <li>받은 파일 크기를 GitHub API 값과 맞춰 확인 (2,727,529 / 32,319,396 바이트)</li>
+<li><strong>사용자 제보: "빌드 후 실행했는데 음악이 안 나와" (웹 브라우저).</strong> 확인한 것:</li>
+<li>브라우저처럼 첫 클릭 전 재생을 막도록 미리보기 창을 흉내 내도(미디어 <code>play()</code> 거절 + AudioContext 정지 상태로 시작) "게임 시작"을 누르면 곡이 나왔다 → 재생 코드는 정상</li>
+<li>사용자 서버를 보니 <strong>8770 포트에 파이썬 서버가 둘</strong> 떠 있었다 (오후 3시에 띄운 것 + 이번에 띄운 것). Windows의 <code>python -m http.server</code>는 같은 포트를 겹쳐 열 수 있고, 예전 서버는 IPv6에서도 받아서 <code>localhost</code> 접속이 그쪽으로 갈 수 있다. 또 이 서버는 캐시 금지 헤더가 없어 브라우저가 예전 <code>main.dart.js</code>(음악 없는 빌드)를 쓸 수 있다</li>
+<li>→ <code>tools/serve_web.py</code>: <code>Cache-Control: no-store</code>, 포트가 이미 쓰이면 시작 거부(Windows <code>SO_EXCLUSIVEADDRUSE</code>), IPv4·IPv6 함께. 시험: 헤더·두 주소 응답·겹쳐 띄우기 거부 확인</li>
+<li>사용자 확인 대기: 예전 서버를 끄고 새 스크립트로 띄운 뒤, 판 오른쪽 위에 음표(♪) 버튼이 보이는지(새 빌드인지)와 소리</li>
 </ol></article>
 </div>
 </body>
