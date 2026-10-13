@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 23:43</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 23:46</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -2417,6 +2417,7 @@ article td img{margin:0 auto}
 <li>봇 난이도 테스트는 컴퓨터 속도에 따라 아주 조금 흔들릴 수 있어 배포를 막지 않도록 <code>balance</code> 태그로 묶어 배포 빌드에서는 뺐다 (내 PC의 <code>flutter test</code>에서는 그대로 돈다)</li>
 <li>새 문구("앱으로 설치")로 폰트 다시 만듦</li>
 <li><strong>공개 뒤 실제 사이트에서 오프라인 저장이 되지 않았다.</strong> 미리 저장 목록에 Flutter가 남기는 숨김 파일 <code>.last_build_id</code>가 들어 있었는데, GitHub Pages(업로드 단계)는 점으로 시작하는 파일을 올리지 않아 그 하나가 404 → <code>cache.addAll</code> 전체가 실패해 서비스 워커가 설치되지 않았다. 로컬 서버는 이 파일도 내줘서 몰랐다 → 목록에서 숨김 파일을 빼고 다시 배포. 실제 사이트의 목록 120개를 하나씩 받아 보는 방법으로 찾음</li>
+<li>실제 사이트 확인(미리보기 창, 음소거): 다시 배포한 뒤 서비스 워커 활성·페이지를 맡음, 게임 파일 119개 저장. 그래픽 엔진은 첫 방문에는 서비스 워커가 자리 잡기 전에 받아 버려 저장되지 않고, <strong>한 번 더 열면</strong> 2개가 더해져 121개 → 그때부터 완전히 오프라인. (엔진 두 종류를 모두 미리 저장하면 브라우저마다 쓰지도 않는 7 MB를 더 받게 되어 이렇게 둠)</li>
 </ol></article>
 </div>
 </body>

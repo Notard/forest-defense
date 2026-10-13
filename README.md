@@ -19,7 +19,7 @@
 
 ## 바로 해 보기
 
-**https://notard.github.io/forest-defense/** — 브라우저에서 바로 (PC·폰). 한 번 열면 인터넷 없이도 된다.
+**https://notard.github.io/forest-defense/** — 브라우저에서 바로 (PC·폰). 처음 연 뒤 한 번 더 열면(새로 고침 포함) 그다음부터는 인터넷 없이도 된다.
 Chrome·Edge에서는 메인 화면 왼쪽 위 **앱으로 설치**로 홈 화면·바탕화면에 앱처럼 둘 수 있다.
 main 브랜치에 푸시하면 GitHub Actions가 자동으로 다시 올린다 (`.github/workflows/pages.yml`).
 
