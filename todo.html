@@ -60,11 +60,11 @@ th{color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>🌰 숲 지키기 · 할 일 목록</h1>
-  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 11:30</p>
+  <p class="muted">원본: TODO.md · 상세 계획: <a href="plan.html">plan.html</a> · 게임 미리보기: <a href="preview.html">preview.html</a> · 아트 미리보기: <a href="art_preview.html">art_preview.html</a> · 작업 기록: <a href="worklog.html">worklog.html</a> · 결과 보고서: <a href="report.html">report.html</a> · 마지막 갱신 2026-10-13 11:38</p>
 
   <div class="hero">
-    <div class="big">15% <small>11 / 75 완료</small></div>
-    <div class="bar"><i style="width:15%"></i></div>
+    <div class="big">23% <small>18 / 77 완료</small></div>
+    <div class="bar"><i style="width:23%"></i></div>
   </div>
 
   
@@ -86,23 +86,23 @@ th{color:var(--muted)}
   <div class="sbar"><i style="width:100%"></i></div>
   <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>C:\forest_defense</code>에 Flutter 프로젝트 생성 (windows · web · android)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>flame</code>, <code>flame_audio</code> 패키지 추가</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>flame_test</code> 개발 의존성 추가</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">폴더 구조 생성 (<code>lib/game</code>, <code>assets/images</code>, <code>assets/audio</code>, <code>tools</code>)</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>main.dart</code>를 빈 <code>ForestGame</code>(1280×720 고정 카메라)으로 교체</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">Windows와 웹에서 빈 화면이 에러 없이 뜨는지 확인<span class="tag">완료 기준</span></span></li></ul>
 </section>
-<section class="stage active">
+<section class="stage complete">
   <div class="shead">
     <span class="n">1-1</span>
     <h2>Git 저장소</h2>
-    <span class="cnt">2 / 3</span>
+    <span class="cnt">3 / 3</span>
   </div>
-  <div class="sbar"><i style="width:67%"></i></div>
-  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>git init</code> (기본 브랜치 <code>main</code>), <code>.gitignore</code> 확인</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">첫 커밋</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">GitHub 저장소 <code>Notard/forest-defense</code> 생성 후 push (사용자 확인 후)<span class="tag">완료 기준</span></span></li></ul>
+  <div class="sbar"><i style="width:100%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>git init</code> (기본 브랜치 <code>main</code>), <code>.gitignore</code> 확인</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">첫 커밋</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">GitHub 저장소 <code>Notard/forest-defense</code> 생성 후 push (사용자 확인 후)<span class="tag">완료 기준</span></span></li></ul>
 </section>
-<section class="stage ">
+<section class="stage complete">
   <div class="shead">
     <span class="n">2</span>
     <h2>화면과 그리드</h2>
-    <span class="cnt">0 / 6</span>
+    <span class="cnt">6 / 6</span>
   </div>
-  <div class="sbar"><i style="width:0%"></i></div>
-  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>config.dart</code>: 그리드 크기, 칸 크기, 필드 위치 상수</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>grid.dart</code>: 칸 ↔ 화면 좌표 변환 + 단위 테스트</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">임시 배경(레인 줄무늬)과 HUD·진행 바 자리 그리기</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">마우스 올림/탭 시 칸 강조</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">레터박스 확인 (16:9, 4:3, 19.5:9)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기: 웹 빌드 캡처 → <a href="preview.html">preview.html</a><span class="tag">완료 기준</span></span></li></ul>
+  <div class="sbar"><i style="width:100%"></i></div>
+  <ul><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>config.dart</code>: 그리드 크기, 칸 크기, 필드 위치 상수</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt"><code>grid.dart</code>: 칸 ↔ 화면 좌표 변환 + 단위 테스트</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">임시 배경(레인 줄무늬)과 HUD·진행 바 자리 그리기</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">마우스 올림/탭 시 칸 강조</span></li><li class="item done"><span class="box" aria-hidden="true"></span><span class="txt">레터박스 확인 (16:9, 4:3, 19.5:9)</span></li><li class="item done gate"><span class="box" aria-hidden="true"></span><span class="txt">미리보기: 웹 빌드 캡처 → <a href="preview.html">preview.html</a><span class="tag">완료 기준</span></span></li></ul>
 </section>
 <section class="stage ">
   <div class="shead">
@@ -162,19 +162,19 @@ th{color:var(--muted)}
   <div class="shead">
     <span class="n">9</span>
     <h2>플랫폼 빌드</h2>
-    <span class="cnt">0 / 6</span>
+    <span class="cnt">0 / 7</span>
   </div>
   <div class="sbar"><i style="width:0%"></i></div>
-  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">앱 이름 &quot;숲 지키기&quot;, Codex 아이콘 원본 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">아이콘 크기별 생성 (앱, 파비콘, PWA 192·512·마스커블)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/build_all.sh</code> (Windows · 웹 · APK)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Windows exe 실행 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Android APK 설치·터치 확인 (사용자 기기)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">사용자 플레이 테스트<span class="tag">완료 기준</span></span></li></ul>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">앱 이름 &quot;숲 지키기&quot;, Codex 아이콘 원본 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">아이콘 크기별 생성 (앱, 파비콘, PWA 192·512·마스커블)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>tools/build_all.sh</code> (Windows · 웹 · APK)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Windows exe 실행 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">배율이 다른 모니터로 창을 옮겨도 화면이 확대되지 않는지 확인 (2단계 문제 3)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Android APK 설치·터치 확인 (사용자 기기)</span></li><li class="item gate"><span class="box" aria-hidden="true"></span><span class="txt">사용자 플레이 테스트<span class="tag">완료 기준</span></span></li></ul>
 </section>
 <section class="stage ">
   <div class="shead">
     <span class="n">10</span>
     <h2>배포: PWA · Microsoft Store</h2>
-    <span class="cnt">0 / 15</span>
+    <span class="cnt">0 / 16</span>
   </div>
   <div class="sbar"><i style="width:0%"></i></div>
-  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>web/manifest.json</code> 정리 (이름, fullscreen, 가로, scope <code>/forest-defense/</code>, 아이콘)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Flutter 3.44 기본 서비스 워커 여부 확인, 없으면 <code>tools/make_sw.py</code>로 오프라인 캐시 서비스 워커 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">시작 화면 &quot;앱으로 설치&quot; 버튼 (지원 브라우저에서만)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">로컬에서 매니페스트·서비스 워커·오프라인 새로 고침 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">GitHub Pages 배포 (사용자 확인 후)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Edge·Chrome 데스크톱 설치, 안드로이드 홈 화면 추가 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">PWA 오프라인 플레이 확인 ✅ PWA 완료 기준</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>msix</code> 패키지 추가, <code>msix_config</code> 작성 (최소 권한)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">테스트 인증서 MSIX 로컬 설치·실행·삭제 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">개인정보 처리방침 페이지 (GitHub Pages)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">스토어 등록 정보: 설명(한·영), 스크린샷 4장 이상, 키워드</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Partner Center 계정·앱 이름 예약 (사용자), Identity 값 반영</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">연령 등급(IARC) 설문 (사용자와 함께)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>dart run msix:create --store</code> → 제출 (사용자)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">인증 통과, Store에서 받은 앱 실행 확인 ✅ Store 완료 기준</span></li></ul>
+  <ul><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>web/manifest.json</code> 정리 (이름, fullscreen, 가로, scope <code>/forest-defense/</code>, 아이콘)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>web/index.html</code> 제목·설명을 &quot;숲 지키기&quot;로 (2단계 문제 4)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Flutter 3.44 기본 서비스 워커 여부 확인, 없으면 <code>tools/make_sw.py</code>로 오프라인 캐시 서비스 워커 생성</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">시작 화면 &quot;앱으로 설치&quot; 버튼 (지원 브라우저에서만)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">로컬에서 매니페스트·서비스 워커·오프라인 새로 고침 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">GitHub Pages 배포 (사용자 확인 후)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Edge·Chrome 데스크톱 설치, 안드로이드 홈 화면 추가 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">PWA 오프라인 플레이 확인 ✅ PWA 완료 기준</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>msix</code> 패키지 추가, <code>msix_config</code> 작성 (최소 권한)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">테스트 인증서 MSIX 로컬 설치·실행·삭제 확인</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">개인정보 처리방침 페이지 (GitHub Pages)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">스토어 등록 정보: 설명(한·영), 스크린샷 4장 이상, 키워드</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">Partner Center 계정·앱 이름 예약 (사용자), Identity 값 반영</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">연령 등급(IARC) 설문 (사용자와 함께)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt"><code>dart run msix:create --store</code> → 제출 (사용자)</span></li><li class="item"><span class="box" aria-hidden="true"></span><span class="txt">인증 통과, Store에서 받은 앱 실행 확인 ✅ Store 완료 기준</span></li></ul>
 </section>
 <section class="stage ">
   <div class="shead">
@@ -187,7 +187,7 @@ th{color:var(--muted)}
 </section>
 
   <h3>완료 기록</h3>
-  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr></table>
+  <table><tr><th>날짜</th><th>단계</th><th>메모</th></tr><tr><td>2026-10-13</td><td>0. 기획</td><td>질문으로 방향 결정, plan.md 작성</td></tr><tr><td>2026-10-13</td><td>계획 변경</td><td>10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로</td></tr><tr><td>2026-10-13</td><td>1. 프로젝트 생성</td><td>Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1</td></tr><tr><td>2026-10-13</td><td>1-1. Git 저장소</td><td>Public 저장소 Notard/forest-defense 생성, push</td></tr><tr><td>2026-10-13</td><td>2. 화면과 그리드</td><td>좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인</td></tr></table>
 </div>
 </body>
 </html>

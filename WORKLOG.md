@@ -38,3 +38,48 @@
 
 ### 문제와 해결
 - 세션 폴더를 옮겨도 미리보기 서버는 `C:\sample\.claude\launch.json`을 읽었다. 그 파일은 git에서 제외된 로컬 파일이라 `forest-web`(8766, `build/web`)과 `forest-docs`(8767) 설정을 추가했다
+
+## 1-1. Git 저장소 (2026-10-13)
+
+- 사용자 승인 후 `gh repo create Notard/forest-defense --public`으로 만들고 `main`을 push했다 → https://github.com/Notard/forest-defense
+- Public으로 한 이유: GitHub Pages(PWA 공개 예정)는 무료 계정에서 Public 저장소만 지원한다
+
+## 2. 화면과 그리드 (2026-10-13)
+
+### 결과 요약
+
+| 파일 | 역할 |
+|---|---|
+| `lib/game/config.dart` | 칸 크기(100 × 110), 필드 위치(140, 110), 통나무 열, 등장 x, 색을 한곳에 모음 |
+| `lib/game/grid.dart` | `Cell`(row, col) 레코드, `cellAt`(화면 → 칸), `topLeft`·`center`(칸 → 화면), `laneCenterY`, `allCells` |
+| `lib/game/components/lane_background.dart` | 임시 배경: 둥지, 잔디 체크무늬, 등장 흙길, 레인 구분선 |
+| `lib/game/components/field.dart` | 필드 입력: 마우스 올림 → 칸 밝게, 탭/클릭 → 노란 테두리 + `onCellTap` 콜백 |
+| `lib/game/hud/hud_placeholder.dart` | HUD 슬롯 자리와 진행 바 자리, 슬롯 위치 상수 `HudLayout` |
+| `preview.html`, `preview/02_*.jpg` | 세 화면 비율 캡처 |
+| `README.md` | Flutter 템플릿 문구를 프로젝트 소개·실행 방법·구조·문서 목록으로 교체 |
+
+### 진행 방식
+- 좌표 변환은 Flame 컴포넌트와 분리된 순수 함수(`Grid`)로 만들어 단위 테스트를 먼저 붙였다. 4단계 배치, 6단계 몬스터 이동이 모두 이 함수를 쓴다
+- 입력은 `TapCallbacks`(마우스 클릭과 터치 공통)와 `PointerMoveCallbacks`(마우스 올림)를 쓴다. 터치에는 올림이 없으므로 탭한 칸을 `selectedCell`로 남겨 눌린 칸이 보이게 했다
+- 카메라가 고정이라 HUD를 따로 뷰포트 레이어에 두지 않고 월드에 우선순위(`priority`)로 겹쳤다. 화면 흔들림 같은 연출을 넣게 되면 그때 뷰포트로 옮긴다
+- 진행 바를 오른쪽 아래로 옮겼다 (plan.md 2-1에 이유 기록)
+
+### 검증
+- `flutter analyze` 문제 없음
+- `flutter test` **10/10** 통과
+  - `grid_test.dart` 7개: 필드 모서리, 칸 경계가 오른쪽·아래 칸에 속하는지, 필드 밖 5곳(둥지·HUD·등장 구역·진행 바·음수), 칸 가운데 좌표, 레인 y, 45칸 전부 `center → cellAt` 왕복
+  - `field_test.dart` 2개: 800 × 600 위젯 테스트 화면(4:3, 위아래 75px 레터박스)에서 실제로 탭해 칸 3곳이 맞게 선택되는지, HUD·둥지·등장 구역·레터박스를 탭하면 선택이 바뀌지 않는지
+  - `forest_game_test.dart` 1개: 카메라 고정 해상도와 앵커
+- 브라우저(웹 릴리스 빌드)에서 세 비율을 직접 확인, 콘솔 에러 없음
+
+| 비율 | 창 크기 | 레터박스 | 확인 |
+|---|---|---|---|
+| 16:9 | 1280 × 720 | 없음 | (2, 4) 칸 올림 강조, (3, 6) 칸 클릭 선택 |
+| 4:3 | 1024 × 768 | 위아래 | 창 크기를 바꾼 뒤에도 강조 위치 유지, (0, 8) 칸 클릭 선택 |
+| 19.5:9 | 1560 × 720 | 양옆 | (4, 0) 칸 클릭 선택 |
+
+### 발생한 문제와 해결
+1. **테스트에서 `game.size`가 800 × 600이 아니라 1280 × 720이었다.** 고정 해상도 카메라를 쓰면 `FlameGame.size`가 가상 해상도를 돌려준다. 실제 화면 크기는 `canvasSize`로 확인하도록 고쳤다
+2. **위젯 테스트가 "Pending timers"로 실패했다.** Flame의 탭 인식기(`MultiTapGestureRecognizer`)가 탭마다 40ms 타이머를 만든다. 탭 뒤에 `tester.pump(100ms)`로 시간을 흘려 해결했다
+3. **브라우저 크기 흉내를 처음 켰을 때 화면이 2배로 확대돼 보였다.** 그 순간 기기 픽셀 비율이 1에서 2로 바뀌었는데 캔버스가 따라가지 않았다. 새로 고침하면 정상이었고, 그 뒤 일반적인 창 크기 변경(16:9 → 4:3 → 19.5:9)은 새로 고침 없이 정상이었다. 실제로는 배율이 다른 모니터로 창을 옮길 때 생길 수 있으므로 **9단계에서 다시 확인**한다
+4. 브라우저 탭 제목이 로딩 중에 `forest_defense`로 보인다 (`web/index.html`의 `<title>`). 10단계에서 매니페스트를 정리할 때 함께 고친다

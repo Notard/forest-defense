@@ -4,7 +4,7 @@
 > 체크 후 `python tools/make_todo_html.py` 실행 → 진행률 갱신 + [todo.html](todo.html) 재생성.
 > 작업별 상세 결과: [WORKLOG.md](WORKLOG.md)
 
-**진행률: 11 / 75**
+**진행률: 18 / 77**
 
 ---
 
@@ -24,15 +24,15 @@
 ## 1-1. Git 저장소
 - [x] `git init` (기본 브랜치 `main`), `.gitignore` 확인
 - [x] 첫 커밋
-- [ ] GitHub 저장소 `Notard/forest-defense` 생성 후 push (사용자 확인 후) ✅ 완료 기준
+- [x] GitHub 저장소 `Notard/forest-defense` 생성 후 push (사용자 확인 후) ✅ 완료 기준
 
 ## 2. 화면과 그리드
-- [ ] `config.dart`: 그리드 크기, 칸 크기, 필드 위치 상수
-- [ ] `grid.dart`: 칸 ↔ 화면 좌표 변환 + 단위 테스트
-- [ ] 임시 배경(레인 줄무늬)과 HUD·진행 바 자리 그리기
-- [ ] 마우스 올림/탭 시 칸 강조
-- [ ] 레터박스 확인 (16:9, 4:3, 19.5:9)
-- [ ] 미리보기: 웹 빌드 캡처 → [preview.html](preview.html) ✅ 완료 기준
+- [x] `config.dart`: 그리드 크기, 칸 크기, 필드 위치 상수
+- [x] `grid.dart`: 칸 ↔ 화면 좌표 변환 + 단위 테스트
+- [x] 임시 배경(레인 줄무늬)과 HUD·진행 바 자리 그리기
+- [x] 마우스 올림/탭 시 칸 강조
+- [x] 레터박스 확인 (16:9, 4:3, 19.5:9)
+- [x] 미리보기: 웹 빌드 캡처 → [preview.html](preview.html) ✅ 완료 기준
 
 ## 3. 아트 (Codex 생성)
 - [ ] `tools/gen_art.sh`: 공통 스타일 프롬프트 + 스프라이트별 프롬프트
@@ -85,11 +85,13 @@
 - [ ] 아이콘 크기별 생성 (앱, 파비콘, PWA 192·512·마스커블)
 - [ ] `tools/build_all.sh` (Windows · 웹 · APK)
 - [ ] Windows exe 실행 확인
+- [ ] 배율이 다른 모니터로 창을 옮겨도 화면이 확대되지 않는지 확인 (2단계 문제 3)
 - [ ] Android APK 설치·터치 확인 (사용자 기기)
 - [ ] 사용자 플레이 테스트 ✅ 완료 기준
 
 ## 10. 배포: PWA · Microsoft Store
 - [ ] `web/manifest.json` 정리 (이름, fullscreen, 가로, scope `/forest-defense/`, 아이콘)
+- [ ] `web/index.html` 제목·설명을 "숲 지키기"로 (2단계 문제 4)
 - [ ] Flutter 3.44 기본 서비스 워커 여부 확인, 없으면 `tools/make_sw.py`로 오프라인 캐시 서비스 워커 생성
 - [ ] 시작 화면 "앱으로 설치" 버튼 (지원 브라우저에서만)
 - [ ] 로컬에서 매니페스트·서비스 워커·오프라인 새로 고침 확인
@@ -118,3 +120,5 @@
 | 2026-10-13 | 0. 기획 | 질문으로 방향 결정, plan.md 작성 |
 | 2026-10-13 | 계획 변경 | 10단계 배포(PWA · Microsoft Store) 추가, 마무리는 11단계로 |
 | 2026-10-13 | 1. 프로젝트 생성 | Flame 1.38 빈 게임, Windows exe·웹 빌드 실행 확인, 테스트 1/1 |
+| 2026-10-13 | 1-1. Git 저장소 | Public 저장소 Notard/forest-defense 생성, push |
+| 2026-10-13 | 2. 화면과 그리드 | 좌표 변환·필드 입력·HUD 자리, 테스트 10/10, 세 비율 브라우저 확인 |

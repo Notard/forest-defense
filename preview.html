@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>숲 지키기 미리보기</title>
+<style>
+:root{--bg:#f6f8f2;--card:#fff;--ink:#22301a;--muted:#5f6b57;--line:#dfe6d4;--leaf:#5f8f3a;--leaf-soft:#e6efd9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a11;--card:#1d2618;--ink:#e6eedd;--muted:#a3b097;--line:#2f3b28;--leaf:#8cc461;--leaf-soft:#26331c}}
+:root[data-theme="dark"]{--bg:#141a11;--card:#1d2618;--ink:#e6eedd;--muted:#a3b097;--line:#2f3b28;--leaf:#8cc461;--leaf-soft:#26331c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+main{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+h1{margin:0 0 4px;font-size:1.7rem}
+h2{font-size:1.25rem;margin:40px 0 12px;padding-top:20px;border-top:2px solid var(--leaf)}
+a{color:var(--leaf)}
+.muted{color:var(--muted);font-size:.92rem}
+figure{margin:0 0 24px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+figure img{display:block;width:100%;height:auto;background:#1f3a1a}
+figcaption{padding:12px 16px;font-size:.94rem}
+figcaption b{color:var(--leaf)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.grid{grid-template-columns:1fr}}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:10px;overflow:hidden;font-size:.94rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--leaf-soft)}
+code{background:var(--leaf-soft);padding:1px 6px;border-radius:4px;font-size:.88em}
+.wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+  <h1>🌰 숲 지키기 · 게임 미리보기</h1>
+  <p class="muted"><a href="todo.html">할 일 목록</a> · <a href="worklog.html">작업 기록</a> · 계획서 <code>plan.md</code> · 단계마다 웹 빌드를 브라우저에서 캡처해 이 페이지에 쌓는다</p>
+
+  <h2>2단계 · 화면과 그리드 (2026-10-13)</h2>
+  <p>아직 그림 없이 색 면으로만 칸 구조를 잡았다. 3단계에서 Codex로 만든 배경과 스프라이트로 바꾼다.
+    화면은 논리 해상도 1280 × 720으로 고정하고, 다른 비율에서는 남는 부분을 어두운 숲색으로 채운다.</p>
+
+  <figure>
+    <img src="preview/02_16x9.jpg" alt="16:9 화면. 위쪽 HUD 자리, 왼쪽 흙색 둥지, 가운데 5×9 잔디 체크무늬, 오른쪽 흙길, 아래 진행 바" width="800" height="450">
+    <figcaption><b>16:9 (1280 × 720)</b> — 레터박스 없음. 마우스를 올린 칸(3번째 레인, 5번째 칸)은 밝게,
+      클릭한 칸(4번째 레인, 7번째 칸)은 노란 테두리로 표시된다.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <figure>
+      <img src="preview/02_4x3.jpg" alt="4:3 화면. 게임 화면 위아래에 어두운 숲색 띠" width="800" height="600">
+      <figcaption><b>4:3 (1024 × 768, 태블릿)</b> — 위아래 레터박스. 창 크기를 바꾼 뒤 맨 윗줄 오른쪽 끝 칸을 클릭했다.</figcaption>
+    </figure>
+    <figure>
+      <img src="preview/02_19x9.jpg" alt="19.5:9 화면. 게임 화면 양옆에 어두운 숲색 띠" width="800" height="369">
+      <figcaption><b>19.5:9 (1560 × 720, 폰 가로)</b> — 양옆 레터박스. 맨 아랫줄 왼쪽 끝 칸을 클릭했다.</figcaption>
+    </figure>
+  </div>
+
+  <h3>화면 구역</h3>
+  <div class="wrap">
+  <table>
+    <tr><th>구역</th><th>논리 좌표</th><th>나중에 들어갈 것</th></tr>
+    <tr><td>HUD (위쪽 갈색 띠)</td><td>y 0 ~ 110</td><td>도토리 수 · 유닛 카드 4장 · 삽 · 오른쪽 끝 일시정지 (4단계)</td></tr>
+    <tr><td>둥지 · 통나무 열 (왼쪽 흙색)</td><td>x 0 ~ 140</td><td>x 60 ~ 140에 레인별 통나무 (7단계)</td></tr>
+    <tr><td>필드 (잔디 체크무늬)</td><td>x 140 ~ 1040, y 110 ~ 660</td><td>5레인 × 9칸, 칸 하나 100 × 110. 유닛 배치</td></tr>
+    <tr><td>등장 구역 (오른쪽 흙길)</td><td>x 1040 ~ 1280</td><td>몬스터가 x 1100에서 나타난다 (6단계)</td></tr>
+    <tr><td>진행 바 (아래 오른쪽)</td><td>y 660 ~ 720</td><td>웨이브 진행 (6단계). 지금은 30%로 고정 표시</td></tr>
+  </table>
+  </div>
+
+  <h3>검증</h3>
+  <ul>
+    <li><code>flutter test</code> 10/10 통과 — 좌표 변환 7개(경계, 필드 밖, 45칸 왕복), 실제 탭 경로 2개(4:3 레터박스에서 탭 → 칸), 카메라 1개</li>
+    <li>브라우저에서 세 비율 모두 클릭한 칸이 정확히 선택됐고 콘솔 에러는 없었다</li>
+  </ul>
+</main>
+</body>
+</html>
