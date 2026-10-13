@@ -51,3 +51,6 @@ art/rejected/
 art/render/
 art/blend/
 art/parts/
+
+# 판 그림 (panel_shots_test, 확인용)
+test/shots/

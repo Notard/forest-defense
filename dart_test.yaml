@@ -1,0 +1,6 @@
+# 태그 설정 (12-1단계)
+tags:
+  # 가운데 판을 진짜 폰트로 그려 그림으로 남기는 테스트. 기본 실행에서는 빠진다.
+  #   flutter test --run-skipped --tags shots --update-goldens test/panel_shots_test.dart
+  shots:
+    skip: "그림 남기기용 (--run-skipped --tags shots --update-goldens)"

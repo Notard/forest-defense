@@ -39,41 +39,52 @@ class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
   final Color titleColor;
   final List<PanelButton> buttons;
 
-  Size get _panel => Size(640, 200 + (stars == null ? 0 : 66) + lines.length * 40.0);
   final _dim = Paint()..color = const Color(0x99000000);
 
   late final _PanelBox _box;
 
+  /// 판 크기와 줄 위치. 위에서부터 차례로 쌓는다: 제목 → 별 → 글줄 → 버튼.
+  static const double padX = 48, titleY = 66, firstY = 122, starRow = 66, lineGap = 40, buttonGap = 24, bottomPad = 34;
+
+  /// 버튼 줄 위쪽 y (판 안 좌표). 마지막 글줄 아래에 띄운다.
+  double get buttonTop {
+    var y = firstY + (stars == null ? 0 : starRow) + lines.length * lineGap;
+    if (stars != null || lines.isNotEmpty) y += 14;
+    return y;
+  }
+
+  Size get panelSize {
+    final row = buttons.fold<double>(0, (a, b) => a + b.size.x) + (buttons.length - 1) * buttonGap;
+    final widest = lines.fold<double>(0, (a, l) => math.max(a, _line.getLineMetrics(l).width));
+    final w = [640.0, row + 2 * padX, widest + 2 * padX, _title.getLineMetrics(title).width + 2 * padX].reduce(math.max);
+    return Size(w, buttonTop + PanelButton.buttonSize.y + bottomPad);
+  }
+
+  late final _title = _text(64, titleColor);
+  static final _line = _text(28, const Color(0xFFE9D3A6));
+
   @override
   Future<void> onLoad() async {
+    final panel = panelSize;
     _box = _PanelBox(
       position: Vector2(GameConfig.width / 2, GameConfig.height / 2),
-      size: Vector2(_panel.width, _panel.height),
+      size: Vector2(panel.width, panel.height),
     );
-    _box.add(TextComponent(
-      text: title,
-      textRenderer: _text(64, titleColor),
-      anchor: Anchor.center,
-      position: Vector2(_panel.width / 2, 66),
-    ));
-    var y = 122.0;
+    _box.add(TextComponent(text: title, textRenderer: _title, anchor: Anchor.center, position: Vector2(panel.width / 2, titleY)));
+    var y = firstY;
     if (stars != null) {
-      _box.add(StarRow(stars!, position: Vector2(_panel.width / 2, y + 22)));
-      y += 66;
+      _box.add(StarRow(stars!, position: Vector2(panel.width / 2, y + 22)));
+      y += starRow;
     }
     for (final line in lines) {
-      _box.add(TextComponent(
-        text: line,
-        textRenderer: _text(28, const Color(0xFFE9D3A6)),
-        anchor: Anchor.center,
-        position: Vector2(_panel.width / 2, y + 12),
-      ));
-      y += 40;
+      _box.add(TextComponent(text: line, textRenderer: _line, anchor: Anchor.center, position: Vector2(panel.width / 2, y + 12)));
+      y += lineGap;
     }
-    final gap = 24.0, w = PanelButton.buttonSize.x;
-    final total = buttons.length * w + (buttons.length - 1) * gap;
-    for (final (i, b) in buttons.indexed) {
-      b.position = Vector2((_panel.width - total) / 2 + i * (w + gap), _panel.height - 100);
+    final row = buttons.fold<double>(0, (a, b) => a + b.size.x) + (buttons.length - 1) * buttonGap;
+    var x = (panel.width - row) / 2;
+    for (final b in buttons) {
+      b.position = Vector2(x, buttonTop);
+      x += b.size.x + buttonGap;
       _box.add(b);
     }
     _box.add(ScaleEffect.to(Vector2.all(1), EffectController(duration: 0.3, curve: Curves.easeOutBack)));
@@ -110,7 +121,12 @@ class _PanelBox extends PositionComponent {
 
 /// 판 안의 나무 버튼.
 class PanelButton extends PositionComponent with TapCallbacks {
-  PanelButton(this.label, this.onPressed, {double? width}) : super(size: Vector2(width ?? buttonSize.x, buttonSize.y));
+  /// [width]를 주지 않으면 글자 폭에 맞춘다 (최소 [buttonSize].x, 양옆 여백 [labelPad]).
+  PanelButton(this.label, this.onPressed, {double? width}) : super(size: Vector2(width ?? fitWidth(label), buttonSize.y));
+
+  static const double labelPad = 28;
+
+  static double fitWidth(String label) => math.max(buttonSize.x, labelPaint.getLineMetrics(label).width + 2 * labelPad);
 
   static final Vector2 buttonSize = Vector2(180, 70);
 
@@ -121,7 +137,7 @@ class PanelButton extends PositionComponent with TapCallbacks {
     ..color = _ink
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3;
-  late final _label = _text(34, _ink);
+  static final labelPaint = _text(34, _ink);
   bool _down = false;
 
   @override
@@ -129,7 +145,14 @@ class PanelButton extends PositionComponent with TapCallbacks {
     final r = RRect.fromRectAndRadius(size.toRect().translate(0, _down ? 3 : 0), const Radius.circular(16));
     canvas.drawRRect(r, _bg);
     canvas.drawRRect(r.deflate(1.5), _rim);
-    _label.render(canvas, label, Vector2(size.x / 2, size.y / 2 + (_down ? 3 : 0)), anchor: Anchor.center);
+    // 폭을 정해 준 버튼에 글자가 길면 줄여서 넣는다
+    final w = labelPaint.getLineMetrics(label).width;
+    final k = math.min(1.0, (size.x - 2 * 12) / w);
+    canvas.save();
+    canvas.translate(size.x / 2, size.y / 2 + (_down ? 3 : 0));
+    canvas.scale(k);
+    labelPaint.render(canvas, label, Vector2.zero(), anchor: Anchor.center);
+    canvas.restore();
   }
 
   @override
