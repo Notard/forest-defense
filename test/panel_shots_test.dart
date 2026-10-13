@@ -6,9 +6,12 @@ import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/forest_game.dart';
+import 'package:forest_defense/game/hud/title.dart';
 import 'package:forest_defense/game/progress.dart';
 import 'package:forest_defense/game/stages.dart';
 import 'package:forest_defense/game/units.dart';
+import 'package:forest_defense/menu/help_panel.dart';
+import 'package:forest_defense/menu/menu_game.dart';
 
 import 'support.dart';
 
@@ -54,4 +57,30 @@ void main() {
     game.togglePause();
     await shoot(game, tester, 'pause');
   });
+
+  // 도움말 세 쪽 (12-4단계). 1-1·1-2를 깬 진행: 거북이·고슴도치까지 보이고 나머지는 그림자
+  for (final page in HelpPage.values) {
+    GameTester(() => MenuGame(progress: Progress(stars: {'1-1': 3, '1-2': 2}), onPlay: (_) {}, sound: false)).testGameWidget(
+      '도움말 ${page.name}',
+      verify: (game, tester) async {
+        Future<void> waitFor(bool Function() done) async {
+          for (var i = 0; i < 400 && !done(); i++) {
+            await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+            await tester.pump();
+          }
+        }
+
+        await waitFor(() => game.world.children.whereType<TitleScreen>().any((t) => t.children.length > 3));
+        game.openHelp();
+        await waitFor(() => game.world.children.whereType<HelpPanel>().any((p) => p.isMounted));
+        final panel = game.world.children.whereType<HelpPanel>().single;
+        await tester.runAsync(() => panel.show(page));
+        for (var i = 0; i < 40; i++) {
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+          await tester.pump(const Duration(milliseconds: 20));
+        }
+        await expectLater(find.byType(GameWidget<MenuGame>), matchesGoldenFile('shots/help_${page.name}.png'));
+      },
+    );
+  }
 }

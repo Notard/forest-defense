@@ -17,6 +17,7 @@ import '../game/progress.dart';
 import '../game/sfx.dart';
 import '../game/stages.dart';
 import '../game/strings.dart';
+import 'help_panel.dart';
 import 'shop_screen.dart';
 
 enum MenuPage { title, map, shop }
@@ -49,13 +50,20 @@ class MenuGame extends FlameGame {
     await show(startPage);
   }
 
+  /// 도움말을 띄운다 (이미 떠 있으면 그대로).
+  void openHelp() {
+    if (world.children.whereType<HelpPanel>().isNotEmpty) return;
+    sfx.play(Sfx.place);
+    world.add(HelpPanel(progress: progress, sfx: sfx));
+  }
+
   Future<void> show(MenuPage p) async {
     page = p;
     // 웹은 첫 누름 전 자동 재생을 막는다: 메인 화면에서 막혔다면 '게임 시작'을 누를 때(→ 지도) 다시 시작된다
     music?.play(Track.title);
     world.removeAll(world.children);
     await world.add(switch (p) {
-      MenuPage.title => TitleScreen(onStart: () {
+      MenuPage.title => TitleScreen(onHelp: openHelp, onStart: () {
           sfx.play(Sfx.place);
           show(MenuPage.map);
         }),

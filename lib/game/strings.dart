@@ -1,3 +1,4 @@
+import 'monsters.dart';
 import 'units.dart';
 import 'upgrades.dart';
 
@@ -45,6 +46,49 @@ abstract final class Strings {
         UnitType.owl => '부엉이',
         UnitType.bear => '곰',
       };
+
+  // ── 도움말 (12-4단계) ──
+  static const help = '도움말';
+  static const close = '닫기';
+  static const helpHowTo = '놀이 방법';
+  static const helpFriends = '친구들';
+  static const helpMonsters = '몬스터';
+
+  /// 놀이 방법: (제목, 설명) 여섯 줄. 아이콘 순서는 help_panel.dart와 같다.
+  static const howTo = [
+    ('도토리 모으기', '떨어지는 도토리를 눌러요. 다람쥐도 도토리를 만들어요'),
+    ('친구 놓기', '위 카드를 고르고 잔디 칸을 눌러요. 카드마다 도토리가 들어요'),
+    ('삽', '삽을 고르고 친구를 누르면 치워요. 도토리는 돌아오지 않아요'),
+    ('통나무', '몬스터가 둥지에 닿으면 그 줄 통나무가 굴러가요. 또 닿으면 끝!'),
+    ('별 세 개', '깨면 하나, 통나무를 안 쓰면 하나, 친구를 안 잃으면 하나'),
+    ('솔방울과 강화', '처음 얻는 별마다 솔방울. 지도의 강화 상점에서 친구를 세게'),
+  ];
+
+  /// 친구 능력 한 줄.
+  static String unitAbility(UnitType t) => switch (t) {
+        UnitType.squirrel => '도토리를 만들어요',
+        UnitType.fox => '여우불을 쏴요',
+        UnitType.turtle => '튼튼하게 막아요',
+        UnitType.skunk => '펑! 둘레 한꺼번에',
+        UnitType.hedgehog => '깨물면 가시로 콕',
+        UnitType.owl => '줄 전체를 느리게',
+        UnitType.bear => '앞 칸을 내려쳐요',
+      };
+
+  static String monsterName(MonsterType m) => switch (m) {
+        MonsterType.slime => '슬라임',
+        MonsterType.helmetSlime => '투구 슬라임',
+        MonsterType.wisp => '도깨비불',
+      };
+
+  static String monsterAbility(MonsterType m) => switch (m) {
+        MonsterType.slime => '느릿느릿 다가와요',
+        MonsterType.helmetSlime => '투구가 먼저 막아요',
+        MonsterType.wisp => '빠르게 둥실 와요',
+      };
+
+  static const unknown = '???';
+  static String meetAt(String stageId) => '$stageId에서 만나요';
 
   // ── 강화 상점 (12단계) ──
   static String upgradeName(Upgrade u) => u.unit == null ? '시작 도토리' : unitName(u.unit!);
