@@ -47,3 +47,4 @@ app.*.map.json
 # 작업 로그
 logs/*.log
 .claude/settings.local.json
+art/rejected/

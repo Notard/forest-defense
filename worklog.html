@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 11:52</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-13 11:59</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -440,7 +440,38 @@ article td img{margin:0 auto}
 <td>Codex가 프레임마다 모양을 다르게 그릴 위험이 있어 먼저 확인한다. 안 되면 컷아웃(부위별 코드 움직임)으로 바꾼다</td>
 </tr>
 </tbody>
-</table></article>
+</table>
+<h3>3-a. 여우 기준 그림 (2026-10-13)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>도구</td>
+<td><code>tools/art_prompts.json</code>(공통 스타일·배경·캐릭터 7종 설명·여우 동작 4개), <code>tools/gen_art.py</code>(<code>ref</code>/<code>action</code> 하위 명령)</td>
+</tr>
+<tr>
+<td>결과</td>
+<td><code>art/ref/fox.png</code> 1254 × 1254, 투명 배경. 흰 털·크림색 가슴·분홍 귀 안쪽·연회색 귀 끝·갈색 외곽선, 오른쪽을 보고 앞발 위에 여우불</td>
+</tr>
+<tr>
+<td>게임 크기 확인</td>
+<td>잔디 칸(100 × 110) 위에 높이 90·100·108·116px로 놓아 봄 → <code>preview/03_fox_ref_ingame.png</code>. <strong>96~100px</strong>가 알맞다 (그보다 크면 꼬리·여우불이 칸 가장자리에 닿음)</td>
+</tr>
+<tr>
+<td>소요 시간</td>
+<td>생성 1회 약 1분 20초</td>
+</tr>
+</tbody>
+</table>
+<p><strong>발생한 문제와 해결</strong>
+1. <strong>Codex 기본 모델(<code>gpt-6.1-sol</code>)이 ChatGPT 계정 로그인에서 지원되지 않아</strong> 바로 실패했다. 사용자 설정(<code>~/.codex/config.toml</code>)은 건드리지 않고, 지난 아이콘 작업에서 쓴 <code>gpt-5.6-sol</code>을 <code>gen_art.py</code>에서 <code>-m</code>으로 지정했다 (환경 변수 <code>CODEX_MODEL</code>로 바꿀 수 있음)
+2. <strong>첫 결과가 사실적인 붉은 여우였다</strong> (<code>art/rejected/</code>에 보관, git 제외). 로그를 보니 Codex가 "art brief가 없다"며 파일 이름만 보고 그렸다. Windows의 <code>codex</code>는 <code>.cmd</code> 배치 파일이라 <strong>여러 줄 인자가 첫 줄에서 잘린다.</strong> 프롬프트를 표준 입력(<code>codex exec ... -</code>)으로 넘기도록 고치자 브리프 전체가 전달됐다
+3. 투명 배경은 실제 알파로 나왔지만 두 가지가 지저분했다: 몸통이 불투명 100%가 아니라 <strong>94~99%</strong>(잔디 위에서 살짝 비침), 눈에 안 보이는 <strong>알파 1~15 점 1만 7천 개</strong>가 퍼져 있어 경계 상자가 그림 전체였다. <code>prep_sprites.py</code>에서 알파 16 미만 → 0, 200 이상 → 255로 정리하기로 했다 (위 확인 그림은 이 정리를 적용한 것)</p></article>
 </div>
 </body>
 </html>

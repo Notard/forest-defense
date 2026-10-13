@@ -4,7 +4,7 @@
 > 체크 후 `python tools/make_todo_html.py` 실행 → 진행률 갱신 + [todo.html](todo.html) 재생성.
 > 작업별 상세 결과: [WORKLOG.md](WORKLOG.md)
 
-**진행률: 26 / 93**
+**진행률: 28 / 93**
 
 ---
 
@@ -45,8 +45,8 @@
 ## 3. 아트와 애니메이션 (Codex 생성, Spriteflow 방식)
 - [x] 연출 기준 정하기: Spriteflow 방식 참고, 서비스는 쓰지 않음, 동작은 피격·쓰러짐까지 전부 (사용자)
 - [x] 계획 다시 쓰기: 동작표(시트 25장 + 효과 5장), 12fps, 만드는 흐름 → [plan.md](plan.md) 3단계
-- [ ] `tools/art_prompts.json`: 공통 스타일, 캐릭터 설명, 동작 설명, 프레임 수
-- [ ] `tools/gen_art.sh`: 기준 그림 / 동작 격자 생성 (`codex exec -i`)
+- [x] `tools/art_prompts.json`: 공통 스타일, 캐릭터 설명, 동작 설명, 프레임 수
+- [x] `tools/gen_art.py`: 기준 그림 / 동작 격자 생성 (`codex exec -i`, 프롬프트는 표준 입력)
 - [ ] `tools/prep_sprites.py`: 격자 자르기 → 여백 정리 → 발 위치 맞추기 → 가로 시트 + JSON
 - [ ] `tools/make_art_preview.py` → [art_preview.html](art_preview.html) (시트 12fps 재생)
 - [ ] 시범: 여우 기준 그림 → 사용자 승인

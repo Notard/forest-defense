@@ -1,0 +1,51 @@
+{
+  "_설명": "tools/gen_art.py가 읽는 프롬프트 모음. 영어 프롬프트가 이미지 모델에서 더 안정적이라 프롬프트는 영어, 설명은 한국어로 쓴다. 바꾸면 WORKLOG에 이유를 남긴다.",
+  "style": "Cute 2D cartoon game sprite for a cozy forest lane-defense game. Chibi proportions (big head, small body), thick dark-brown outline (#4A3220) of even width, soft two-tone cel shading, bright warm forest palette, clean flat colors, no texture noise, no text, no ground shadow, no background scenery.",
+  "background": "Fully transparent background (PNG with alpha). If transparency is impossible, use a perfectly flat solid magenta #FF00FF background with no gradient, no vignette and no shadow.",
+  "frame_size": 256,
+  "characters": {
+    "fox": {
+      "name": "여우",
+      "facing": "right",
+      "description": "A white fox, the hero shooter of the forest. Sitting upright in side 3/4 view facing RIGHT. Pure white fur with light-gray shading, cream-colored chest, cheeks and muzzle, pink inner ears, light-gray ear tips, a big fluffy white tail curling behind with a cream tip, shiny black eyes with a white highlight, small black nose, gentle confident smile. Front paws slightly raised, ready to toss a small warm orange-gold fox-fire flame."
+    },
+    "squirrel": {
+      "name": "다람쥐",
+      "facing": "right",
+      "description": "A chubby orange-brown squirrel with a cream belly and a big curly tail, hugging a shiny acorn, side 3/4 view facing RIGHT."
+    },
+    "turtle": {
+      "name": "거북이",
+      "facing": "right",
+      "description": "A sturdy green turtle with a big domed moss-green shell with honeycomb plates, determined eyes, side 3/4 view facing RIGHT, bracing to block."
+    },
+    "skunk": {
+      "name": "스컨크",
+      "facing": "right",
+      "description": "A black-and-white skunk with a huge raised striped tail and a mischievous grin, side 3/4 view facing RIGHT."
+    },
+    "slime": {
+      "name": "슬라임",
+      "facing": "left",
+      "description": "A round jelly-green slime blob with a glossy highlight, two big dot eyes and a small hungry mouth, side 3/4 view facing LEFT."
+    },
+    "slime_helmet": {
+      "name": "투구 슬라임",
+      "facing": "left",
+      "description": "The same jelly-green slime blob wearing an oversized brown acorn-cap as a helmet, side 3/4 view facing LEFT."
+    },
+    "wisp": {
+      "name": "도깨비불",
+      "facing": "left",
+      "description": "A small floating purple will-o'-the-wisp spirit, teardrop-shaped flame body with a wispy tail, two cute eyes, side 3/4 view facing LEFT."
+    }
+  },
+  "actions": {
+    "fox": {
+      "idle": {"frames": 8, "fps": 12, "loop": true, "prompt": "Idle breathing loop: body gently rises and falls, tail sways slowly, one ear twitches once. Frame 8 must flow back into frame 1."},
+      "attack": {"frames": 8, "fps": 12, "loop": false, "event": 5, "prompt": "Throw attack: crouch back to anticipate (frames 1-3), lunge forward with front paws flinging a small orange-gold fox-fire flame to the RIGHT (frame 5 is the release, the flame just leaving the paws), then settle back to the idle pose (frames 6-8)."},
+      "hit": {"frames": 4, "fps": 12, "loop": false, "prompt": "Hurt reaction: flinch backward to the LEFT with squinted eyes and flattened ears (frames 1-2), then recover to the idle pose (frames 3-4)."},
+      "death": {"frames": 8, "fps": 10, "loop": false, "prompt": "Defeat: wobble, dizzy swirl eyes, slowly tip over onto its side and lie still with the tail flopping down. No blood, cute and gentle."}
+    }
+  }
+}

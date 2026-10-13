@@ -143,8 +143,8 @@ y   0 ┌───────────────────────�
 ### 3-4. 만드는 흐름 (`tools/`)
 
 ```
-gen_art.sh 기준 fox             →  art/ref/fox.png             (기준 그림, 사용자 승인)
-gen_art.sh 동작 fox attack      →  art/raw/fox_attack.png      (한 장에 8프레임 격자)
+gen_art.py ref fox              →  art/ref/fox.png             (기준 그림, 사용자 승인)
+gen_art.py action fox attack    →  art/raw/fox_attack.png      (한 장에 8프레임 격자)
 prep_sprites.py fox_attack      →  assets/images/fox_attack.png + fox_attack.json
                                    (격자 자르기 → 투명 여백 정리 → 발 위치 맞추기 → 가로 시트)
 make_art_preview.py             →  art_preview.html            (모든 시트 재생)
