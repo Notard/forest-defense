@@ -172,6 +172,17 @@
       ],
       "ref": "art/ref/props/acorn.png",
       "prompt": "A single cute cartoon pinecone, the reward currency earned by clearing stages. Plump rounded cone with overlapping warm brown scales whose tips are lighter tan, a tiny green needle sprig on top, bright glossy highlight, slightly tilted, centered. A small soft sparkle star near the top. Same art style, outline and lighting as the reference acorn. Readable at 48px."
+    },
+    "icon": {
+      "size": [
+        1024,
+        1024
+      ],
+      "opaque": true,
+      "square": true,
+      "app_icon": true,
+      "ref": "art/ref/fox.png",
+      "prompt": "APP ICON for the game \"Forest Keepers\" (Korean: 숲 지키기), a cozy cartoon lane-defense game where forest animals protect their tree home from cute slimes. This is an app icon, so IGNORE the 'no background scenery' rule above: fill the WHOLE square edge to edge with a background, no transparency, no rounded corners, no border, no frame, no text, no letters. Subject: the attached fox character (the game's mascot - keep its exact design: white fur, fluffy tail, the small flame it holds) shown from the chest up, big and friendly, looking at the viewer with a confident smile, hugging one big shiny acorn in front of its chest. Background: a soft glowing forest-green radial gradient (lighter green behind the fox, deeper green #2E5A2A at the edges) with a few simple round leaves and one or two tiny green slimes peeking from the lower corners, kept simple. Composition: keep the fox head and the acorn inside the central 70% of the square (the corners may be cut off by round masks). Bold, simple shapes that stay readable at 48x48 pixels. Same art style as the attached image: thick dark-brown outline, soft cel shading, bright warm palette."
     }
   }
 }

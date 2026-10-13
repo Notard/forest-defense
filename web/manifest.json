@@ -1,12 +1,12 @@
 {
-    "name": "forest_defense",
-    "short_name": "forest_defense",
+    "name": "숲 지키기",
+    "short_name": "숲 지키기",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "숲 지키기 디펜스 - Flutter + Flame lane defense demo",
-    "orientation": "portrait-primary",
+    "background_color": "#1F3A1A",
+    "theme_color": "#1F3A1A",
+    "description": "숲속 친구들과 함께 둥지를 지키는 귀여운 레인 디펜스 게임",
+    "orientation": "landscape",
     "prefer_related_applications": false,
     "icons": [
         {

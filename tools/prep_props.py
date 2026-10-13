@@ -65,8 +65,8 @@ def main() -> None:
     props = json.loads((ROOT / "tools" / "art_prompts.json").read_text(encoding="utf-8"))["props"]
     OUT.mkdir(parents=True, exist_ok=True)
     for name, spec in props.items():
-        if name.startswith("_"):
-            continue
+        if name.startswith("_") or spec.get("app_icon"):
+            continue  # 앱 아이콘은 tools/make_icons.py가 플랫폼별로 만든다
         src = ROOT / "art" / "ref" / "props" / f"{name}.png"
         if not src.exists():
             print(f"{name}: 원본 없음 (gen_art.py prop {name})")

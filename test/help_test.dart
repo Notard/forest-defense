@@ -72,8 +72,13 @@ void main() {
     expect(page.entries, hasLength(UnitType.values.length));
   });
 
-  test('몬스터 쪽: 몬스터 종류마다 한 장', () {
-    expect(CardPage.monsters().entries, hasLength(MonsterType.values.length));
+  test('몬스터 쪽: 몬스터 종류마다 한 장, 같은 그림을 쓰는 작은 버섯은 작게 (사용자 제보: 둘이 똑같아 보였다)', () {
+    final entries = CardPage.monsters().entries;
+    expect(entries, hasLength(MonsterType.values.length));
+    final big = entries[MonsterType.mushroom.index], small = entries[MonsterType.miniMushroom.index];
+    expect(big.scale, 1);
+    expect(small.scale, closeTo(MonsterType.miniMushroom.displayHeight / MonsterType.mushroom.displayHeight, 1e-9));
+    expect(entries[MonsterType.bossSlime.index].scale, 1);
   });
 
   test('글이 판·카드 안에 들어간다 (테스트 글꼴은 Gaegu보다 넓어 넉넉한 기준)', () {

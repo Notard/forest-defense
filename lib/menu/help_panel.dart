@@ -214,9 +214,17 @@ class CardPage extends PositionComponent with HasGameReference<FlameGame> {
     ]);
   }
 
+  /// 같은 그림을 쓰는 몬스터(버섯 포자·작은 버섯)는 게임 속 키 비율대로 그려서 크기 차이가 보이게 한다.
   factory CardPage.monsters() => CardPage._([
         for (final m in MonsterType.values)
-          HelpEntry(sheet: m.sheet, action: 'walk', name: Strings.monsterName(m), line: Strings.monsterAbility(m)),
+          HelpEntry(
+            sheet: m.sheet,
+            action: 'walk',
+            name: Strings.monsterName(m),
+            line: Strings.monsterAbility(m),
+            scale: m.displayHeight /
+                MonsterType.values.where((o) => o.sheet == m.sheet).map((o) => o.displayHeight).reduce(math.max),
+          ),
       ]);
 
   final List<HelpEntry> entries;
@@ -242,7 +250,7 @@ class CardPage extends PositionComponent with HasGameReference<FlameGame> {
 }
 
 class HelpEntry {
-  const HelpEntry({required this.sheet, required this.action, required this.name, required this.line, this.cost, this.hidden = false});
+  const HelpEntry({required this.sheet, required this.action, required this.name, required this.line, this.cost, this.hidden = false, this.scale = 1});
 
   final String sheet, action, name, line;
 
@@ -251,6 +259,9 @@ class HelpEntry {
 
   /// 아직 못 만난 친구: 그림을 그림자로.
   final bool hidden;
+
+  /// 그림 칸 안 크기 비율 (1이면 칸에 꽉, 작은 버섯은 버섯 포자보다 작게).
+  final double scale;
 }
 
 class HelpCard extends PositionComponent {
@@ -281,7 +292,9 @@ class HelpCard extends PositionComponent {
     canvas.drawRRect(r.deflate(1.5), _rim);
     final picture = _portrait;
     if (picture != null) {
-      drawFitted(canvas, picture, Rect.fromLTWH(20, 10, size.x - 40, 88), paint: entry.hidden ? _shadow : null, bottom: true);
+      final box = Rect.fromLTWH(20, 10, size.x - 40, 88);
+      final h = box.height * entry.scale;
+      drawFitted(canvas, picture, Rect.fromLTWH(box.left, box.bottom - h, box.width, h), paint: entry.hidden ? _shadow : null, bottom: true);
     }
     namePaint.render(canvas, entry.name, Vector2(size.x / 2, 120), anchor: Anchor.center);
     linePaint.render(canvas, entry.line, Vector2(size.x / 2, 156), anchor: Anchor.center);
