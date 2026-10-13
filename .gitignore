@@ -48,3 +48,6 @@ app.*.map.json
 logs/*.log
 .claude/settings.local.json
 art/rejected/
+art/render/
+art/blend/
+art/parts/

@@ -1,0 +1,38 @@
+{
+  "character": "fox",
+  "anchor": [
+    186.9,
+    303.2
+  ],
+  "actions": {
+    "idle": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "attack": {
+      "frames": 8,
+      "fps": 12,
+      "loop": false,
+      "event": 5
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    259.4,
+    212.2
+  ],
+  "frame": [
+    320,
+    320
+  ]
+}
