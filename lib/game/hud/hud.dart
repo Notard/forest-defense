@@ -29,6 +29,11 @@ TextPaint _text(double size, {Color color = _cream}) => TextPaint(
       ),
     );
 
+/// 밝은 바탕(말풍선) 위 글자: 그림자 없이.
+TextPaint _plain(double size, Color color) => TextPaint(
+      style: TextStyle(fontFamily: GameConfig.fontFamily, fontWeight: FontWeight.w700, fontSize: size, color: color),
+    );
+
 /// 화면 위·아래 HUD 전체. 월드 위에 가장 높은 우선순위로 그린다.
 class Hud extends PositionComponent with HasGameReference<ForestGame> {
   Hud() : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 1000);
@@ -44,6 +49,9 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
 
   /// 첫 웨이브까지 줄어드는 막대 (14-2단계). 웨이브가 시작되면 사라진다.
   FirstWaveCountdown? firstWave;
+
+  /// 새로 열린 친구 카드 아래 말풍선 (14단계).
+  NewFriendHint? newFriendHint;
   late final List<UnitCard> cards;
   late final ShovelButton shovel;
 
@@ -68,6 +76,9 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
       hearts,
       if (game.wavesOn) firstWave = FirstWaveCountdown(),
     ]);
+    // 새로 열린 친구가 있으면 그 카드 아래 말풍선 (여럿이면 앞 카드 하나만)
+    final fresh = cards.where((c) => game.isNewUnit(c.type)).firstOrNull;
+    if (fresh != null) await add(newFriendHint = NewFriendHint(fresh));
   }
 
   final _waveLabel = TextComponent(
@@ -178,6 +189,12 @@ class UnitCard extends PositionComponent with TapCallbacks, HasGameReference<For
   final _cost = _text(26, color: _ink);
   final _shade = Paint()..color = const Color(0x8C1E140A);
   final _dim = Paint()..color = const Color(0x661E140A);
+  static final _newTag = Paint()..color = const Color(0xFFE8505B);
+  static final _newTagRim = Paint()
+    ..color = const Color(0xFFFFF4DC)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+  static final _newText = _text(18);
 
   bool get selected => game.selectedUnit == type;
 
@@ -203,6 +220,13 @@ class UnitCard extends PositionComponent with TapCallbacks, HasGameReference<For
     final w = _portrait.srcSize.x * s, h = _portrait.srcSize.y * s;
     _portrait.render(canvas, position: Vector2(box.center.dx - w / 2, box.bottom - h), size: Vector2(w, h));
     _cost.render(canvas, '${type.cost}', Vector2(size.x / 2, size.y - 14), anchor: Anchor.center);
+    if (game.isNewUnit(type)) {
+      // 오른쪽 위 "새로!" 꼬리표 (처음 놓을 때까지, 14단계)
+      final tag = RRect.fromRectAndRadius(Rect.fromLTWH(size.x - 46, -8, 52, 24), const Radius.circular(12));
+      canvas.drawRRect(tag, _newTag);
+      canvas.drawRRect(tag, _newTagRim);
+      _newText.render(canvas, Strings.newTag, Vector2(tag.center.dx, tag.center.dy), anchor: Anchor.center);
+    }
 
     final g = game.garden;
     if (!g.canAfford(type)) {
@@ -445,7 +469,12 @@ class FirstWaveCountdown extends PositionComponent with HasGameReference<ForestG
   void update(double dt) {
     super.update(dt);
     final d = game.waveRunner?.director;
-    if (d == null || _leaving) return;
+    if (d == null) return;
+    if (_leaving) {
+      // 첫 몬스터가 처음 보는 몬스터라 소개 창으로 멈추면 접는 효과가 돌지 않는다 → 바로 뗀다 (14단계)
+      if (game.frozen) removeFromParent();
+      return;
+    }
     if (!d.beforeFirstWave) {
       _leaving = true;
       add(SequenceEffect([
@@ -479,6 +508,64 @@ class FirstWaveCountdown extends PositionComponent with HasGameReference<ForestG
           _shown <= hurry ? _hurry : _calm);
     }
     canvas.drawRRect(RRect.fromRectAndRadius(bar, const Radius.circular(10)), _rim);
+  }
+}
+
+/// 새로 열린 친구 카드 아래 말풍선 (14단계): "새 친구 까치!" + 놓는 요령.
+/// 카운트다운 동안 보이고, 판이 시작된 뒤 [life]초가 지나거나 그 친구를 처음 놓으면 사라진다.
+class NewFriendHint extends PositionComponent with HasGameReference<ForestGame> {
+  NewFriendHint(this.card) : super(anchor: Anchor.topCenter);
+
+  final UnitCard card;
+  static const double life = 9, _padX = 18, _padY = 10, _lineGap = 6, _tail = 12;
+  static final _head = _plain(26, const Color(0xFF4A3220));
+  static final _body = _plain(22, const Color(0xFF6B4A2E));
+  final _bg = Paint()..color = const Color(0xFFFFF4DC);
+  final _rim = Paint()
+    ..color = const Color(0xFF4A3220)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 3;
+  late final String head = Strings.newFriendHint(card.type);
+  late final String body = Strings.unitTip(card.type);
+  double _age = 0;
+
+  /// 말풍선 꼬리 끝 x (말풍선 안 좌표). 화면 끝에 닿아 말풍선이 밀려도 꼬리는 카드를 가리킨다.
+  double _tailX = 0;
+
+  @override
+  Future<void> onLoad() async {
+    final w = max(_head.getLineMetrics(head).width, _body.getLineMetrics(body).width) + 2 * _padX;
+    final h = _head.getLineMetrics(head).height + _lineGap + _body.getLineMetrics(body).height + 2 * _padY;
+    size = Vector2(w, h + _tail);
+    final cx = card.position.x + card.size.x / 2;
+    final x = cx.clamp(w / 2 + 8, GameConfig.width - w / 2 - 8);
+    position = Vector2(x, card.position.y + card.size.y + 6);
+    _tailX = w / 2 + (cx - x);
+  }
+
+  @override
+  void update(double dt) {
+    _age += dt;
+    if (_age > life || !game.isNewUnit(card.type)) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final body = RRect.fromRectAndRadius(Rect.fromLTWH(0, _tail, size.x, size.y - _tail), const Radius.circular(16));
+    final tail = Path()
+      ..moveTo(_tailX - 12, _tail + 2)
+      ..lineTo(_tailX, 0)
+      ..lineTo(_tailX + 12, _tail + 2)
+      ..close();
+    canvas.drawPath(tail, _bg);
+    canvas.drawPath(tail, _rim);
+    canvas.drawRRect(body, _bg);
+    canvas.drawRRect(body, _rim);
+    // 꼬리와 몸이 이어져 보이게 꼬리 밑동의 테두리를 덮는다
+    canvas.drawRect(Rect.fromLTWH(_tailX - 10, _tail - 1, 20, 5), _bg);
+    final headH = _head.getLineMetrics(head).height;
+    _head.render(canvas, head, Vector2(_padX, _tail + _padY));
+    _body.render(canvas, this.body, Vector2(_padX, _tail + _padY + headH + _lineGap));
   }
 }
 

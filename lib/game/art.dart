@@ -54,6 +54,18 @@ class CharacterArt {
     );
   }
 
+  /// [action]을 계속 되풀이하는 그림. 발이 [foot]에 오고 키가 [height] (메인 화면·소개 창).
+  SpriteAnimationComponent actor(String action, {required double height, required Vector2 foot}) {
+    final s = scaleForHeight(height);
+    final anim = animation(action);
+    return SpriteAnimationComponent(
+      animation: loops(action) ? anim : (anim.clone()..loop = true),
+      size: frameSize * s,
+      anchor: Anchor(anchor.x / frameSize.x, anchor.y / frameSize.y),
+      position: foot,
+    );
+  }
+
   /// 첫 동작 첫 프레임 (카드 초상화, 놓기 전 미리보기).
   Sprite firstFrame(String action) =>
       Sprite(_images[action]!, srcPosition: Vector2.zero(), srcSize: frameSize);
@@ -62,7 +74,11 @@ class CharacterArt {
 
   /// `assets/images/<name>/`을 읽는다. 같은 캐릭터는 한 번만 읽는다.
   static Future<CharacterArt> load(FlameGame game, String name) =>
-      _cache.putIfAbsent(name, () => _load(game, name));
+      _cache.putIfAbsent(name, () => _load(game, name).then((art) => _loaded[name] = art));
+
+  /// 다 읽은 그림 (아직이면 null). 기다릴 수 없는 곳(결과 판·소개 창)에서 쓴다.
+  static CharacterArt? loaded(String name) => _loaded[name];
+  static final Map<String, CharacterArt> _loaded = {};
 
   static Future<CharacterArt> _load(FlameGame game, String name) async {
     final json = await game.assets.readJson('images/$name/$name.json');
@@ -87,5 +103,8 @@ class CharacterArt {
   }
 
   /// 테스트에서 게임을 새로 만들 때 이전 게임의 그림 캐시를 비운다.
-  static void clearCache() => _cache.clear();
+  static void clearCache() {
+    _cache.clear();
+    _loaded.clear();
+  }
 }

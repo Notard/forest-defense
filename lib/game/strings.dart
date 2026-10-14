@@ -53,7 +53,41 @@ abstract final class Strings {
   static String pineconesGained(int n) => '솔방울 +$n';
   static String pinecones(int n) => '솔방울 $n';
   static String totalStars(int n, int max) => '별 $n / $max';
-  static String newFriend(UnitType t) => '새 친구: ${unitName(t)}!';
+  static String newFriend(UnitType t) => '새 친구 ${unitName(t)}: ${unitAbility(t)}';
+
+  // ── 새 친구·처음 보는 몬스터 안내 (14단계) ──
+  /// 새로 열린 카드에 붙는 꼬리표 (처음 놓을 때까지).
+  static const newTag = '새로!';
+  static String newFriendHint(UnitType t) => '새 친구 ${unitName(t)}!';
+
+  /// 처음 보는 몬스터가 나오면 잠깐 멈추고 띄우는 창.
+  static const meetTitle = '처음 보는 몬스터!';
+  static const gotIt = '알겠어요!';
+  static String meetLine(MonsterType m) => '${monsterName(m)}: ${monsterAbility(m)}';
+
+  /// 처음 놓을 때 쓰는 요령 (카드 아래 말풍선).
+  static String unitTip(UnitType t) => switch (t) {
+        UnitType.squirrel => '첫 칸에 놓으면 도토리가 쑥쑥',
+        UnitType.fox => '몬스터가 오는 줄에 놓아요',
+        UnitType.turtle => '앞쪽에 놓아 몬스터를 막아요',
+        UnitType.skunk => '몬스터 바로 앞 칸에 놓으면 펑!',
+        UnitType.hedgehog => '앞쪽에 놓으면 깨문 몬스터가 따끔',
+        UnitType.owl => '박쥐나 골렘이 오는 줄에 놓아요',
+        UnitType.bear => '앞쪽에 놓아 다가온 몬스터를 쾅!',
+        UnitType.magpie => '첫 칸에 놓으면 위아래 줄 도토리까지',
+      };
+
+  /// 처음 보는 몬스터를 막는 요령.
+  static String monsterTip(MonsterType m) => switch (m) {
+        MonsterType.slime => '여우를 같은 줄에 놓아 막아요',
+        MonsterType.helmetSlime => '투구가 깨질 때까지 여러 번 맞혀요',
+        MonsterType.wisp => '빠르니까 여우를 미리 놓아 두어요',
+        MonsterType.golem => '여우를 여럿 모으고 레벨업해요',
+        MonsterType.bat => '뒤 칸에도 여우를 놓아 두어요',
+        MonsterType.mushroom => '작은 버섯은 빨라요. 뒤에도 여우를!',
+        MonsterType.miniMushroom => '작지만 빨라요. 뒤에도 여우를!',
+        MonsterType.bossSlime => '여우를 레벨업하고 줄마다 모아요',
+      };
 
   static String unitName(UnitType t) => switch (t) {
         UnitType.squirrel => '다람쥐',

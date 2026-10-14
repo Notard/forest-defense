@@ -23,6 +23,7 @@ void main() {
 ///   ?intro=0      카운트다운 없이 바로 시작
 ///   ?stage=1-3    그 스테이지 (없으면 예전 데모 한 판). 이때는 모든 유닛을 쓸 수 있다
 ///   ?enemy=golem,bat  연습 상대 종류 (?practice=1과 함께, MonsterType 이름)
+///   ?fresh=1      처음 하는 사람처럼: 몬스터 소개 창·"새로!" 꼬리표가 나온다 (저장하지 않음)
 class ForestApp extends StatefulWidget {
   const ForestApp({super.key});
 
@@ -85,6 +86,10 @@ class _ForestAppState extends State<ForestApp> {
       music: _music,
       muted: !p.soundOn,
       onSettings: _saveSettings,
+      // 처음 보는 몬스터 소개·새 친구 안내 (14단계). 확인용 판은 `?fresh=1`일 때만 (저장하지 않는 빈 기록으로)
+      seenMonsters: dev ? (_query['fresh'] == '1' ? <MonsterType>{} : null) : p.seenMonsters,
+      usedUnits: dev ? (_query['fresh'] == '1' ? {...Progress.startUnits} : null) : p.usedUnits,
+      onLearned: dev ? null : p.save,
       onFinish: stage == demoStage
           ? null
           : ({required won, required lostHeart, required lostUnit}) {

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'monsters.dart';
 import 'stages.dart';
 import 'units.dart';
 import 'upgrades.dart';
@@ -23,9 +24,18 @@ class Reward {
 
 /// 진행: 스테이지별 최고 별, 솔방울, 강화 단계. 기기에 저장한다 (plan.md 확장).
 class Progress {
-  Progress({Map<String, int>? stars, this.pinecones = 0, Map<String, int>? upgrades, this.soundOn = true, this.musicOn = true})
-      : stars = stars ?? {},
-        upgrades = upgrades ?? {};
+  Progress({
+    Map<String, int>? stars,
+    this.pinecones = 0,
+    Map<String, int>? upgrades,
+    this.soundOn = true,
+    this.musicOn = true,
+    Set<MonsterType>? seenMonsters,
+    Set<UnitType>? usedUnits,
+  })  : stars = stars ?? {},
+        upgrades = upgrades ?? {},
+        seenMonsters = seenMonsters ?? {},
+        usedUnits = usedUnits ?? {...startUnits};
 
   static const _key = 'forest_progress_v1';
 
@@ -39,6 +49,12 @@ class Progress {
   /// 효과음·배경음악 켜기 (12-3단계). 판을 다시 시작해도 그대로.
   bool soundOn;
   bool musicOn;
+
+  /// 이미 소개한 몬스터 (14단계). 처음 나오면 판이 잠깐 멈추고 소개 창이 뜬다.
+  final Set<MonsterType> seenMonsters;
+
+  /// 한 번이라도 놓아 본 친구 (14단계). 열렸는데 아직 안 놓아 본 카드에는 "새로!"가 붙는다.
+  final Set<UnitType> usedUnits;
 
   int levelOf(Upgrade u) => upgrades[u.name] ?? 0;
 
@@ -96,16 +112,44 @@ class Progress {
     return Reward(stars: earned, newStars: newStars, pinecones: gained, unlocked: firstClear ? s.unlocks : null);
   }
 
-  Map<String, Object> toJson() =>
-      {'stars': stars, 'pinecones': pinecones, 'upgrades': upgrades, 'sound': soundOn, 'music': musicOn};
+  Map<String, Object> toJson() => {
+        'stars': stars,
+        'pinecones': pinecones,
+        'upgrades': upgrades,
+        'sound': soundOn,
+        'music': musicOn,
+        'seen': [for (final m in seenMonsters) m.name],
+        'used': [for (final u in usedUnits) u.name],
+      };
 
-  factory Progress.fromJson(Map<String, dynamic> j) => Progress(
-        stars: (j['stars'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
-        pinecones: (j['pinecones'] as num? ?? 0).toInt(),
-        upgrades: (j['upgrades'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
-        soundOn: j['sound'] as bool? ?? true,
-        musicOn: j['music'] as bool? ?? true,
-      );
+  /// 14단계 전 저장에는 'seen'·'used'가 없다: 깬 스테이지의 몬스터는 본 것으로, 열린 친구는 써 본 것으로 친다
+  /// (이미 하던 사람에게 아는 몬스터 소개 창·"새로!"가 쏟아지지 않게).
+  factory Progress.fromJson(Map<String, dynamic> j) {
+    final p = Progress(
+      stars: (j['stars'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
+      pinecones: (j['pinecones'] as num? ?? 0).toInt(),
+      upgrades: (j['upgrades'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
+      soundOn: j['sound'] as bool? ?? true,
+      musicOn: j['music'] as bool? ?? true,
+    );
+    final seen = j['seen'] as List?;
+    if (seen != null) {
+      p.seenMonsters.addAll(MonsterType.values.where((m) => seen.contains(m.name)));
+    } else {
+      p.seenMonsters.addAll({
+        for (final s in stages)
+          if (p.cleared(s))
+            for (final w in s.waves) ...w.monsters,
+      });
+      if (p.seenMonsters.contains(MonsterType.mushroom)) p.seenMonsters.add(MonsterType.miniMushroom);
+    }
+    final used = j['used'] as List?;
+    p.usedUnits.addAll(used != null ? UnitType.values.where((u) => used.contains(u.name)) : p.unlockedUnits);
+    return p;
+  }
+
+  /// 열렸지만 아직 한 번도 놓아 보지 않은 친구.
+  bool isNew(UnitType t) => !usedUnits.contains(t);
 
   /// 저장된 진행을 읽는다. 없거나 깨졌으면 새로 시작.
   static Future<Progress> load() async {

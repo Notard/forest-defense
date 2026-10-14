@@ -10,6 +10,7 @@ import 'package:forest_defense/game/components/unit.dart';
 import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/grid.dart';
 import 'package:forest_defense/game/hud/title.dart';
+import 'package:forest_defense/game/monsters.dart';
 import 'package:forest_defense/game/progress.dart';
 import 'package:forest_defense/game/stages.dart';
 import 'package:forest_defense/game/units.dart';
@@ -51,6 +52,20 @@ void main() {
   GameTester(stageGame).testGameWidget('클리어', setUp: waitForLoad, verify: (game, tester) async {
     game.win();
     await shoot(game, tester, 'win');
+  });
+  // 14단계: 처음 보는 몬스터 소개 창 + 새 친구 카드 꼬리표·말풍선
+  GameTester(() => ForestGame(
+        stage: stageById('1-4'),
+        units: [UnitType.squirrel, UnitType.fox, UnitType.turtle, UnitType.hedgehog, UnitType.magpie],
+        nestAcorns: false,
+        waves: false,
+        sound: false,
+        intro: false,
+        seenMonsters: {},
+        usedUnits: {UnitType.squirrel, UnitType.fox, UnitType.turtle},
+      )).testGameWidget('처음 보는 몬스터', setUp: waitForLoad, verify: (game, tester) async {
+    await tester.runAsync(() => game.addMonster(MonsterType.golem, row: 2, x: 1000));
+    await shoot(game, tester, 'meet');
   });
   GameTester(testGame).testGameWidget('게임오버', setUp: waitForLoad, verify: (game, tester) async {
     game.lose();

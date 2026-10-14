@@ -55,7 +55,7 @@ void main() {
         sound: false,
         intro: false,
         onFinish: ({required won, required lostHeart, required lostUnit}) =>
-            const Reward(stars: 3, newStars: 3, pinecones: 30, unlocked: UnitType.hedgehog),
+            const Reward(stars: 3, newStars: 3, pinecones: 30, unlocked: UnitType.turtle),
       )).testGameWidget(
     '클리어 판 (가장 긴 경우)',
     setUp: waitForLoad,
@@ -64,6 +64,12 @@ void main() {
       final panel = await shown(game, tester);
       expect(panel.lines, hasLength(3));
       expect(panel.buttons, hasLength(3));
+      expect(panel.picture, isNotNull, reason: '새 친구 그림 (14단계)');
+      final pic = panel.picture!;
+      final box = panel.children.whereType<PositionComponent>().single;
+      final firstLine = box.children.whereType<TextComponent>().where((t) => t.text == panel.lines.first).single;
+      expect(pic.position.y, lessThanOrEqualTo(firstLine.toRect().top), reason: '그림 발이 글줄 위에 (프레임 아래 빈 곳은 투명)');
+      expect(pic.position.y - 110, greaterThan(box.children.whereType<StarRow>().single.toRect().bottom - 6), reason: '머리가 별을 가리지 않는다');
       checkLayout(panel);
     },
   );

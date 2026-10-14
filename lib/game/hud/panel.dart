@@ -26,7 +26,7 @@ TextPaint _text(double size, Color color) => TextPaint(
 /// 판이 떠 있는 동안 게임 시계는 멈춘다(ForestGame.frozen). 판 자신의 등장 효과는
 /// 멈춘 시계와 상관없이 [update]에서 실제 시간으로 돌린다.
 class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
-  CenterPanel({required this.title, this.lines = const [], this.stars, required this.buttons, this.titleColor = _cream})
+  CenterPanel({required this.title, this.lines = const [], this.stars, required this.buttons, this.titleColor = _cream, this.picture})
       : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 2000);
 
   final String title;
@@ -39,17 +39,20 @@ class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
   final Color titleColor;
   final List<PanelButton> buttons;
 
+  /// 별 아래, 글줄 위에 세우는 그림 (새 친구·처음 보는 몬스터, 14단계). 발이 그림 줄 바닥 가운데에 오게 놓는다.
+  final PositionComponent? picture;
+
   final _dim = Paint()..color = const Color(0x99000000);
 
   late final _PanelBox _box;
 
   /// 판 크기와 줄 위치. 위에서부터 차례로 쌓는다: 제목 → 별 → 글줄 → 버튼.
-  static const double padX = 48, titleY = 66, firstY = 122, starRow = 66, lineGap = 40, buttonGap = 24, bottomPad = 34;
+  static const double padX = 48, titleY = 66, firstY = 122, starRow = 66, pictureRow = 150, lineGap = 40, buttonGap = 24, bottomPad = 34;
 
   /// 버튼 줄 위쪽 y (판 안 좌표). 마지막 글줄 아래에 띄운다.
   double get buttonTop {
-    var y = firstY + (stars == null ? 0 : starRow) + lines.length * lineGap;
-    if (stars != null || lines.isNotEmpty) y += 14;
+    var y = firstY + (stars == null ? 0 : starRow) + (picture == null ? 0 : pictureRow) + lines.length * lineGap;
+    if (stars != null || picture != null || lines.isNotEmpty) y += 14;
     return y;
   }
 
@@ -75,6 +78,11 @@ class CenterPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen {
     if (stars != null) {
       _box.add(StarRow(stars!, position: Vector2(panel.width / 2, y + 22)));
       y += starRow;
+    }
+    final pic = picture;
+    if (pic != null) {
+      _box.add(pic..position = Vector2(panel.width / 2, y + pictureRow - 14));
+      y += pictureRow;
     }
     for (final line in lines) {
       _box.add(TextComponent(text: line, textRenderer: _line, anchor: Anchor.center, position: Vector2(panel.width / 2, y + 12)));

@@ -30,7 +30,8 @@ import 'strings.dart';
 import 'units.dart';
 
 /// 판 상태.
-enum GameState { countdown, playing, paused, won, lost }
+/// [notice]: 처음 보는 몬스터 소개 창이 떠 있어 잠깐 멈춤 (14단계).
+enum GameState { countdown, playing, paused, notice, won, lost }
 
 /// 판이 끝나거나 멈춘 뒤 어디로 갈지 (앱이 정한다, main.dart).
 /// 소리·음악 켜기를 바꿨을 때 (앱이 저장한다).
@@ -66,6 +67,9 @@ class ForestGame extends FlameGame {
     this.music,
     bool muted = false,
     this.onSettings,
+    this.seenMonsters,
+    this.usedUnits,
+    this.onLearned,
   })  : units = units ?? UnitType.values,
         _random = random ?? Random(),
         garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns, cooldownOf: boosts.cooldownOf),
@@ -134,6 +138,21 @@ class ForestGame extends FlameGame {
   /// 시작할 때 카운트다운을 보일지 (테스트·`?intro=0`에서는 바로 시작).
   final bool intro;
 
+  /// 이미 소개한 몬스터 (14단계, 앱의 진행과 같은 집합). null이면 소개하지 않는다 (테스트·확인용 판).
+  final Set<MonsterType>? seenMonsters;
+
+  /// 한 번이라도 놓아 본 친구 (14단계). null이면 "새로!" 꼬리표·말풍선이 없다.
+  final Set<UnitType>? usedUnits;
+
+  /// [seenMonsters]·[usedUnits]가 바뀌었을 때 (앱이 저장한다).
+  final void Function()? onLearned;
+
+  /// 이 카드에 "새로!"를 붙일지: 열렸지만 아직 한 번도 놓아 보지 않은 친구.
+  bool isNewUnit(UnitType t) => usedUnits != null && !usedUnits!.contains(t);
+
+  /// 소개를 기다리는 몬스터 (한꺼번에 둘이 처음 나오면 차례로).
+  final List<MonsterType> _toIntroduce = [];
+
   /// 효과음 (테스트에서는 끈다).
   final SoundBoard sfx;
 
@@ -201,6 +220,9 @@ class ForestGame extends FlameGame {
       MonsterType.slime.sheet,
     };
     await Future.wait([for (final name in sheets) CharacterArt.load(this, name)]);
+    // 이 스테이지를 깨면 열리는 친구도 읽어 둔다: 결과 판에 세운다 (14단계)
+    final unlocks = stage.unlocks;
+    if (unlocks != null) await CharacterArt.load(this, unlocks.sheet);
     await world.addAll([
       LaneBackground(closedLanes: [for (var r = 0; r < GameConfig.rows; r++) if (!laneOpen(r)) r], night: stage.region == Region.night),
       field,
@@ -270,10 +292,14 @@ class ForestGame extends FlameGame {
     sfx.play(Sfx.win);
     final r = _finish(true);
     final hasNext = nextStage(stage) != null && onFinish != null;
+    // 새 친구가 열렸으면 그 친구가 별 아래에서 움직인다 (14단계). 그림은 판 시작 때 읽어 둔 것
+    final friend = r.unlocked;
+    final art = friend == null ? null : CharacterArt.loaded(friend.sheet);
     _showPanel(CenterPanel(
       title: Strings.cleared,
       titleColor: const Color(0xFFFFE066),
       stars: r.stars,
+      picture: art?.actor(friend!.idleAction, height: 110, foot: Vector2.zero()),
       lines: [
         Strings.result(defeated: defeated, hearts: hearts),
         if (r.pinecones > 0) Strings.pineconesGained(r.pinecones),
@@ -304,7 +330,45 @@ class ForestGame extends FlameGame {
       _closePanel();
       state = GameState.playing;
       music?.resume();
+      _introduceNext();
     }
+  }
+
+  // ── 처음 보는 몬스터 소개 (14단계) ──
+  /// 몬스터가 나올 때: 처음 보는 종류면 기억하고 소개 창을 띄운다. 버섯 포자는 작은 버섯까지 함께 소개한다.
+  void _meet(MonsterType t) {
+    final seen = seenMonsters;
+    if (seen == null || seen.contains(t)) return;
+    seen.add(t);
+    if (t == MonsterType.mushroom) seen.add(MonsterType.miniMushroom);
+    onLearned?.call();
+    _toIntroduce.add(t);
+    _introduceNext();
+  }
+
+  /// 다음 소개 창. 몬스터가 이미 나와 있으니 그림은 읽혀 있다.
+  void _introduceNext() {
+    if (state != GameState.playing || _toIntroduce.isEmpty) return;
+    final t = _toIntroduce.removeAt(0);
+    final art = CharacterArt.loaded(t.sheet);
+    if (art == null) return;
+    state = GameState.notice;
+    closeBubble();
+    sfx.play(Sfx.warning);
+    _showPanel(CenterPanel(
+      title: Strings.meetTitle,
+      titleColor: const Color(0xFFFFE066),
+      picture: art.actor('walk', height: min(130, t.displayHeight * 1.3), foot: Vector2.zero()),
+      lines: [Strings.meetLine(t), Strings.monsterTip(t)],
+      buttons: [
+        PanelButton(Strings.gotIt, () {
+          _closePanel();
+          if (state != GameState.notice) return;
+          state = GameState.playing;
+          _introduceNext();
+        }),
+      ],
+    ));
   }
 
   /// 지금 떠 있는(또는 다음 프레임에 붙을) 가운데 판.
@@ -354,6 +418,7 @@ class ForestGame extends FlameGame {
     }
     monsters.add(m);
     await world.add(m);
+    if (moving) _meet(type);
     return m;
   }
 
@@ -445,6 +510,7 @@ class ForestGame extends FlameGame {
     if (garden.place(type, cell) != PlaceResult.placed) return;
     selectedUnit = null;
     sfx.play(Sfx.place);
+    if (usedUnits?.add(type) ?? false) onLearned?.call();
     final unit = UnitComponent(type: type, cell: cell, art: await CharacterArt.load(this, type.sheet), boosts: boosts);
     unitComponents[cell] = unit;
     await world.add(unit);
