@@ -28,6 +28,17 @@ abstract final class Strings {
 
   // ── 메인 화면·카운트다운 ──
   static const subtitle = '숲속 친구들과 함께 둥지를 지켜요';
+
+  // ── 책 소개 (14-3단계) ──
+  /// 메인 화면 아래 띠. Gaegu에 『』가 없어 “ ”를 쓴다.
+  static const bookPromo = '“작고 쓸모 있는 코딩 딴짓” 저자가 만든 게임';
+  static const bookMore = '책 보기';
+  static const bookTitle = '작고 쓸모 있는 코딩 딴짓';
+  static const bookLines = [
+    '코덱스와 시작하는 10분 바이브 코딩 프로젝트 29',
+    '권경열 지음, 한빛미디어',
+    '이 게임을 만든 사람이 쓴 책이에요',
+  ];
   static const start = '게임 시작';
   static const go = '시작!';
   static const toTitle = '처음으로';

@@ -9,6 +9,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
 import '../game/art.dart';
+import '../game/book.dart' as book;
 import '../game/config.dart';
 import '../game/hud/panel.dart';
 import '../game/hud/title.dart';
@@ -24,7 +25,7 @@ enum MenuPage { title, map, shop }
 
 /// 판 밖의 화면: 메인 화면, 숲 지도, 강화 상점 (plan.md 확장). 판은 ForestGame이 따로 그린다.
 class MenuGame extends FlameGame {
-  MenuGame({required this.progress, required this.onPlay, this.startPage = MenuPage.title, bool sound = true, this.music})
+  MenuGame({required this.progress, required this.onPlay, this.startPage = MenuPage.title, bool sound = true, this.music, this.openLink = book.openLink})
       : sfx = SoundBoard(enabled: sound)..muted = !progress.soundOn,
         super(camera: CameraComponent.withFixedResolution(width: GameConfig.width, height: GameConfig.height));
 
@@ -37,6 +38,10 @@ class MenuGame extends FlameGame {
 
   /// 앱 전체의 배경음악. 메뉴 화면은 모두 '숲속 아침'.
   final Jukebox? music;
+
+  /// 서점 페이지 열기 (테스트에서는 바꿔 끼운다).
+  final Future<bool> Function(String url) openLink;
+  CenterPanel? _bookPanel;
   MenuPage? page;
 
   @override
@@ -57,13 +62,29 @@ class MenuGame extends FlameGame {
     world.add(HelpPanel(progress: progress, sfx: sfx));
   }
 
+  /// 책 소개 창 (14-3단계): 책 이름·부제·저자와 서점 버튼 셋.
+  void openBook() {
+    if (_bookPanel?.parent != null) return;
+    sfx.play(Sfx.place);
+    late final CenterPanel panel;
+    panel = CenterPanel(
+      title: Strings.bookTitle,
+      lines: Strings.bookLines,
+      buttons: [
+        for (final s in book.Book.stores) PanelButton(s.name, () => openLink(s.url)),
+        PanelButton(Strings.close, () => panel.removeFromParent()),
+      ],
+    );
+    world.add(_bookPanel = panel..priority = 4000); // 메인 화면(3000) 위
+  }
+
   Future<void> show(MenuPage p) async {
     page = p;
     // 웹은 첫 누름 전 자동 재생을 막는다: 메인 화면에서 막혔다면 '게임 시작'을 누를 때(→ 지도) 다시 시작된다
     music?.play(Track.title);
     world.removeAll(world.children);
     await world.add(switch (p) {
-      MenuPage.title => TitleScreen(onHelp: openHelp, onStart: () {
+      MenuPage.title => TitleScreen(onHelp: openHelp, onBook: openBook, onStart: () {
           sfx.play(Sfx.place);
           show(MenuPage.map);
         }),

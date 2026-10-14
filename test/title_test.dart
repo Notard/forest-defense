@@ -1,12 +1,16 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:forest_defense/game/book.dart';
+import 'package:forest_defense/game/config.dart';
 import 'package:forest_defense/game/forest_game.dart';
+import 'package:forest_defense/game/hud/panel.dart';
 import 'package:forest_defense/game/hud/title.dart';
 import 'package:forest_defense/game/monsters.dart';
 import 'package:forest_defense/game/progress.dart';
 import 'package:forest_defense/game/sfx.dart';
 import 'package:forest_defense/game/stages.dart';
+import 'package:forest_defense/game/strings.dart';
 import 'package:forest_defense/menu/menu_game.dart';
 
 import 'support.dart';
@@ -43,6 +47,39 @@ void main() {
       });
       await waitFor(tester, () => game.world.children.whereType<MapScreen>().any((m) => m.isMounted));
       expect(game.page, MenuPage.map);
+    },
+  );
+
+  final opened = <String>[];
+  GameTester(() => MenuGame(progress: Progress(), onPlay: played.add, sound: false, openLink: (url) async {
+        opened.add(url);
+        return true;
+      })).testGameWidget(
+    '메인 화면 아래 책 소개 띠를 누르면 책 창이 뜨고, 서점 버튼은 그 서점 페이지를 연다 (14-3단계)',
+    setUp: (game, tester) => waitFor(tester, () => game.isLoaded && game.world.children.whereType<TitleScreen>().any((t) => t.isMounted)),
+    verify: (game, tester) async {
+      final badge = game.world.descendants().whereType<BookBadge>().single;
+      expect(badge.toRect().bottom, lessThanOrEqualTo(GameConfig.height - 8), reason: '화면 안');
+      await tapWorld(tester, badge.position);
+      await waitFor(tester, () => game.world.children.whereType<CenterPanel>().any((p) => p.isMounted));
+      final panel = game.world.children.whereType<CenterPanel>().single;
+      expect(panel.title, Strings.bookTitle);
+      expect(panel.priority, greaterThan(game.world.children.whereType<TitleScreen>().single.priority), reason: '메인 화면 위에');
+      final buttons = panel.descendants().whereType<PanelButton>().toList();
+      expect(buttons.map((b) => b.label), [...Book.stores.map((s) => s.name), Strings.close]);
+      opened.clear();
+      for (final b in buttons.take(3)) {
+        await tapWorld(tester, b.absoluteCenter);
+      }
+      expect(opened, Book.stores.map((s) => s.url).toList());
+      expect(opened.every((u) => u.startsWith('https://')), isTrue);
+      await tapWorld(tester, buttons.last.absoluteCenter);
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+      });
+      expect(panel.isMounted, isFalse);
+      expect(game.page, MenuPage.title);
     },
   );
 

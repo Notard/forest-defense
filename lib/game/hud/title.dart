@@ -33,13 +33,16 @@ TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
 
 /// 메인 화면: 숲 배경, 제목, 마주 선 동물과 몬스터, 게임 시작 버튼 (7-2단계).
 class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<FlameGame> {
-  TitleScreen({required this.onStart, this.onHelp}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+  TitleScreen({required this.onStart, this.onHelp, this.onBook}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
 
   /// 게임 시작 버튼 (숲 지도로).
   final void Function() onStart;
 
   /// 도움말 버튼 (12-4단계). 없으면 버튼을 두지 않는다.
   final void Function()? onHelp;
+
+  /// 아래 책 소개 띠를 눌렀을 때 (14-3단계). 없으면 띠를 두지 않는다.
+  final void Function()? onBook;
 
   late final Sprite _background;
   final _shade = Paint()..color = const Color(0x59000000);
@@ -82,6 +85,8 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
       add(button..position = Vector2(GameConfig.width - 24 - button.size.x, 26));
       add(InstallButton());
     }
+    final book = onBook;
+    if (book != null) add(BookBadge(onPressed: book));
   }
 
   SpriteAnimationComponent _actor(CharacterArt art, String action, double x, double footY, double height) {
@@ -140,6 +145,55 @@ class InstallButton extends PositionComponent {
       _button!.removeFromParent();
       _button = null;
     }
+  }
+}
+
+/// 메인 화면 맨 아래 가운데 책 소개 띠 (14-3단계): "“작고 쓸모 있는 코딩 딴짓” 저자가 만든 게임 [책 보기]".
+/// 누르면 서점 링크 창을 연다.
+class BookBadge extends PositionComponent with TapCallbacks {
+  BookBadge({required this.onPressed}) : super(anchor: Anchor.center, position: Vector2(GameConfig.width / 2, 672));
+
+  final void Function() onPressed;
+  static final _label = _text(28, const Color(0xFFFFF4DC), shadow: 2);
+  static final _more = _text(24, const Color(0xFF4A3220), shadow: 0);
+  final _bg = Paint()..color = const Color(0xB0362412);
+  final _rim = Paint()
+    ..color = const Color(0x99FFE6A8)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+  final _tag = Paint()..color = const Color(0xFFFFD866);
+  static const double _padX = 22, _gap = 14, _tagPadX = 14, _height = 50;
+  late final double _labelWidth = _label.getLineMetrics(Strings.bookPromo).width;
+  late final double _moreWidth = _more.getLineMetrics(Strings.bookMore).width;
+  bool _down = false;
+
+  @override
+  Future<void> onLoad() async {
+    size = Vector2(_padX + _labelWidth + _gap + _moreWidth + 2 * _tagPadX + 10, _height);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final r = RRect.fromRectAndRadius(size.toRect().translate(0, _down ? 2 : 0), const Radius.circular(_height / 2));
+    canvas.drawRRect(r, _bg);
+    canvas.drawRRect(r.deflate(1), _rim);
+    final y = size.y / 2 + (_down ? 2 : 0);
+    _label.render(canvas, Strings.bookPromo, Vector2(_padX, y), anchor: Anchor.centerLeft);
+    final tag = Rect.fromLTWH(_padX + _labelWidth + _gap, y - 17, _moreWidth + 2 * _tagPadX, 34);
+    canvas.drawRRect(RRect.fromRectAndRadius(tag, const Radius.circular(17)), _tag);
+    _more.render(canvas, Strings.bookMore, Vector2(tag.center.dx, tag.center.dy), anchor: Anchor.center);
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) => _down = true;
+
+  @override
+  void onTapCancel(TapCancelEvent event) => _down = false;
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    _down = false;
+    onPressed();
   }
 }
 

@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 13:51</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 14:00</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -2605,6 +2605,62 @@ article td img{margin:0 auto}
 <h3>발생한 문제와 해결</h3>
 <ol>
 <li>카운트다운(3 · 2 · 1) 동안은 게임 시계가 멈춰 HUD의 update가 돌지 않아, 처음에 글자가 비고 막대 색이 주황으로 보일 수 있었다 → 처음 값(30초, 노랑)으로 시작하게 함</li>
+</ol>
+<h2>14-3. 메인 화면 책 소개 (2026-10-14)</h2>
+<blockquote>
+<p>사용자: (예스24 · 교보문고 · 알라딘 책 주소 셋) "이 책 저자가 만든거라고 홍보문구도 메인에 붙여줘."</p>
+</blockquote>
+<h3>결과 요약</h3>
+<p>서점 페이지에서 책 정보를 확인했다: <strong>『작고 쓸모 있는 코딩 딴짓』 — 코덱스와 시작하는 10분 바이브 코딩 프로젝트 29</strong> (권경열, 한빛미디어, 2026-10-16).
+메인 화면 맨 아래 가운데에 <strong>"“작고 쓸모 있는 코딩 딴짓” 저자가 만든 게임 [책 보기]"</strong> 띠를 붙였다. 띠를 누르면 책 창이 뜨고 <strong>예스24 · 교보문고 · 알라딘</strong> 버튼으로 그 서점 페이지를 연다(웹은 새 탭, Windows·Android는 기본 브라우저).</p>
+<p><img alt="메인 화면 아래 책 소개 띠" src="preview/14-3_title_book.jpg" />
+<img alt="책 창: 제목, 부제, 저자, 서점 버튼 셋과 닫기" src="preview/14-3_book_panel.jpg" /></p>
+<h3>진행 방식</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/book.dart</code></td>
+<td>서점 이름·주소 셋, <code>openLink(url)</code> (<code>url_launcher</code>, 웹은 <code>_blank</code>)</td>
+</tr>
+<tr>
+<td><code>lib/game/hud/title.dart</code></td>
+<td><code>BookBadge</code>: 반투명 둥근 띠 + 노란 "책 보기" 꼬리표, 글자 폭에 맞춰 크기. <code>TitleScreen(onBook:)</code></td>
+</tr>
+<tr>
+<td><code>lib/menu/menu_game.dart</code></td>
+<td><code>openBook()</code>: 기존 <code>CenterPanel</code>로 책 창 (메인 화면보다 위 priority 4000). 링크 여는 함수는 테스트에서 바꿔 끼울 수 있게</td>
+</tr>
+<tr>
+<td><code>lib/game/strings.dart</code></td>
+<td>띠·창 문구. Gaegu에 『』가 없어 “ ” 사용</td>
+</tr>
+<tr>
+<td><code>android/app/src/main/AndroidManifest.xml</code></td>
+<td>https 링크를 열 수 있게 <code>queries</code>에 VIEW 추가 (Android 11+)</td>
+</tr>
+<tr>
+<td><code>pubspec.yaml</code></td>
+<td><code>url_launcher</code></td>
+</tr>
+</tbody>
+</table>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>213/213</strong> (<code>title_test</code>: 띠가 화면 안, 누르면 책 창이 메인 화면 위에, 버튼 순서, 서점 버튼 셋이 각 주소를 엶, 닫기)</li>
+<li>글꼴 다시 자르기: 283 → 309자 (쓸·딴·짓·덱 등)</li>
+<li>웹 릴리스 빌드(미리보기 창 음소거, 실제 서점으로 가지 않게 <code>window.open</code>을 가로채 기록): 세 버튼이 각각 예스24 · 교보문고 · 알라딘 주소를 <code>_blank</code>로 엶</li>
+<li>Windows 릴리스 빌드 성공 (새 플러그인의 네이티브 코드 포함)</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>처음 웹 빌드에서는 서점 버튼을 눌러도 아무 일도 없었다 → 12단계 저장 문제와 같은 원인: 플러그인을 새로 넣었는데 이전 빌드의 웹 플러그인 등록 파일(<code>web_plugin_registrant.dart</code>)에 <code>url_launcher</code>가 없었다. <code>flutter clean</code> 뒤 다시 빌드하니 정상. GitHub Actions는 늘 새로 빌드하므로 실제 사이트에는 영향 없음</li>
+<li><code>CenterPanel</code> 기본 priority(2000)가 메인 화면(3000)보다 낮아 책 창이 뒤에 깔릴 뻔함 → 책 창만 4000으로</li>
 </ol></article>
 </div>
 </body>
