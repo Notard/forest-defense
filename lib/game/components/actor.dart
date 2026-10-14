@@ -120,4 +120,49 @@ abstract class Actor extends SpriteAnimationGroupComponent<String> with HasGameR
     if (_flash > 0) _flash -= dt;
     paint.colorFilter = _flash > 0 ? _flashFilter : standingTint;
   }
+
+  // ── 머리 위 HP 막대 (사용자: "몬스터와 우리편 hp를 위에 작게 막대로") ──
+  /// 막대를 다쳤을 때만 보일지. false면 늘 보인다 (꽉 찬 친구가 많으면 판이 어수선해서 기본은 다쳤을 때만).
+  static const bool hpBarOnlyWhenHurt = true;
+
+  /// 남은 HP 비율 0~1 (투구 슬라임은 투구까지 합친다).
+  double get hpFraction => maxHp <= 0 ? 0 : (hp / maxHp).clamp(0.0, 1.0);
+
+  bool get showsHpBar => alive && (!hpBarOnlyWhenHurt || hpFraction < 1);
+
+  /// 막대 길이 (논리 px). 큰 몬스터는 길게.
+  double get hpBarWidth => 46;
+
+  /// 막대 채움 색. 친구는 초록, 몬스터는 다홍.
+  Color get hpBarColor;
+
+  static final _hpTrack = Paint()..color = const Color(0xB0201510);
+  static final _hpRim = Paint()
+    ..color = const Color(0xE63A2416)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1.5;
+  final _hpFill = Paint();
+  static const double hpBarHeight = 6, hpBarGap = 8;
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    if (showsHpBar) renderHpBar(canvas);
+  }
+
+  /// 머리(첫 프레임 그림의 위 끝) 위 [hpBarGap]에 막대. 통 튀는 동안에도 크기는 그대로.
+  void renderHpBar(Canvas canvas) {
+    final s = 1 / scale.x;
+    final w = hpBarWidth * s, h = hpBarHeight * s;
+    final cx = size.x * anchor.x;
+    final top = art.bbox.top * _scale - (hpBarGap + hpBarHeight) * s;
+    final bar = RRect.fromRectAndRadius(Rect.fromLTWH(cx - w / 2, top, w, h), Radius.circular(h / 2));
+    canvas.drawRRect(bar, _hpTrack);
+    final f = hpFraction;
+    if (f > 0) {
+      _hpFill.color = hpBarColor;
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(cx - w / 2, top, w * f, h), Radius.circular(h / 2)), _hpFill);
+    }
+    canvas.drawRRect(bar, _hpRim);
+  }
 }

@@ -54,6 +54,31 @@ void main() {
     game.win();
     await shoot(game, tester, 'win');
   });
+  // 머리 위 HP 막대: 다친 친구(초록)·몬스터(다홍), 투구 슬라임, 골렘, 보스
+  GameTester(() => ForestGame(stage: stageById('1-5'), nestAcorns: false, waves: false, sound: false, intro: false)).testGameWidget('HP 막대',
+      setUp: waitForLoad, verify: (game, tester) async {
+    game.garden.acorns = 9999;
+    await tester.runAsync(() async {
+      for (final (t, cell) in [(UnitType.fox, (row: 1, col: 1)), (UnitType.turtle, (row: 2, col: 3)), (UnitType.squirrel, (row: 3, col: 0)), (UnitType.fox, (row: 0, col: 1))]) {
+        game.selectCard(t);
+        await game.onCellTapped(cell);
+      }
+      final ms = [
+        await game.addMonster(MonsterType.slime, row: 0, x: 700, moving: false),
+        await game.addMonster(MonsterType.helmetSlime, row: 1, x: 760, moving: false),
+        await game.addMonster(MonsterType.golem, row: 2, x: 820, moving: false),
+        await game.addMonster(MonsterType.bossSlime, row: 4, x: 900, moving: false),
+        await game.addMonster(MonsterType.wisp, row: 3, x: 640, moving: false),
+      ];
+      for (final (m, f) in [(ms[0], 0.4), (ms[1], 0.3), (ms[2], 0.65), (ms[3], 0.2), (ms[4], 0.5)]) {
+        m.takeDamage(m.maxHp * f);
+      }
+      game.unitComponents[(row: 2, col: 3)]!.takeDamage(1500);
+      game.unitComponents[(row: 1, col: 1)]!.takeDamage(120);
+    });
+    await shoot(game, tester, 'hp_bars');
+  });
+
   // 14-4단계: 쉬움(하트 다섯) 아래 띠 — 웨이브 이름, 하트, "몬스터가 오기까지"가 겹치지 않는지
   GameTester(() => ForestGame(stage: stageById('1-1'), nestAcorns: false, sound: false, intro: false, difficulty: Difficulty.easy))
       .testGameWidget('쉬움 아래 띠', setUp: waitForLoad, verify: (game, tester) async {

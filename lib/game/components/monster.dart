@@ -31,6 +31,7 @@ class Monster extends Actor {
     this.speedFactor = 1,
     double helmetFactor = 1,
   })  : helmetHp = (type.helmetHp * helmetFactor).roundToDouble(),
+        _helmetMax = (type.helmetHp * helmetFactor).roundToDouble(),
         groundY = UnitComponent.footOf((row: row, col: 0)).y - type.floatHeight,
         super(
           startAction: 'walk',
@@ -69,6 +70,21 @@ class Monster extends Actor {
   /// 남은 투구 HP. 0이 되면 투구가 날아가고 슬라임 시트로 바뀐다.
   double helmetHp;
   bool get hasHelmet => helmetHp > 0;
+
+  /// 처음 투구 HP (막대 비율에 함께 넣는다).
+  final double _helmetMax;
+
+  @override
+  double get hpFraction {
+    final total = maxHp + _helmetMax;
+    return total <= 0 ? 0 : ((hp + helmetHp) / total).clamp(0.0, 1.0);
+  }
+
+  @override
+  double get hpBarWidth => type.boss ? 110 : (type == MonsterType.golem ? 64 : 46);
+
+  @override
+  Color get hpBarColor => const Color(0xFFF06A4A);
 
   /// 슬라임의 맞는 범위 반폭 (논리 px). 종류별 값은 [MonsterType.hitHalfWidth].
   static const double hitHalfWidth = 30;

@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 15:00</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 15:08</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -2886,6 +2886,45 @@ article td img{margin:0 auto}
 <li>처음 찍은 exe 창이 왼쪽 위만 나왔다 → PowerShell이 DPI를 모르는 프로세스라 창 크기를 100% 기준(1280 × 720)으로 받음. <code>SetThreadDpiAwarenessContext(PER_MONITOR_AWARE_V2)</code> 뒤 실제 2240 × 1260으로 찍힘</li>
 <li>플러터 화면 창을 클래스 이름(FLUTTERVIEW)으로 못 찾음 → 첫 자식 창(<code>GetWindow(GW_CHILD)</code>)으로</li>
 <li>남은 확인: <strong>배율이 다른 모니터로 창을 옮길 때</strong> (2단계 문제 3). 미리보기 창에서 배율(DPR)이 도중에 바뀌면 캔버스가 확대된 채 멈추는 일이 여러 번 있었다(14·14-4단계 화면 찍기). 미리보기 창의 흉내 기능 때문인지 실제로도 생기는지는 모니터가 둘 있어야 확인할 수 있어 사용자 확인으로 남김</li>
+</ol>
+<h2>15-1. 머리 위 HP 막대 (2026-10-14)</h2>
+<blockquote>
+<p>사용자: "몬스터와 우리편 hp 를 위에 작게 막대로 나타나게 해 줘"</p>
+</blockquote>
+<h3>결과 요약</h3>
+<p>친구와 몬스터 머리 위에 작은 HP 막대 (46 × 6, 골렘 64, 보스 110). 친구는 초록, 몬스터는 다홍. <strong>다쳤을 때부터</strong> 보이고 쓰러지면 사라진다 (꽉 찬 친구 모두에 막대가 있으면 판이 어수선해서. <code>Actor.hpBarOnlyWhenHurt</code>를 false로 바꾸면 늘 보인다). 투구 슬라임은 투구 HP까지 합친 비율이라 투구를 맞혀도 줄어든다.</p>
+<p><img alt="HP 막대: 다친 여우·거북이(초록), 슬라임·투구 슬라임·골렘·도깨비불·슬라임 왕(다홍)" src="preview/15-1_hp_bars.jpg" /></p>
+<h3>진행 방식</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/components/actor.dart</code></td>
+<td><code>hpFraction</code>, <code>showsHpBar</code>, <code>hpBarWidth</code>, <code>hpBarColor</code>, <code>render</code>에서 첫 프레임 그림의 머리 위 8px에 막대. 통 튀는 효과(배율) 동안에도 크기는 그대로</td>
+</tr>
+<tr>
+<td><code>lib/game/components/unit.dart</code></td>
+<td>초록</td>
+</tr>
+<tr>
+<td><code>lib/game/components/monster.dart</code></td>
+<td>다홍, 투구 포함 비율(처음 투구 HP를 만들 때 기억), 큰 몬스터 막대 길이</td>
+</tr>
+</tbody>
+</table>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>294/294</strong> (새 <code>test/hp_bar_test.dart</code>: 꽉 찼을 때 없음 → 다치면 비율대로 → 쓰러지면 없음, 친구·몬스터 색이 다름, 투구 포함 비율, 막대 길이)</li>
+<li>진짜 그림(<code>--tags shots</code>의 <code>panel_hp_bars</code>): 위 그림처럼 머리 위에 겹치지 않게 놓임 (골렘처럼 큰 몬스터는 막대가 윗줄 칸에 살짝 걸친다)</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>처음 투구 HP를 <code>late final</code>로 두어, 투구를 먼저 맞으면 그때의 (줄어든) 값이 최대로 잡힐 수 있었다 → 만들 때 바로 정하도록</li>
 </ol></article>
 </div>
 </body>

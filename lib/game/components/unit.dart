@@ -113,6 +113,9 @@ abstract class UnitComponent extends Actor {
   String get restAction => 'idle';
 
   @override
+  Color get hpBarColor => const Color(0xFF8BD45C);
+
+  @override
   void onDeath() {
     game.garden.remove(cell);
     game.unitComponents.remove(cell);
