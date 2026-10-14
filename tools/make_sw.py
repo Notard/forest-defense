@@ -21,7 +21,8 @@ WEB = ROOT / "build" / "web"
 
 # 미리 저장하지 않는 것: 서비스 워커 자신, 엔진(처음 받을 때 저장), 디버그 기호·소스 맵, Flutter 기본 워커
 SKIP_DIRS = ("canvaskit/",)
-SKIP_FILES = {"sw.js", "flutter_service_worker.js"}
+# og.jpg는 링크 미리보기(카카오톡·SNS)용이라 게임에는 필요 없다
+SKIP_FILES = {"sw.js", "flutter_service_worker.js", "og.jpg"}
 SKIP_SUFFIXES = (".symbols", ".map")
 
 TEMPLATE = r"""// 숲 지키기 오프라인 캐시 — tools/make_sw.py가 빌드마다 만든다. 고치지 말 것.

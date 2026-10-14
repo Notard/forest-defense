@@ -6,6 +6,7 @@ import 'package:flame_test/flame_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/forest_game.dart';
+import 'package:forest_defense/game/hud/panel.dart';
 import 'package:forest_defense/game/hud/title.dart';
 import 'package:forest_defense/game/monsters.dart';
 import 'package:forest_defense/game/progress.dart';
@@ -66,8 +67,9 @@ void main() {
 
   for (final lang in Lang.values) {
     GameTester(() => menu(lang)).testGameWidget('${lang.name} 메인 화면 + 설정', verify: (game, tester) async {
-      await waitFor(tester, () => game.world.children.whereType<TitleScreen>().any((t) => t.children.length > 3));
-      await settle(tester, frames: 10);
+      // 버튼은 캐릭터 그림을 다 읽은 뒤에 붙는다 (버튼 둘 = 설정·도움말)
+      await waitFor(tester, () => game.world.children.whereType<TitleScreen>().any((t) => t.children.whereType<PanelButton>().length >= 2));
+      await settle(tester);
       await expectLater(find.byType(GameWidget<MenuGame>), matchesGoldenFile('shots/lang_${lang.name}_title.png'));
       game.openSettings();
       await settle(tester);
