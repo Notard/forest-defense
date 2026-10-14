@@ -16,6 +16,10 @@ abstract final class Strings {
   /// 웨이브가 시작될 때 가운데에 잠깐 뜨는 글자.
   static String waveBanner(int number) => '웨이브 $number';
 
+  /// 판 시작 뒤 첫 웨이브까지 줄어드는 막대 옆 글자 (14-2단계).
+  static const firstWaveIn = '몬스터가 오기까지';
+  static String seconds(int s) => '$s초';
+
   /// 마지막 큰 무리 웨이브 경고.
   static const bigWave = '숲이 술렁여요! 마지막 무리!';
 

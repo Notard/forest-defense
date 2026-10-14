@@ -94,6 +94,12 @@ class WaveDirector {
   /// HUD에 보일 웨이브 번호: 마지막으로 시작한 웨이브. 아직 하나도 시작 전이면 다가오는 웨이브.
   int get displayWave => _current >= 0 ? _current + 1 : _next + 1;
 
+  /// 아직 첫 웨이브 전인지 (판 시작 뒤 준비 시간).
+  bool get beforeFirstWave => _current < 0 && _next < waves.length;
+
+  /// 다음 웨이브까지 남은 초 (0 이상).
+  double get untilNext => max(0, _untilNext);
+
   /// 진행 바: 내보낸 몬스터 수 / 전체.
   double get progress => _spawnedTotal / total;
 

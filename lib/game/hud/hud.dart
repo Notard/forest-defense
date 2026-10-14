@@ -12,6 +12,7 @@ import '../config.dart';
 import '../forest_game.dart';
 import '../strings.dart';
 import '../units.dart';
+import '../waves.dart';
 import 'layout.dart';
 
 const _ink = Color(0xFF4A3220);
@@ -40,6 +41,9 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
 
   /// 둥지 하트 (14-1단계). 아래 띠, 웨이브 이름 오른쪽.
   final hearts = HeartsDisplay();
+
+  /// 첫 웨이브까지 줄어드는 막대 (14-2단계). 웨이브가 시작되면 사라진다.
+  FirstWaveCountdown? firstWave;
   late final List<UnitCard> cards;
   late final ShovelButton shovel;
 
@@ -62,6 +66,7 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
       if (game.music != null) MusicButton(),
       _waveLabel,
       hearts,
+      if (game.wavesOn) firstWave = FirstWaveCountdown(),
     ]);
   }
 
@@ -388,6 +393,92 @@ class HeartsDisplay extends PositionComponent with HasGameReference<ForestGame> 
       canvas.drawRRect(RRect.fromRectAndRadius(size.toRect().inflate(6), const Radius.circular(10)),
           Paint()..color = const Color(0xFFFF4040).withValues(alpha: (_flash / 0.5) * 0.35));
     }
+  }
+}
+
+/// 판 시작 뒤 첫 웨이브까지 남은 시간 (14-2단계, 사용자: "웨이브 시작까지 줄어드는 그래프가 보이면 좋겠다. 문구와 함께.").
+/// 아래 띠 가운데에 "몬스터가 오기까지 [막대] 23초". 막대는 오른쪽에서 줄어들고, 마지막 5초는 주황으로 바뀌며 초마다 통통 뛴다.
+/// 첫 웨이브가 시작되면 줄어들며 사라진다.
+class FirstWaveCountdown extends PositionComponent with HasGameReference<ForestGame> {
+  FirstWaveCountdown()
+      : super(
+          position: HudLayout.firstWave.center.toVector2(),
+          size: HudLayout.firstWave.size.toVector2(),
+          anchor: Anchor.center,
+        );
+
+  static const double hurry = 5;
+
+  final _label = TextComponent(text: Strings.firstWaveIn, textRenderer: _text(26), anchor: Anchor.centerLeft);
+  final _seconds = TextComponent(text: '', textRenderer: _text(28), anchor: Anchor.center);
+  final _hurryText = _text(28, color: const Color(0xFFFFB04A));
+  final _calmText = _text(28);
+  final _track = Paint()..color = const Color(0xFF2E2014);
+  final _calm = Paint()..color = const Color(0xFFFFD45A);
+  final _hurry = Paint()..color = const Color(0xFFFF8A3D);
+  final _rim = Paint()
+    ..color = const Color(0x66FFF4DC)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+
+  /// 처음 남은 시간 (막대 길이의 기준).
+  double? _full;
+
+  /// 지금 남은 시간 비율 0~1 (테스트용).
+  double fraction = 1;
+
+  /// 3 · 2 · 1 동안은 게임 시계가 멈춰 update가 없으니 처음 값으로 시작한다.
+  int _shown = WaveDirector.firstDelay.ceil();
+  bool _leaving = false;
+
+  Rect get _bar => HudLayout.firstWaveBar.shift(-HudLayout.firstWave.topLeft);
+
+  @override
+  Future<void> onLoad() async {
+    _label.position = Vector2(0, size.y / 2);
+    _seconds.position = Vector2(_bar.right + 38, size.y / 2);
+    _seconds.text = Strings.seconds(_shown);
+    await addAll([_label, _seconds]);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final d = game.waveRunner?.director;
+    if (d == null || _leaving) return;
+    if (!d.beforeFirstWave) {
+      _leaving = true;
+      add(SequenceEffect([
+        ScaleEffect.to(Vector2(1, 0), EffectController(duration: 0.25, curve: Curves.easeIn)),
+        RemoveEffect(),
+      ]));
+      return;
+    }
+    final left = d.untilNext;
+    _full ??= max(left, 1);
+    fraction = (left / _full!).clamp(0.0, 1.0);
+    final s = left.ceil();
+    if (s != _shown) {
+      _shown = s;
+      _seconds.text = Strings.seconds(s);
+      _seconds.textRenderer = s <= hurry ? _hurryText : _calmText;
+      if (s <= hurry && s > 0) {
+        _seconds.scale = Vector2.all(1.35);
+        _seconds.add(ScaleEffect.to(Vector2.all(1), EffectController(duration: 0.3, curve: Curves.easeOut)));
+      }
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final bar = _bar;
+    canvas.drawRRect(RRect.fromRectAndRadius(bar, const Radius.circular(10)), _track);
+    if (fraction > 0) {
+      final w = max(bar.height, bar.width * fraction);
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(bar.left, bar.top, w, bar.height), const Radius.circular(10)),
+          _shown <= hurry ? _hurry : _calm);
+    }
+    canvas.drawRRect(RRect.fromRectAndRadius(bar, const Radius.circular(10)), _rim);
   }
 }
 
