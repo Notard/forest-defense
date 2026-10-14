@@ -14,6 +14,7 @@ import 'components/monster.dart';
 import 'components/unit.dart';
 import 'components/wave_runner.dart';
 import 'config.dart';
+import 'difficulty.dart';
 import 'garden.dart';
 import 'music.dart';
 import 'upgrades.dart';
@@ -70,9 +71,11 @@ class ForestGame extends FlameGame {
     this.seenMonsters,
     this.usedUnits,
     this.onLearned,
+    this.difficulty = Difficulty.normal,
   })  : units = units ?? UnitType.values,
         _random = random ?? Random(),
-        garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns, cooldownOf: boosts.cooldownOf),
+        garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns + difficulty.extraAcorns, cooldownOf: boosts.cooldownOf),
+        hearts = difficulty.hearts,
         wavesOn = waves ?? !practice,
         sfx = SoundBoard(enabled: sound)..muted = muted,
         super(
@@ -110,8 +113,13 @@ class ForestGame extends FlameGame {
   WaveRunner? waveRunner;
 
   /// 둥지 하트 (14-1단계): 몬스터가 둥지에 닿을 때마다 하나(보스는 둘) 줄고, 0이 되면 게임오버.
+  /// 보통·어려움은 셋, 쉬움은 다섯 (14-4단계 난이도).
   static const int startHearts = 3;
-  int hearts = startHearts;
+  int hearts;
+  int get maxHearts => difficulty.hearts;
+
+  /// 난이도: 몬스터 HP·빠르기, 시작 도토리, 하트 수.
+  final Difficulty difficulty;
 
   /// 쓰러뜨린 몬스터 수 (결과 화면).
   int defeated = 0;
@@ -120,7 +128,7 @@ class ForestGame extends FlameGame {
   bool lostUnit = false;
 
   /// 하트를 하나라도 잃었는지 (★★ 조건).
-  bool get lostHeart => hearts < startHearts;
+  bool get lostHeart => hearts < maxHearts;
 
   /// 지금 판 상태. 카운트다운·일시정지·클리어·게임오버면 게임 시계가 멈춘다.
   GameState state = GameState.playing;
@@ -320,6 +328,7 @@ class ForestGame extends FlameGame {
       music?.pause();
       _showPanel(CenterPanel(
         title: Strings.paused,
+        lines: [Strings.difficultyLine(difficulty)],
         buttons: [
           PanelButton(Strings.resume, togglePause),
           PanelButton(Strings.retry, restart),

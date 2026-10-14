@@ -84,10 +84,20 @@ class MenuGame extends FlameGame {
     music?.play(Track.title);
     world.removeAll(world.children);
     await world.add(switch (p) {
-      MenuPage.title => TitleScreen(onHelp: openHelp, onBook: openBook, onStart: () {
-          sfx.play(Sfx.place);
-          show(MenuPage.map);
-        }),
+      MenuPage.title => TitleScreen(
+          onHelp: openHelp,
+          onBook: openBook,
+          difficulty: progress.difficulty,
+          onDifficulty: (d) {
+            sfx.play(Sfx.place);
+            progress.difficulty = d;
+            progress.save();
+          },
+          onStart: () {
+            sfx.play(Sfx.place);
+            show(MenuPage.map);
+          },
+        ),
       MenuPage.map => MapScreen(),
       MenuPage.shop => ShopScreen(),
     });

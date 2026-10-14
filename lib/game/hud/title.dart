@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart';
 
 import '../art.dart';
 import '../config.dart';
+import '../difficulty.dart';
 import '../forest_game.dart';
 import '../monsters.dart';
 import '../sfx.dart';
@@ -33,7 +34,7 @@ TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
 
 /// 메인 화면: 숲 배경, 제목, 마주 선 동물과 몬스터, 게임 시작 버튼 (7-2단계).
 class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<FlameGame> {
-  TitleScreen({required this.onStart, this.onHelp, this.onBook}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+  TitleScreen({required this.onStart, this.onHelp, this.onBook, this.difficulty, this.onDifficulty}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
 
   /// 게임 시작 버튼 (숲 지도로).
   final void Function() onStart;
@@ -43,6 +44,10 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
 
   /// 아래 책 소개 띠를 눌렀을 때 (14-3단계). 없으면 띠를 두지 않는다.
   final void Function()? onBook;
+
+  /// 지금 난이도와 바꿀 때 (14-4단계). 둘 다 있어야 고르는 줄을 둔다.
+  final Difficulty? difficulty;
+  final void Function(Difficulty)? onDifficulty;
 
   late final Sprite _background;
   final _shade = Paint()..color = const Color(0x59000000);
@@ -87,6 +92,8 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
     }
     final book = onBook;
     if (book != null) add(BookBadge(onPressed: book));
+    final level = difficulty, pick = onDifficulty;
+    if (level != null && pick != null) add(DifficultyPicker(level, pick));
   }
 
   SpriteAnimationComponent _actor(CharacterArt art, String action, double x, double footY, double height) {
@@ -146,6 +153,63 @@ class InstallButton extends PositionComponent {
       _button = null;
     }
   }
+}
+
+/// 부제와 게임 시작 버튼 사이의 난이도 고르기 [쉬움][보통][어려움] (14-4단계). 고른 것은 노랗게.
+class DifficultyPicker extends PositionComponent {
+  DifficultyPicker(this.selected, this.onChanged)
+      : super(
+          anchor: Anchor.center,
+          position: Vector2(GameConfig.width / 2, 338),
+          size: Vector2(Difficulty.values.length * (pillWidth + gap) - gap, pillHeight),
+        );
+
+  static const double pillWidth = 124, pillHeight = 46, gap = 12;
+  Difficulty selected;
+  final void Function(Difficulty) onChanged;
+
+  @override
+  Future<void> onLoad() async {
+    for (final (i, d) in Difficulty.values.indexed) {
+      add(_DifficultyPill(d, Vector2(i * (pillWidth + gap), 0), () {
+        selected = d;
+        onChanged(d);
+      }));
+    }
+  }
+}
+
+class _DifficultyPill extends PositionComponent with TapCallbacks, HasAncestor<DifficultyPicker> {
+  _DifficultyPill(this.level, Vector2 position, this.onPressed)
+      : super(position: position, size: Vector2(DifficultyPicker.pillWidth, DifficultyPicker.pillHeight));
+
+  final Difficulty level;
+  final void Function() onPressed;
+  static final _on = Paint()..color = const Color(0xFFFFD866);
+  static final _off = Paint()..color = const Color(0xB0362412);
+  static final _rimOn = Paint()
+    ..color = const Color(0xFF4A3220)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 3;
+  static final _rimOff = Paint()
+    ..color = const Color(0x99FFE6A8)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+  static final _textOn = _text(28, const Color(0xFF4A3220), shadow: 0);
+  static final _textOff = _text(28, const Color(0xFFFFF4DC), shadow: 2);
+
+  bool get on => ancestor.selected == level;
+
+  @override
+  void render(Canvas canvas) {
+    final r = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(23));
+    canvas.drawRRect(r, on ? _on : _off);
+    canvas.drawRRect(r.deflate(1.5), on ? _rimOn : _rimOff);
+    (on ? _textOn : _textOff).render(canvas, Strings.difficultyName(level), size / 2, anchor: Anchor.center);
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) => onPressed();
 }
 
 /// 메인 화면 맨 아래 가운데 책 소개 띠 (14-3단계): "“작고 쓸모 있는 코딩 딴짓” 저자가 만든 게임 [책 보기]".

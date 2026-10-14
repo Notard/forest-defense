@@ -25,8 +25,11 @@ abstract final class HudLayout {
   /// 진행 바는 오른쪽 아래. 왼쪽 아래는 웨이브 이름과 둥지 하트.
   static const Rect progressBar = Rect.fromLTWH(880, 674, 380, 26);
 
+  /// 둥지 하트 (14-1단계). 웨이브 이름 오른쪽, 쉬움이면 다섯 개라 x 220 ~ 380.
+  static const Rect hearts = Rect.fromLTWH(220, 662, 160, 50);
+
   /// 첫 웨이브까지 남은 시간 (14-2단계). 아래 띠 가운데, 하트와 진행 바 사이.
   /// 글자 "몬스터가 오기까지" + 줄어드는 막대 + 남은 초.
-  static const Rect firstWave = Rect.fromLTWH(372, 662, 488, 50);
-  static const Rect firstWaveBar = Rect.fromLTWH(590, 677, 196, 20);
+  static const Rect firstWave = Rect.fromLTWH(396, 662, 464, 50);
+  static const Rect firstWaveBar = Rect.fromLTWH(606, 677, 182, 20);
 }

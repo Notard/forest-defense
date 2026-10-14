@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/components/level_bubble.dart';
 import 'package:forest_defense/game/components/unit.dart';
+import 'package:forest_defense/game/difficulty.dart';
 import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/grid.dart';
 import 'package:forest_defense/game/hud/title.dart';
@@ -53,6 +54,12 @@ void main() {
     game.win();
     await shoot(game, tester, 'win');
   });
+  // 14-4단계: 쉬움(하트 다섯) 아래 띠 — 웨이브 이름, 하트, "몬스터가 오기까지"가 겹치지 않는지
+  GameTester(() => ForestGame(stage: stageById('1-1'), nestAcorns: false, sound: false, intro: false, difficulty: Difficulty.easy))
+      .testGameWidget('쉬움 아래 띠', setUp: waitForLoad, verify: (game, tester) async {
+    await shoot(game, tester, 'easy_hud');
+  });
+
   // 14단계: 처음 보는 몬스터 소개 창 + 새 친구 카드 꼬리표·말풍선
   GameTester(() => ForestGame(
         stage: stageById('1-4'),

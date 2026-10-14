@@ -28,7 +28,9 @@ class Monster extends Actor {
     required double x,
     required super.maxHp,
     this.moving = true,
-  })  : helmetHp = type.helmetHp.toDouble(),
+    this.speedFactor = 1,
+    double helmetFactor = 1,
+  })  : helmetHp = (type.helmetHp * helmetFactor).roundToDouble(),
         groundY = UnitComponent.footOf((row: row, col: 0)).y - type.floatHeight,
         super(
           startAction: 'walk',
@@ -45,7 +47,19 @@ class Monster extends Actor {
     final sharesSlime = type == MonsterType.slime || type == MonsterType.helmetSlime;
     final scale = (sharesSlime ? slime : art).scaleForHeight(type.displayHeight);
     final hp = type.boss && game.stage.region == Region.night ? MonsterType.nightBossHp : type.hp;
-    return Monster._(type: type, row: row, art: art, slimeArt: slime, scale: scale, x: x, maxHp: hp, moving: moving);
+    final d = game.difficulty;
+    return Monster._(
+      type: type,
+      row: row,
+      art: art,
+      slimeArt: slime,
+      scale: scale,
+      x: x,
+      maxHp: (hp * d.hp).round(),
+      helmetFactor: d.hp,
+      speedFactor: d.speed,
+      moving: moving,
+    );
   }
 
   final MonsterType type;
@@ -65,8 +79,11 @@ class Monster extends Actor {
   /// 걷는지 (false면 연습 상대).
   final bool moving;
 
+  /// 난이도에 따른 걷는 빠르기 배수.
+  final double speedFactor;
+
   /// 걷는 속도 (논리 px/초).
-  double get speed => GameConfig.cellWidth / type.secondsPerCell;
+  double get speed => GameConfig.cellWidth / type.secondsPerCell * speedFactor;
 
   /// 슬라임이 멈춰 갉아먹는 거리 (동물 발 x에서 오른쪽으로). 종류별 값은 [MonsterType.biteReach].
   static const double biteReach = 52;

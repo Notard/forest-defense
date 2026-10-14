@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import 'game/difficulty.dart';
 import 'game/config.dart';
 import 'game/forest_game.dart';
 import 'game/monsters.dart';
@@ -23,6 +24,7 @@ void main() {
 ///   ?intro=0      카운트다운 없이 바로 시작
 ///   ?stage=1-3    그 스테이지 (없으면 예전 데모 한 판). 이때는 모든 유닛을 쓸 수 있다
 ///   ?enemy=golem,bat  연습 상대 종류 (?practice=1과 함께, MonsterType 이름)
+///   ?level=easy   난이도 (easy·normal·hard, 없으면 메인 화면에서 고른 것)
 ///   ?fresh=1      처음 하는 사람처럼: 몬스터 소개 창·"새로!" 꼬리표가 나온다 (저장하지 않음)
 class ForestApp extends StatefulWidget {
   const ForestApp({super.key});
@@ -90,6 +92,7 @@ class _ForestAppState extends State<ForestApp> {
       seenMonsters: dev ? (_query['fresh'] == '1' ? <MonsterType>{} : null) : p.seenMonsters,
       usedUnits: dev ? (_query['fresh'] == '1' ? {...Progress.startUnits} : null) : p.usedUnits,
       onLearned: dev ? null : p.save,
+      difficulty: Difficulty.values.where((d) => d.name == _query['level']).firstOrNull ?? p.difficulty,
       onFinish: stage == demoStage
           ? null
           : ({required won, required lostHeart, required lostUnit}) {

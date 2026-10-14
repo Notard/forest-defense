@@ -379,7 +379,16 @@ class MusicButton extends PositionComponent with TapCallbacks, HasGameReference<
 /// 둥지 하트 세 개 (14-1단계). 잃은 하트는 빈 칸. 하트를 잃으면 흔들리며 빨갛게 번쩍인다.
 /// Gaegu에 ♥ 글자가 없어서 그린다.
 class HeartsDisplay extends PositionComponent with HasGameReference<ForestGame> {
-  HeartsDisplay() : super(position: Vector2(232, HudLayout.progressBar.center.dy), size: Vector2(3 * 38, 34), anchor: Anchor.centerLeft);
+  HeartsDisplay() : super(position: Vector2(HudLayout.hearts.left, HudLayout.progressBar.center.dy), anchor: Anchor.centerLeft);
+
+  /// 하트 사이 간격과 크기. 쉬움(다섯 개)은 촘촘하게 (14-4단계).
+  double get _step => game.maxHearts > 3 ? 30 : 38;
+  double get _radius => game.maxHearts > 3 ? 13 : 15;
+
+  @override
+  Future<void> onLoad() async {
+    size = Vector2(game.maxHearts * _step, 34);
+  }
 
   final _full = Paint()..color = const Color(0xFFE8505B);
   final _empty = Paint()..color = const Color(0x40FFFFFF);
@@ -407,8 +416,8 @@ class HeartsDisplay extends PositionComponent with HasGameReference<ForestGame> 
 
   @override
   void render(Canvas canvas) {
-    for (var i = 0; i < ForestGame.startHearts; i++) {
-      final p = heartPath(Offset(17 + i * 38.0, size.y / 2), 15);
+    for (var i = 0; i < game.maxHearts; i++) {
+      final p = heartPath(Offset(17 + i * _step, size.y / 2), _radius);
       final on = i < game.hearts;
       canvas.drawPath(p, on ? _full : _empty);
       canvas.drawPath(p, _rim);

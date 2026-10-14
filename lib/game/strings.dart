@@ -1,3 +1,4 @@
+import 'difficulty.dart';
 import 'monsters.dart';
 import 'units.dart';
 import 'upgrades.dart';
@@ -28,6 +29,14 @@ abstract final class Strings {
 
   // ── 메인 화면·카운트다운 ──
   static const subtitle = '숲속 친구들과 함께 둥지를 지켜요';
+
+  // ── 난이도 (14-4단계) ──
+  static String difficultyName(Difficulty d) => switch (d) {
+        Difficulty.easy => '쉬움',
+        Difficulty.normal => '보통',
+        Difficulty.hard => '어려움',
+      };
+  static String difficultyLine(Difficulty d) => '난이도: ${difficultyName(d)}';
 
   // ── 책 소개 (14-3단계) ──
   /// 메인 화면 아래 띠. Gaegu에 『』가 없어 “ ”를 쓴다.

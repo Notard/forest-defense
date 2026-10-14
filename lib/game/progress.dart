@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'difficulty.dart';
 import 'monsters.dart';
 import 'stages.dart';
 import 'units.dart';
@@ -32,6 +33,7 @@ class Progress {
     this.musicOn = true,
     Set<MonsterType>? seenMonsters,
     Set<UnitType>? usedUnits,
+    this.difficulty = Difficulty.normal,
   })  : stars = stars ?? {},
         upgrades = upgrades ?? {},
         seenMonsters = seenMonsters ?? {},
@@ -55,6 +57,9 @@ class Progress {
 
   /// 한 번이라도 놓아 본 친구 (14단계). 열렸는데 아직 안 놓아 본 카드에는 "새로!"가 붙는다.
   final Set<UnitType> usedUnits;
+
+  /// 메인 화면에서 고른 난이도.
+  Difficulty difficulty;
 
   int levelOf(Upgrade u) => upgrades[u.name] ?? 0;
 
@@ -120,6 +125,7 @@ class Progress {
         'music': musicOn,
         'seen': [for (final m in seenMonsters) m.name],
         'used': [for (final u in usedUnits) u.name],
+        'difficulty': difficulty.name,
       };
 
   /// 14단계 전 저장에는 'seen'·'used'가 없다: 깬 스테이지의 몬스터는 본 것으로, 열린 친구는 써 본 것으로 친다
@@ -131,6 +137,7 @@ class Progress {
       upgrades: (j['upgrades'] as Map? ?? {}).map((k, v) => MapEntry(k as String, (v as num).toInt())),
       soundOn: j['sound'] as bool? ?? true,
       musicOn: j['music'] as bool? ?? true,
+      difficulty: Difficulty.values.where((d) => d.name == j['difficulty']).firstOrNull ?? Difficulty.normal,
     );
     final seen = j['seen'] as List?;
     if (seen != null) {
