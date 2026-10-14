@@ -11,13 +11,14 @@ abstract final class GameConfig {
 
   // ── 필드 (레인 × 칸) ──────────────────────────────
   static const int rows = 5;
-  static const int cols = 9;
+  // 14-1단계: 9칸 → 8칸, 정사각 칸 (우리 게임만의 판). 필드 넓이는 그대로라 배경에 그대로 맞는다.
+  static const int cols = 8;
   // 배경 그림(assets/images/fx/background.webp)의 잔디밭에 맞춘 값 (WORKLOG 3-g).
   // 잔디밭은 1280 × 720 기준 x 207~1055, y 110~646.
-  static const double cellWidth = 96;
+  static const double cellWidth = 108;
   static const double cellHeight = 108;
 
-  /// 필드 왼쪽 위 모서리. 왼쪽 200px은 둥지·통나무 열, 위쪽 108px은 HUD.
+  /// 필드 왼쪽 위 모서리. 왼쪽 200px은 둥지, 위쪽 108px은 HUD.
   static const double fieldX = 200;
   static const double fieldY = 108;
   static const double fieldWidth = cols * cellWidth; // 864 → 오른쪽 끝 1064
@@ -26,8 +27,8 @@ abstract final class GameConfig {
   // ── 필드 바깥 구역 ────────────────────────────────
   static const double hudHeight = fieldY;
 
-  /// 통나무가 놓이는 열 (x 120 ~ 200). 120보다 왼쪽은 둥지(굴 문).
-  static const double logColumnX = 120;
+  /// 둥지 문 (도토리가 가끔 굴러 나오는 곳, 14-1단계).
+  static const double nestDoorX = 80, nestDoorY = 300;
 
   /// 몬스터가 나타나는 x. 필드 오른쪽 끝(1064) 바깥 흙길.
   static const double spawnX = 1120;

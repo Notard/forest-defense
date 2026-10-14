@@ -40,11 +40,11 @@ void main() {
 
   ForestGame stageGame() => ForestGame(
         stage: stageById('1-1'),
-        skyAcorns: false,
+        nestAcorns: false,
         waves: false,
         sound: false,
         intro: false,
-        onFinish: ({required won, required usedLog, required lostUnit}) =>
+        onFinish: ({required won, required lostHeart, required lostUnit}) =>
             const Reward(stars: 3, newStars: 3, pinecones: 30, unlocked: UnitType.turtle),
       );
 
@@ -88,7 +88,7 @@ void main() {
   }
 
   // 판 안 레벨업 (12-2단계): Lv3 여우(별 둘), Lv2 곰(별 하나), 거북이 말풍선(맨 윗줄이라 발 아래), 다람쥐 말풍선(머리 위)
-  GameTester(() => ForestGame(skyAcorns: false, waves: false, sound: false, intro: false, logsOn: false)).testGameWidget(
+  GameTester(() => ForestGame(nestAcorns: false, waves: false, sound: false, intro: false)).testGameWidget(
     '레벨업',
     setUp: waitForLoad,
     verify: (game, tester) async {

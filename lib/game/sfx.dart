@@ -13,7 +13,7 @@ enum Sfx {
   slimeDie('slime_die', 0.6, minGap: 0.06),
   bite('bite', 0.4, pooled: true, minGap: 0.1),
   boom('boom', 0.9),
-  log('log', 0.8),
+  nest('nest', 0.8),
   warning('warning', 0.6),
   win('win', 0.8),
   lose('lose', 0.8),

@@ -79,10 +79,6 @@ class Monster extends Actor {
   static const double jumpTime = 0.6, jumpHeight = 70;
   bool get jumping => _jumpTo != null;
 
-  /// 통나무에 깔렸는지. 깔린 버섯 포자는 나뉘지 않는다: 나뉘면 작은 버섯이 이미 지나간 통나무 뒤(둥지 바로 앞)에
-  /// 생겨 그대로 둥지에 닿아 게임오버가 되었다 (13단계, 자동 플레이 봇으로 찾음).
-  bool crushed = false;
-
   // ── 보스 소환 (11단계) ──
   /// 지금까지 소환한 횟수 (HP 75%·50%·25%에서 한 번씩).
   int summons = 0;
@@ -202,8 +198,27 @@ class Monster extends Actor {
     }
   }
 
-  /// 이 x보다 왼쪽에 닿으면 둥지에 닿은 것 (그 레인 통나무를 이미 썼으면 게임오버).
-  static const double reachedHomeX = GameConfig.logColumnX - 60;
+  /// 이 x보다 왼쪽에 닿으면 둥지에 닿은 것: 하트가 줄고 몬스터는 사라진다 (14-1단계).
+  static const double reachedHomeX = GameConfig.fieldX - 40;
+
+  /// 뒤(오른쪽)로 밀려난다 (스컨크 방귀). 깨물던 것은 놓고 다시 걸어온다.
+  void knockBack(double dx) {
+    if (!alive || jumping) return;
+    position.x = math.min(position.x + dx, GameConfig.spawnX);
+    if (eating != null) {
+      eating = null;
+      play('walk');
+    }
+  }
+
+  /// 둥지에 닿아 사라진다 (쓰러뜨린 게 아니라 셈하지 않고, 버섯도 나뉘지 않고, 도토리도 없다).
+  void reachNest() {
+    if (!alive) return;
+    hp = 0;
+    game.monsters.remove(this);
+    game.world.add(Smoke(position: absolutePosition - Vector2(0, size.y * 0.3), size: size.y * 0.9));
+    removeFromParent();
+  }
 
   @override
   void takeDamage(double amount) {
@@ -239,9 +254,10 @@ class Monster extends Actor {
     game.defeated++;
     game.sfx.play(Sfx.slimeDie);
     // 버섯 포자: 작은 버섯으로 나뉜다 (addMonster는 부르자마자 대기 수를 올려서, 이 사이에 클리어로 판정되지 않는다)
-    for (var i = 0; i < (crushed ? 0 : type.splitsInto); i++) {
+    for (var i = 0; i < type.splitsInto; i++) {
       game.addMonster(MonsterType.miniMushroom, row: row, x: position.x - 24 + i * 52);
     }
+    game.dropAcorns(this);
   }
 
   /// 이 몬스터가 있는 칸 (필드 밖이면 null).

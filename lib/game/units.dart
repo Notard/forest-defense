@@ -51,6 +51,14 @@ enum UnitType {
     cooldown: 20,
     maxHp: 800,
     displayHeight: 100,
+  ),
+  // ── 14-1단계: 도토리를 물어 오는 친구 ──
+  magpie(
+    sheet: 'magpie',
+    cost: 50,
+    cooldown: 12,
+    maxHp: 300,
+    displayHeight: 84,
   );
 
   const UnitType({

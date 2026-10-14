@@ -37,6 +37,9 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
   final _barFill = Paint()..color = const Color(0xFF9BCB5A);
 
   late final AcornCounter acornCounter;
+
+  /// 둥지 하트 (14-1단계). 아래 띠, 웨이브 이름 오른쪽.
+  final hearts = HeartsDisplay();
   late final List<UnitCard> cards;
   late final ShovelButton shovel;
 
@@ -58,6 +61,7 @@ class Hud extends PositionComponent with HasGameReference<ForestGame> {
       SoundButton(),
       if (game.music != null) MusicButton(),
       _waveLabel,
+      hearts,
     ]);
   }
 
@@ -342,3 +346,55 @@ class MusicButton extends PositionComponent with TapCallbacks, HasGameReference<
   @override
   void onTapDown(TapDownEvent event) => game.toggleMusic();
 }
+
+/// 둥지 하트 세 개 (14-1단계). 잃은 하트는 빈 칸. 하트를 잃으면 흔들리며 빨갛게 번쩍인다.
+/// Gaegu에 ♥ 글자가 없어서 그린다.
+class HeartsDisplay extends PositionComponent with HasGameReference<ForestGame> {
+  HeartsDisplay() : super(position: Vector2(232, HudLayout.progressBar.center.dy), size: Vector2(3 * 38, 34), anchor: Anchor.centerLeft);
+
+  final _full = Paint()..color = const Color(0xFFE8505B);
+  final _empty = Paint()..color = const Color(0x40FFFFFF);
+  final _rim = Paint()
+    ..color = const Color(0xFF3A1C12)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.5;
+  double _flash = 0;
+
+  /// 하트를 잃었을 때.
+  void hit() {
+    _flash = 0.5;
+    if (children.whereType<SequenceEffect>().isNotEmpty) return;
+    add(SequenceEffect([
+      MoveByEffect(Vector2(-6, 0), EffectController(duration: 0.05)),
+      MoveByEffect(Vector2(12, 0), EffectController(duration: 0.1)),
+      MoveByEffect(Vector2(-6, 0), EffectController(duration: 0.05)),
+    ]));
+  }
+
+  @override
+  void update(double dt) {
+    if (_flash > 0) _flash -= dt;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    for (var i = 0; i < ForestGame.startHearts; i++) {
+      final p = heartPath(Offset(17 + i * 38.0, size.y / 2), 15);
+      final on = i < game.hearts;
+      canvas.drawPath(p, on ? _full : _empty);
+      canvas.drawPath(p, _rim);
+    }
+    if (_flash > 0) {
+      canvas.drawRRect(RRect.fromRectAndRadius(size.toRect().inflate(6), const Radius.circular(10)),
+          Paint()..color = const Color(0xFFFF4040).withValues(alpha: (_flash / 0.5) * 0.35));
+    }
+  }
+}
+
+/// 하트 모양 ([c] 가운데, [r] 반지름쯤).
+Path heartPath(Offset c, double r) => Path()
+  ..moveTo(c.dx, c.dy + r * 0.95)
+  ..cubicTo(c.dx - r * 1.5, c.dy - r * 0.05, c.dx - r * 0.9, c.dy - r * 1.15, c.dx, c.dy - r * 0.45)
+  ..cubicTo(c.dx + r * 0.9, c.dy - r * 1.15, c.dx + r * 1.5, c.dy - r * 0.05, c.dx, c.dy + r * 0.95)
+  ..close();
+

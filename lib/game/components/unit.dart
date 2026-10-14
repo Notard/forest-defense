@@ -41,6 +41,7 @@ abstract class UnitComponent extends Actor {
         UnitType.hedgehog => Hedgehog(cell: cell, art: art),
         UnitType.owl => Owl(cell: cell, art: art),
         UnitType.bear => Bear(cell: cell, art: art),
+        UnitType.magpie => Magpie(cell: cell, art: art),
       };
 
   final UnitType type;
@@ -211,14 +212,28 @@ class Skunk extends UnitComponent {
     play('arm', onDone: () => play('explode', onEvent: _blast, onDone: _finish));
   }
 
+  /// 방귀 구름이 닿는 거리 (자기 칸 반 칸 뒤 ~ 앞 [reachCells]칸), 밀어내는 거리 (14-1단계: 3 × 3 폭발 대신).
+  static const double reachCells = 3, pushCells = 1;
+  static const _stink = Color(0xFFB8E07A);
+
+  bool inCloud(Monster m) {
+    final dx = m.position.x - position.x;
+    return m.alive && m.row == cell.row && dx >= -GameConfig.cellWidth * 0.5 && dx <= GameConfig.cellWidth * (reachCells + 0.2);
+  }
+
   void _blast() {
     game.sfx.play(Sfx.boom);
-    final center = framePointToWorld(art.muzzle!);
-    game.world.add(Smoke(position: center, size: GameConfig.cellWidth * 2.6, duration: 0.7));
-    for (final m in game.monsters.toList()) {
-      if ((m.row - cell.row).abs() <= 1 && (m.position.x - position.x).abs() <= GameConfig.cellWidth * 1.5) {
-        m.takeDamage(damage);
-      }
+    for (var i = 0; i < reachCells; i++) {
+      game.world.add(Smoke(
+        position: Vector2(position.x + GameConfig.cellWidth * (i + 0.6), position.y - type.displayHeight * 0.45),
+        size: GameConfig.cellWidth * 1.5,
+        duration: 0.8,
+        cloudColor: _stink,
+      ));
+    }
+    for (final m in game.monsters.where(inCloud).toList()) {
+      m.takeDamage(damage);
+      if (m.alive) m.knockBack(GameConfig.cellWidth * pushCells);
     }
   }
 
@@ -303,5 +318,31 @@ class Bear extends UnitComponent {
     for (final m in game.monsters.where(_inReach).toList()) {
       m.takeDamage(damage * game.boosts.bearDamage * power);
     }
+  }
+}
+
+/// 까치 (14-1단계): 자기 레인과 위아래 한 레인(모두 3레인)에 내려앉은 도토리를 [gap]초에 하나씩 물어 온다.
+/// '깍!' 4번째 프레임에 도토리가 HUD로 날아간다. 레벨이 오르면 더 빨리.
+class Magpie extends UnitComponent {
+  Magpie({required super.cell, required super.art}) : super._(type: UnitType.magpie);
+
+  static const double gap = 0.9;
+  static const int reachLanes = 1;
+  double _next = 0.5;
+
+  bool _reaches(Acorn a) => a.landed && !a.collecting && (a.lane - cell.row).abs() <= reachLanes;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!alive) return;
+    _next -= dt;
+    if (_next > 0 || busy) return;
+    final target = game.world.children.whereType<Acorn>().where(_reaches).firstOrNull;
+    if (target == null) return;
+    _next = gap / power;
+    play('call', onEvent: () {
+      if (target.isMounted && !target.collecting) target.collect();
+    });
   }
 }

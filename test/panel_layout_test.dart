@@ -50,11 +50,11 @@ void main() {
   // 결과 판에 들어갈 수 있는 것을 모두 넣은 경우: 별 3 + 결과·솔방울·새 친구 + 버튼 셋
   GameTester(() => ForestGame(
         stage: stageById('1-1'),
-        skyAcorns: false,
+        nestAcorns: false,
         waves: false,
         sound: false,
         intro: false,
-        onFinish: ({required won, required usedLog, required lostUnit}) =>
+        onFinish: ({required won, required lostHeart, required lostUnit}) =>
             const Reward(stars: 3, newStars: 3, pinecones: 30, unlocked: UnitType.hedgehog),
       )).testGameWidget(
     '클리어 판 (가장 긴 경우)',

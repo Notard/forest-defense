@@ -67,7 +67,7 @@ void main() {
   final saved = <String>[];
   GameTester(() => ForestGame(
         stage: stageById('1-5'),
-        skyAcorns: false,
+        nestAcorns: false,
         waves: false,
         sound: false,
         intro: false,
@@ -94,7 +94,7 @@ void main() {
     },
   );
 
-  GameTester(() => ForestGame(skyAcorns: false, waves: false, sound: false, intro: false, muted: true)).testGameWidget(
+  GameTester(() => ForestGame(nestAcorns: false, waves: false, sound: false, intro: false, muted: true)).testGameWidget(
     '효과음을 꺼 두었으면 새 판도 꺼진 채 시작한다 (예전에는 다시 하기마다 켜졌다)',
     setUp: waitForLoad,
     verify: (game, tester) async => expect(game.sfx.muted, isTrue),

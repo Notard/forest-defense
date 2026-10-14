@@ -1,12 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:forest_defense/game/components/log.dart';
 import 'package:forest_defense/game/components/monster.dart';
 import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/hud/layout.dart';
 import 'package:forest_defense/game/hud/panel.dart';
 import 'package:forest_defense/game/monsters.dart';
+import 'package:forest_defense/game/sfx.dart';
 import 'package:forest_defense/game/strings.dart';
 import 'package:forest_defense/game/waves.dart';
 
@@ -31,12 +31,6 @@ void main() {
 
   /// 프레임 사이에 실제 시간을 흘린다. 쓰러진 몬스터 자리에 생기는 연기가 그림을 읽어야
   /// Flame이 그 뒤의 붙이기·떼기(통나무 사라짐 등)를 이어서 처리한다 (WORKLOG 7).
-  Future<void> runReal(ForestGame game, WidgetTester tester, double seconds) => tester.runAsync(() async {
-        for (var t = 0.0; t < seconds; t += 1 / 60) {
-          game.update(1 / 60);
-          await Future<void>.delayed(Duration.zero);
-        }
-      });
 
   Future<void> settle(ForestGame game, WidgetTester tester) => tester.runAsync(() async {
         for (var i = 0; i < 5; i++) {
@@ -51,35 +45,34 @@ void main() {
   }
 
   GameTester(testGame).testGameWidget(
-    '레인마다 통나무가 하나씩 있고, 몬스터가 닿으면 굴러가 그 레인 몬스터만 모두 쓰러뜨린다',
+    '둥지 하트는 셋: 몬스터가 둥지에 닿으면 사라지고 하트가 하나 준다 (쓰러뜨린 수에는 안 셈, 14-1단계)',
     setUp: waitForLoad,
     verify: (game, tester) async {
-      expect(game.logs.keys, unorderedEquals([0, 1, 2, 3, 4]));
-      final a = await spawn(game, tester, MonsterType.slime, 2, RollingLog.triggerX + 30);
-      final b = await spawn(game, tester, MonsterType.helmetSlime, 2, 700);
-      final other = await spawn(game, tester, MonsterType.slime, 3, 900); // 자기 레인 통나무까지 멀다
-      final log = game.logs[2]!;
-      run(game, 2.0); // 30px 걸어 통나무에 닿음 (약 1.5초)
-      expect(log.rolling, isTrue);
-      expect(game.logs.containsKey(2), isFalse);
-      await runReal(game, tester, 2.5); // 520 px/초로 화면 끝까지 약 2.3초
+      expect(game.hearts, ForestGame.startHearts);
+      final a = await spawn(game, tester, MonsterType.slime, 2, Monster.reachedHomeX + 20);
+      final other = await spawn(game, tester, MonsterType.slime, 3, 900);
+      run(game, 2.0);
       expect(a.alive, isFalse);
-      expect(b.alive, isFalse, reason: '투구도 소용없다');
-      expect(log.isMounted, isFalse, reason: '화면 밖으로 나가면 사라진다');
-      expect(other.alive, isTrue, reason: '다른 레인은 그대로');
-      expect(game.logs.containsKey(3), isTrue);
+      expect(game.monsters, [other]);
+      expect(game.hearts, ForestGame.startHearts - 1);
+      expect(game.lostHeart, isTrue);
+      expect(game.defeated, 0);
+      expect(game.sfx.played, contains(Sfx.nest));
       expect(game.state, GameState.playing);
     },
   );
 
   GameTester(testGame).testGameWidget(
-    '통나무를 쓴 레인에서 몬스터가 둥지에 닿으면 게임오버 판이 뜨고 시계가 멈춘다',
+    '하트를 다 잃으면 게임오버 판이 뜨고 시계가 멈춘다 (보스는 하트 둘)',
     setUp: waitForLoad,
     verify: (game, tester) async {
-      game.logs[1]!.roll();
-      run(game, 2);
+      final boss = await spawn(game, tester, MonsterType.bossSlime, 1, Monster.reachedHomeX + 10);
+      run(game, 1.5);
+      expect(boss.alive, isFalse);
+      expect(game.hearts, 1);
       final m = await spawn(game, tester, MonsterType.wisp, 1, Monster.reachedHomeX + 20);
       run(game, 1.0);
+      expect(game.hearts, 0);
       expect(game.state, GameState.lost);
       await settle(game, tester);
       expect(panelTitle(game), Strings.gameOver);
@@ -89,7 +82,7 @@ void main() {
     },
   );
 
-  GameTester(() => ForestGame(skyAcorns: false, waves: true, startWave: 5, sound: false, intro: false)).testGameWidget(
+  GameTester(() => ForestGame(nestAcorns: false, waves: true, startWave: 5, sound: false, intro: false)).testGameWidget(
     '마지막 웨이브까지 모두 쓰러뜨리면 클리어 판이 뜬다',
     setUp: waitForLoad,
     verify: (game, tester) async {

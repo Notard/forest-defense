@@ -22,6 +22,6 @@ abstract final class HudLayout {
   /// 아래 띠 (웨이브 이름 + 진행 바). 배경 뿌리가 비치게 반투명.
   static const Rect bottomBand = Rect.fromLTWH(0, 652, 1280, 68);
 
-  /// 진행 바는 오른쪽 아래 (원작과 같은 위치).
+  /// 진행 바는 오른쪽 아래. 왼쪽 아래는 웨이브 이름과 둥지 하트.
   static const Rect progressBar = Rect.fromLTWH(880, 674, 380, 26);
 }

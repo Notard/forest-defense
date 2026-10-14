@@ -4,6 +4,7 @@ import 'package:forest_defense/game/components/acorn.dart';
 import 'package:forest_defense/game/components/fireball.dart';
 import 'package:forest_defense/game/components/flyers.dart';
 import 'package:forest_defense/game/components/unit.dart';
+import 'package:forest_defense/game/config.dart';
 import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/grid.dart';
 import 'package:forest_defense/game/monsters.dart';
@@ -95,22 +96,28 @@ void main() {
   );
 
   GameTester(testGame).testGameWidget(
-    '스컨크는 1.2초 부푼 뒤 터져 주변 3 × 3칸 몬스터만 쓰러뜨리고 칸을 비운다',
+    '스컨크는 1.2초 부푼 뒤 앞쪽 3칸에 방귀 구름: 그 레인 앞 3칸만 맞고, 버틴 몬스터는 한 칸 밀려난다 (14-1단계)',
     setUp: waitForLoad,
     verify: (game, tester) async {
-      const at = (row: 2, col: 4);
+      const at = (row: 2, col: 2);
       await place(game, tester, UnitType.skunk, at);
-      await addMonster(game, tester, MonsterType.slime, (row: 2, col: 5)); // 바로 옆
-      await addMonster(game, tester, MonsterType.helmetSlime, (row: 3, col: 5)); // 대각선 (투구 370 + 200)
-      await addMonster(game, tester, MonsterType.slime, (row: 4, col: 5)); // 두 레인 아래
-      await addMonster(game, tester, MonsterType.slime, (row: 2, col: 7)); // 세 칸 오른쪽
+      await addMonster(game, tester, MonsterType.slime, (row: 2, col: 3)); // 바로 앞
+      await addMonster(game, tester, MonsterType.golem, (row: 2, col: 5)); // 세 칸 앞: HP 900이라 쓰러짐
+      await addMonster(game, tester, MonsterType.bossSlime, (row: 2, col: 4)); // 두 칸 앞, 버팀
+      await addMonster(game, tester, MonsterType.slime, (row: 3, col: 3)); // 아래 레인 (3 × 3이 아니다)
+      await addMonster(game, tester, MonsterType.slime, (row: 2, col: 7)); // 다섯 칸 앞 (구름 밖)
+      final boss = game.monsters.firstWhere((m) => m.type == MonsterType.bossSlime);
+      final bossX = boss.position.x;
       await tester.runAsync(() async {
         run(game, 1.6);
         await Future<void>.delayed(const Duration(milliseconds: 50));
         run(game, 1.0);
       });
-      final alive = game.monsters.map((m) => (row: m.row, col: Grid.cellAt(m.position.clone()..y = Grid.laneCenterY(m.row))!.col)).toSet();
-      expect(alive, {(row: 4, col: 5), (row: 2, col: 7)});
+      final alive = game.monsters.map((m) => m.type == MonsterType.bossSlime ? 'boss' : '${m.row}-${Grid.cellAt(m.position.clone()..y = Grid.laneCenterY(m.row))!.col}').toSet();
+      // 보스는 HP가 75% 아래로 내려가 위아래 레인(1·3)에 슬라임 둘을 불러낸다 (11단계 규칙)
+      expect(alive, {'boss', '3-3', '2-7', '1-4', '3-4'});
+      expect(boss.hp, boss.maxHp - Skunk.damage);
+      expect(boss.position.x, closeTo(bossX + GameConfig.cellWidth * Skunk.pushCells, 0.01), reason: '한 칸 밀려남');
       expect(game.garden.unitAt(at), isNull);
       expect(game.unitComponents.containsKey(at), isFalse);
     },

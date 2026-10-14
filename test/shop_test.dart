@@ -42,7 +42,7 @@ void main() {
       expect(p.isAvailable(Upgrade.turtle), isFalse, reason: '거북이는 1-1을 깨야');
       expect(p.buy(Upgrade.turtle), isFalse);
       expect(p.buy(Upgrade.startAcorns), isTrue, reason: '시작 도토리는 처음부터');
-      p.record(stageById('1-1'), won: true, usedLog: false, lostUnit: false);
+      p.record(stageById('1-1'), won: true, lostHeart: false, lostUnit: false);
       expect(p.buy(Upgrade.turtle), isTrue);
     });
 
@@ -80,7 +80,7 @@ void main() {
   });
 
   const boosts = Boosts({Upgrade.fox: 2, Upgrade.turtle: 2, Upgrade.skunk: 1, Upgrade.startAcorns: 3});
-  GameTester(() => ForestGame(skyAcorns: false, waves: false, sound: false, intro: false, boosts: boosts)).testGameWidget(
+  GameTester(() => ForestGame(nestAcorns: false, waves: false, sound: false, intro: false, boosts: boosts)).testGameWidget(
     '판 안: 시작 도토리 +75, 거북이 HP +50%, 스컨크 쿨다운 -15%, 여우불 +30%',
     setUp: waitForLoad,
     verify: (game, tester) async {

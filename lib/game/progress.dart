@@ -85,8 +85,8 @@ class Progress {
   }
 
   /// 판이 끝났을 때 기록한다. 별은 최고 기록만 남고, 처음 얻은 별만큼 솔방울을 준다.
-  Reward record(StageDef s, {required bool won, required bool usedLog, required bool lostUnit}) {
-    final earned = !won ? 0 : 1 + (usedLog ? 0 : 1) + (lostUnit ? 0 : 1);
+  Reward record(StageDef s, {required bool won, required bool lostHeart, required bool lostUnit}) {
+    final earned = !won ? 0 : 1 + (lostHeart ? 0 : 1) + (lostUnit ? 0 : 1);
     final before = starsOf(s);
     final firstClear = won && before == 0;
     final newStars = earned > before ? earned - before : 0;

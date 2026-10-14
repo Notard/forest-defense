@@ -59,7 +59,7 @@ void main() {
     },
   );
 
-  GameTester(() => ForestGame(skyAcorns: false, waves: false, sound: false)).testGameWidget(
+  GameTester(() => ForestGame(nestAcorns: false, waves: false, sound: false)).testGameWidget(
     '판은 3 · 2 · 1 · 시작! 뒤에 시작하고, 그동안은 멈춰 있다',
     setUp: (game, tester) => waitFor(tester, () => game.isLoaded),
     verify: (game, tester) async {

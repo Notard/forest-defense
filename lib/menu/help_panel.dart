@@ -10,6 +10,7 @@ import 'package:flutter/painting.dart';
 
 import '../game/art.dart';
 import '../game/config.dart';
+import '../game/hud/hud.dart' show heartPath;
 import '../game/hud/panel.dart';
 import '../game/monsters.dart';
 import '../game/progress.dart';
@@ -170,10 +171,11 @@ class HowToPage extends PositionComponent with HasGameReference<FlameGame> {
   Future<void> onLoad() async {
     Future<Sprite> fx(String name) async => Sprite(await game.images.load('fx/$name.webp'));
     final fox = await CharacterArt.load(game, UnitType.fox.sheet);
-    _icons.addAll([await fx('acorn'), portrait(fox, UnitType.fox.idleAction), null, await fx('shovel'), await fx('log'), null, await fx('pinecone')]);
+    _icons.addAll([await fx('acorn'), portrait(fox, UnitType.fox.idleAction), null, await fx('shovel'), null, null, await fx('pinecone')]);
   }
 
   final _star = Paint()..color = const Color(0xFFFFD34D);
+  final _heart = Paint()..color = const Color(0xFFE8505B);
   final _starRim = Paint()
     ..color = _ink
     ..style = PaintingStyle.stroke
@@ -187,6 +189,11 @@ class HowToPage extends PositionComponent with HasGameReference<FlameGame> {
       final icon = i < _icons.length ? _icons[i] : null;
       if (icon != null) {
         drawFitted(canvas, icon, Rect.fromCenter(center: center, width: iconSize, height: iconSize));
+      } else if (title == Strings.howTo[4].$1) {
+        // 둥지 하트
+        final p = heartPath(center, 20);
+        canvas.drawPath(p, _heart);
+        canvas.drawPath(p, _starRim);
       } else if (title == Strings.howTo[2].$1) {
         // 레벨업: 노란 동그라미에 Lv
         canvas.drawCircle(center, 22, _star);

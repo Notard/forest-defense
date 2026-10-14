@@ -10,7 +10,6 @@ import 'components/field.dart';
 import 'components/ghost.dart';
 import 'components/lane_background.dart';
 import 'components/level_bubble.dart';
-import 'components/log.dart';
 import 'components/monster.dart';
 import 'components/unit.dart';
 import 'components/wave_runner.dart';
@@ -40,7 +39,7 @@ typedef SettingsHandler = void Function({required bool sound, required bool musi
 enum GameExit { retry, map, next }
 
 /// 판이 끝났을 때 앱에 알리는 결과. 앱이 진행에 기록하고 보상을 돌려준다.
-typedef FinishHandler = Reward Function({required bool won, required bool usedLog, required bool lostUnit});
+typedef FinishHandler = Reward Function({required bool won, required bool lostHeart, required bool lostUnit});
 
 /// 숲 지키기 한 판. 월드 좌표는 왼쪽 위 (0, 0) ~ 오른쪽 아래 (1280, 720).
 ///
@@ -52,14 +51,13 @@ class ForestGame extends FlameGame {
     this.stage = demoStage,
     List<UnitType>? units,
     Random? random,
-    bool? skyAcorns,
+    this.nestAcorns = true,
     int? startAcorns,
     this.practice = false,
     this.practiceKinds,
     bool? waves,
     this.startWave = 1,
     this.timeScale = 1,
-    this.logsOn = true,
     this.onExit,
     this.onFinish,
     bool sound = true,
@@ -70,7 +68,6 @@ class ForestGame extends FlameGame {
     this.onSettings,
   })  : units = units ?? UnitType.values,
         _random = random ?? Random(),
-        skyAcorns = skyAcorns ?? stage.skyAcorns,
         garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns, cooldownOf: boosts.cooldownOf),
         wavesOn = waves ?? !practice,
         sfx = SoundBoard(enabled: sound)..muted = muted,
@@ -81,7 +78,7 @@ class ForestGame extends FlameGame {
           ),
         );
 
-  /// 이 판의 스테이지 (레인·하늘 도토리·웨이브).
+  /// 이 판의 스테이지 (레인·둥지 도토리·웨이브).
   final StageDef stage;
 
   /// 카드로 쓸 수 있는 유닛 (해금한 것만, 순서대로).
@@ -89,8 +86,8 @@ class ForestGame extends FlameGame {
 
   final Random _random;
 
-  /// 하늘 도토리를 떨어뜨릴지 (기본은 스테이지, 테스트에서는 끈다).
-  final bool skyAcorns;
+  /// 둥지 문에서 가끔 도토리가 굴러 나오는지 (테스트에서는 끈다, 14-1단계).
+  final bool nestAcorns;
 
   /// 확인용: 레인마다 움직이지 않는 연습 상대 몬스터를 세운다 (`?practice=1`, 5단계).
   final bool practice;
@@ -108,12 +105,9 @@ class ForestGame extends FlameGame {
   final double timeScale;
   WaveRunner? waveRunner;
 
-  /// 레인마다 아직 쓰지 않은 통나무 (굴러가면 빠진다).
-  final Map<int, RollingLog> logs = {};
-  int _logsAtStart = 0;
-
-  /// 통나무를 놓을지 (테스트에서 끌 수 있다).
-  final bool logsOn;
+  /// 둥지 하트 (14-1단계): 몬스터가 둥지에 닿을 때마다 하나(보스는 둘) 줄고, 0이 되면 게임오버.
+  static const int startHearts = 3;
+  int hearts = startHearts;
 
   /// 쓰러뜨린 몬스터 수 (결과 화면).
   int defeated = 0;
@@ -121,8 +115,8 @@ class ForestGame extends FlameGame {
   /// 몬스터에게 동물을 잃었는지 (★★★ 조건, 삽으로 치운 것은 빼고).
   bool lostUnit = false;
 
-  /// 통나무를 하나라도 썼는지 (★★ 조건).
-  bool get usedLog => logs.length < _logsAtStart;
+  /// 하트를 하나라도 잃었는지 (★★ 조건).
+  bool get lostHeart => hearts < startHearts;
 
   /// 지금 판 상태. 카운트다운·일시정지·클리어·게임오버면 게임 시계가 멈춘다.
   GameState state = GameState.playing;
@@ -196,7 +190,7 @@ class ForestGame extends FlameGame {
     hud = Hud();
     // 효과 그림은 미리 읽어 둔다. 첫 여우불·첫 연기에서 그림을 읽느라 한 박자 늦지 않게.
     await sfx.load();
-    await images.loadAll(const ['fx/acorn.webp', 'fx/fireball.webp', 'fx/smoke.webp', 'fx/helmet.webp', 'fx/log.webp']);
+    await images.loadAll(const ['fx/acorn.webp', 'fx/fireball.webp', 'fx/smoke.webp', 'fx/helmet.webp']);
     // 이 판에 나올 몬스터·쓸 수 있는 친구 그림도 미리 읽는다. 처음 나오는 순간 시트를 풀면 핸드폰에서 멈칫했다 (16-1단계).
     // 투구 슬라임은 투구가 깨지면, 보스는 소환할 때 슬라임 그림을 쓴다. 작은 버섯은 버섯 그림을 같이 쓴다.
     final sheets = <String>{
@@ -212,22 +206,11 @@ class ForestGame extends FlameGame {
       field,
       PlacementGhost(),
       hud,
-      if (skyAcorns)
-        stage.region == Region.night
-            ? SkyAcornSpawner(random: _random, lanes: stage.lanes, minGap: SkyAcornSpawner.nightMinGap, maxGap: SkyAcornSpawner.nightMaxGap)
-            : SkyAcornSpawner(random: _random, lanes: stage.lanes),
+      if (nestAcorns) NestAcorns(random: _random, lanes: stage.lanes, every: stage.nestEvery),
     ]);
     if (practice) await _addPracticeTargets();
     if (wavesOn) {
       await world.add(waveRunner = WaveRunner(random: _random, startWave: startWave, waves: stage.waves, lanes: stage.lanes));
-    }
-    if (logsOn) {
-      for (final row in stage.lanes) {
-        final log = RollingLog(row);
-        logs[row] = log;
-        await world.add(log);
-      }
-      _logsAtStart = logs.length;
     }
     if (intro) startCountdown();
     music?.play(Track.forStage(stage));
@@ -239,20 +222,32 @@ class ForestGame extends FlameGame {
     world.add(Countdown(onDone: () => state = GameState.playing));
   }
 
-  /// 몬스터가 둥지 앞에 닿았다. 그 레인 통나무가 남아 있으면 굴리고, 없으면 게임오버.
-  /// (통나무는 몬스터가 더 앞에서 닿을 때 이미 굴러가므로, 여기 오는 건 통나무를 쓴 레인이다.)
+  /// 몬스터가 둥지에 닿았다: 몬스터는 사라지고 하트가 하나(보스는 둘) 준다. 하트가 다 떨어지면 게임오버.
   void onMonsterReachedHome(Monster m) {
-    final log = logs[m.row];
-    if (log != null) {
-      log.roll();
-      return;
-    }
-    lose();
+    if (!m.alive || state == GameState.lost || state == GameState.won) return;
+    m.reachNest();
+    hearts = max(0, hearts - (m.type.boss ? 2 : 1));
+    sfx.play(Sfx.nest);
+    hud.hearts.hit();
+    if (hearts == 0) lose();
+  }
+
+  /// 쓰러진 몬스터가 도토리를 떨어뜨린다 (눌러서 줍는다, 14-1단계).
+  void dropAcorns(Monster m) {
+    if (m.type.acornDrop <= 0) return;
+    final foot = UnitComponent.footOf((row: m.row, col: 0)).y;
+    final x = m.position.x.clamp(GameConfig.fieldX + 30, GameConfig.fieldX + GameConfig.fieldWidth - 30);
+    world.add(Acorn.popped(
+      from: Vector2(x, foot - m.type.displayHeight * 0.6),
+      toX: x + (_random.nextDouble() - 0.5) * 40,
+      landY: foot - 14,
+      value: m.type.acornDrop,
+    ));
   }
 
   Reward _finish(bool won) =>
-      reward = onFinish?.call(won: won, usedLog: usedLog, lostUnit: lostUnit) ??
-          Reward(stars: won ? 1 + (usedLog ? 0 : 1) + (lostUnit ? 0 : 1) : 0, newStars: 0, pinecones: 0);
+      reward = onFinish?.call(won: won, lostHeart: lostHeart, lostUnit: lostUnit) ??
+          Reward(stars: won ? 1 + (lostHeart ? 0 : 1) + (lostUnit ? 0 : 1) : 0, newStars: 0, pinecones: 0);
 
   void lose() {
     if (state == GameState.lost || state == GameState.won) return;
@@ -263,7 +258,7 @@ class ForestGame extends FlameGame {
     _finish(false);
     _showPanel(CenterPanel(
       title: Strings.gameOver,
-      lines: [Strings.result(defeated: defeated, logsLeft: logs.length)],
+      lines: [Strings.result(defeated: defeated, hearts: hearts)],
       buttons: [PanelButton(Strings.toMap, () => exit(GameExit.map)), PanelButton(Strings.retry, restart)],
     ));
   }
@@ -280,7 +275,7 @@ class ForestGame extends FlameGame {
       titleColor: const Color(0xFFFFE066),
       stars: r.stars,
       lines: [
-        Strings.result(defeated: defeated, logsLeft: logs.length),
+        Strings.result(defeated: defeated, hearts: hearts),
         if (r.pinecones > 0) Strings.pineconesGained(r.pinecones),
         if (r.unlocked != null) Strings.newFriend(r.unlocked!),
       ],

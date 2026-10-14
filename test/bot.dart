@@ -9,7 +9,7 @@ import 'package:forest_defense/game/units.dart';
 ///
 /// 보통 사람처럼 두는 봇: 도토리는 내려앉으면 바로 줍고, 다람쥐를 첫 칸에 놓고,
 /// 몬스터가 들어온 레인에 여우를 세우고, 도토리가 남으면 여우·벽을 더 놓는다.
-/// 판에서 쓸 수 있는 친구(카드)만 쓴다: 고슴도치가 있으면 벽으로, 부엉이는 박쥐·골렘이 온 레인에,
+/// 판에서 쓸 수 있는 친구(카드)만 쓴다: 까치는 첫 칸에, 고슴도치가 있으면 벽으로, 부엉이는 박쥐·골렘이 온 레인에,
 /// 곰은 골렘·보스가 온 레인 앞쪽에. 스컨크와 레벨업은 쓰지 않는다 (처음 하는 사람처럼).
 class Bot {
   Bot(this.game, {this.pickRate = 1, this.maxSquirrels = 4, this.waitForLawn = false, int seed = 0}) : _random = Random(seed);
@@ -63,6 +63,12 @@ class Bot {
     if (count(UnitType.squirrel) < maxSquirrels) {
       for (final row in lanes) {
         if (await put(UnitType.squirrel, row, 0)) return;
+      }
+    }
+    // 3-1) 까치 (14-1단계): 다람쥐 옆 첫 칸에 하나(익숙하면 둘)
+    if (count(UnitType.magpie) < (maxSquirrels >= 4 ? 2 : 1)) {
+      for (final row in [3, 1, 0, 4, 2].where(game.laneOpen)) {
+        if (await put(UnitType.magpie, row, 0)) return;
       }
     }
     // 4) 박쥐·골렘이 온 레인에 부엉이, 골렘·보스가 온 레인에 곰
@@ -124,6 +130,6 @@ Future<String> playOut(ForestGame game, Bot bot, double actEvery, {double limit 
     }
   }
   final units = game.garden.units.values.fold(<UnitType, int>{}, (m, u) => m..update(u, (v) => v + 1, ifAbsent: () => 1));
-  return '${game.state.name} ${t.round()}초, 쓰러뜨림 ${game.defeated}, 남은 통나무 ${game.logs.length}, '
+  return '${game.state.name} ${t.round()}초, 쓰러뜨림 ${game.defeated}, 남은 하트 ${game.hearts}, '
       '도토리 ${game.garden.acorns}, 유닛 ${units.map((k, v) => MapEntry(k.name, v))}, ${waveTimes.join(' ')}';
 }

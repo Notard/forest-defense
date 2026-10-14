@@ -11,30 +11,46 @@ import '../garden.dart';
 import '../grid.dart';
 import '../sfx.dart';
 
-/// 주울 수 있는 도토리. 하늘에서 떨어지거나(4단계) 다람쥐가 만든다(5단계, [Acorn.popped]).
+/// 주울 수 있는 도토리 (14-1단계): 다람쥐가 만들고, 쓰러진 몬스터가 떨어뜨리고, 둥지 문에서 가끔 굴러 나온다
+/// (모두 [Acorn.popped]). 하늘에서 떨어지지 않는다.
 ///
-/// 떨어지는 동안 살랑 흔들리고, 내려앉은 뒤 [lifetime]초가 지나면 사라진다.
-/// 마지막 [blinkTime]초는 깜빡인다. 누르면 HUD 도토리 칸으로 날아가 +25.
+/// 내려앉은 뒤 [lifetime]초가 지나면 사라진다. 마지막 [blinkTime]초는 깜빡인다.
+/// 누르거나 까치가 물어 오면 HUD 도토리 칸으로 날아가 [value]만큼 더한다.
 class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGame> {
-  Acorn({required Vector2 from, required this.landY, this.fallSpeed = 60})
-      : super(position: from, size: Vector2.all(displaySize), anchor: Anchor.center, priority: 500);
+  Acorn({required Vector2 from, required this.landY, this.fallSpeed = 60, this.value = Garden.acornValue})
+      : super(position: from, size: Vector2.all(sizeFor(value)), anchor: Anchor.center, priority: 500);
 
   /// 다람쥐가 만든 도토리: [from]에서 위로 튀었다가 포물선을 그리며 [toX], [landY]에 떨어진다.
-  Acorn.popped({required Vector2 from, required double toX, required this.landY})
+  Acorn.popped({required Vector2 from, required double toX, required this.landY, this.value = Garden.acornValue})
       : fallSpeed = 0,
-        super(position: from, size: Vector2.all(displaySize), anchor: Anchor.center, priority: 500) {
-    // 위로 0.35초 튀어 오르는 속도와, 그 뒤 landY에 닿을 때까지 걸리는 시간으로 가로 속도를 정한다
-    const up = 0.35;
-    final vy = -gravity * up;
-    final rise = gravity * up * up / 2;
-    final fallTime = sqrt(2 * (landY - from.y + rise) / gravity);
-    _velocity = Vector2((toX - from.x) / (up + fallTime), vy);
+        super(position: from, size: Vector2.all(sizeFor(value)), anchor: Anchor.center, priority: 500) {
+    // 출발점과 떨어질 곳 중 높은 쪽보다 [hop]만큼 위를 꼭대기로 하는 포물선.
+    // (떨어질 곳이 출발점보다 위여도 된다: 둥지 문에서 위쪽 레인으로 굴러갈 때. 예전 식은 이때 NaN이 났다, 14-1단계)
+    final apex = min(from.y, landY) - hop;
+    final upTime = sqrt(2 * (from.y - apex) / gravity);
+    final fallTime = sqrt(2 * (landY - apex) / gravity);
+    _velocity = Vector2((toX - from.x) / (upTime + fallTime), -gravity * upTime);
   }
 
   static const double gravity = 1400;
+
+  /// 튀어 오르는 높이 (출발점·떨어질 곳 중 높은 쪽 위로, 논리 px).
+  static const double hop = 86;
   Vector2? _velocity;
 
   static const double displaySize = 46;
+
+  /// 25보다 적은 도토리(몬스터가 떨어뜨린 작은 것)는 작게 그린다.
+  static double sizeFor(int value) => value < Garden.acornValue ? 34 : displaySize;
+
+  /// 주우면 더해지는 도토리 수.
+  final int value;
+
+  /// 내려앉은 레인 (까치가 자기 근처 레인만 줍는다).
+  int get lane => ((landY - GameConfig.fieldY) / GameConfig.cellHeight).floor().clamp(0, GameConfig.rows - 1);
+
+  /// 날아가는 중인지 (두 번 줍지 않게).
+  bool get collecting => _collecting;
   static const double lifetime = 10; // 8 → 10 (7-1단계: 줍기 전에 사라지는 일이 잦았다)
   static const double blinkTime = 2;
 
@@ -100,26 +116,20 @@ class Acorn extends SpriteComponent with TapCallbacks, HasGameReference<ForestGa
     addAll([
       MoveEffect.to(game.hud.acornCounter.target, EffectController(duration: 0.45, curve: Curves.easeInCubic)),
       ScaleEffect.to(Vector2.all(0.7), EffectController(duration: 0.45)),
-      RemoveEffect(delay: 0.45, onComplete: () => game.garden.addAcorns(Garden.acornValue)),
+      RemoveEffect(delay: 0.45, onComplete: () => game.garden.addAcorns(value)),
     ]);
   }
 }
 
-/// 7~10초마다 무작위 칸 위로 도토리를 떨어뜨린다. 첫 도토리는 [firstDelay]초 뒤.
-class SkyAcornSpawner extends Component with HasGameReference<ForestGame> {
-  SkyAcornSpawner({Random? random, this.firstDelay = 4, this.lanes = const [0, 1, 2, 3, 4], this.minGap = dayMinGap, this.maxGap = dayMaxGap})
-      : _random = random ?? Random();
+/// 둥지 문에서 [every]초쯤마다 도토리가 하나 굴러 나와 첫 칸 근처에 떨어진다 (14-1단계, 하늘 도토리 대신).
+class NestAcorns extends Component with HasGameReference<ForestGame> {
+  NestAcorns({Random? random, required this.every, this.lanes = const [0, 1, 2, 3, 4], this.firstDelay = 4}) : _random = random ?? Random();
+
+  /// 굴러 나오는 간격 (초, ±15% 흔들림). 낮 7, 밤 12 ([StageDef.nestEvery]).
+  final double every;
 
   /// 도토리가 떨어지는 레인 (스테이지가 쓰는 레인).
   final List<int> lanes;
-
-  static const double dayMinGap = 5, dayMaxGap = 8; // 7~10 → 5~8 (7-1단계)
-
-  /// 밤 숲은 드물게 (13단계): 처음엔 "없음"으로 계획했지만, 다람쥐 수입만으로는 처음 하는 사람이 버티지 못했다.
-  static const double nightMinGap = 10, nightMaxGap = 14;
-
-  /// 다음 도토리까지 간격 (초).
-  final double minGap, maxGap;
 
   final Random _random;
   final double firstDelay;
@@ -129,10 +139,13 @@ class SkyAcornSpawner extends Component with HasGameReference<ForestGame> {
   void update(double dt) {
     _next -= dt;
     if (_next > 0) return;
-    _next = minGap + _random.nextDouble() * (maxGap - minGap);
-    final col = _random.nextInt(GameConfig.cols);
+    _next = every * (0.85 + _random.nextDouble() * 0.3);
     final row = lanes[_random.nextInt(lanes.length)];
-    final x = Grid.center((row: row, col: col)).x;
-    game.world.add(Acorn(from: Vector2(x, GameConfig.fieldY - 30), landY: Grid.laneCenterY(row) + 18));
+    final land = Grid.center((row: row, col: 0));
+    game.world.add(Acorn.popped(
+      from: Vector2(GameConfig.nestDoorX, GameConfig.nestDoorY),
+      toX: land.x - 20 + _random.nextDouble() * 40,
+      landY: Grid.laneCenterY(row) + 18,
+    ));
   }
 }

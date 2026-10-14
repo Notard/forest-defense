@@ -30,8 +30,8 @@ class StageDef {
   /// 처음 깨면 해금하는 유닛.
   final UnitType? unlocks;
 
-  /// 하늘 도토리는 낮·밤 모두 떨어진다. 밤에는 드물게 (13단계, [SkyAcornSpawner.nightMinGap]).
-  bool get skyAcorns => true;
+  /// 둥지 문에서 도토리가 굴러 나오는 간격 (초). 밤에는 드물게 (14-1단계).
+  double get nestEvery => region == Region.day ? 7 : 14;
 
   /// 별을 처음 얻을 때 별 하나당 솔방울.
   int get pineconesPerStar => boss ? 20 : 10;
@@ -54,7 +54,7 @@ const List<StageDef> stages = [
     Wave([_s, _h, _s, _s], gap: 7),
     Wave([_s, _s, _h, _s, _h, _s], gap: 2, big: true),
   ]),
-  StageDef(id: '1-3', region: Region.day, unlocks: UnitType.skunk, waves: [
+  StageDef(id: '1-3', region: Region.day, unlocks: UnitType.magpie, waves: [
     Wave([_s, _s], gap: 12),
     Wave([_s, _w, _s], gap: 9),
     Wave([_s, _h, _w, _s], gap: 7),
@@ -77,7 +77,7 @@ const List<StageDef> stages = [
     Wave([_k, _s, _s, _h, _m], gap: 3, big: true),
   ]),
   // 밤 숲: 하늘 도토리가 없다 → 다람쥐가 중요. 박쥐
-  StageDef(id: '2-1', region: Region.night, startAcorns: 300, waves: [
+  StageDef(id: '2-1', region: Region.night, startAcorns: 300, unlocks: UnitType.skunk, waves: [
     Wave([_s, _s], gap: 12),
     Wave([_s, _b, _s], gap: 9),
     Wave([_b, _s, _b], gap: 8),

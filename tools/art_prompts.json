@@ -75,6 +75,11 @@
       "facing": "left",
       "based_on": "slime",
       "description": "EXACTLY the same green slime as the attached slime image (same shape, colors, glossy style, facing LEFT), but now it is the KING: wearing a small golden crown tilted on top, with slightly angry eyebrows and a bigger grin. Change nothing else."
+    },
+    "magpie": {
+      "name": "까치",
+      "facing": "right",
+      "description": "A cute chubby Korean magpie (kkachi), the helper friend who picks up acorns for the player. Standing on the ground, side 3/4 view facing RIGHT. Glossy black head and chest, bright white belly and white shoulder patches, wings folded at the sides with a blue-green iridescent sheen and clearly separated from the body outline, a long black tail angled up behind, small dark beak, big round shiny eyes with white highlights, a cheerful look. Short legs with little feet on the ground."
     }
   },
   "actions": {
@@ -115,13 +120,6 @@
       ],
       "prompt": "A single shiny cartoon acorn, the collectible currency of the game. Brown scaly cap with a tiny stem, glossy golden-brown nut with a bright highlight, slightly tilted, centered. A small soft sparkle star near the top. Readable at 48px."
     },
-    "log": {
-      "size": [
-        128,
-        128
-      ],
-      "prompt": "A round wooden log seen exactly END-ON (we see the circular cut face, like a wheel): light wood face with clear concentric growth rings and a few radial cracks, a thick dark-brown bark rim all around, one small leaf sprouting from the bark. Perfectly round and centered so it can be rotated to look like rolling."
-    },
     "smoke": {
       "size": [
         192,
@@ -135,7 +133,7 @@
         720
       ],
       "opaque": true,
-      "prompt": "Game background for a cozy cartoon forest lane-defense game, 16:9 landscape, flat front view like Plants vs. Zombies (no strong perspective). Same art style as the attached character (thick dark-brown outlines on big shapes, soft cel shading, bright warm palette). Layout, strictly:\n- TOP 15% of the height: a dense band of leafy tree canopy and branches across the whole width (game UI will be drawn over it).\n- LEFT 11% of the width, below the canopy: a cozy animal home: big tree trunk roots with a round burrow door, moss and small mushrooms.\n- CENTER (from 11% to 81% of the width, from 15% to 92% of the height): one open flat lawn of short bright grass with very gentle horizontal stripes, EMPTY - no flowers, rocks or objects on it, because a 9x5 grid of tiles is drawn on top by the game.\n- RIGHT 19% of the width: a winding dirt path coming out of darker, slightly mysterious woods, where monsters will enter.\n- BOTTOM 8%: a strip of mossy ground with roots and pebbles.\nNo characters, no text, no UI.",
+      "prompt": "Game background for a cozy cartoon forest lane-defense game, 16:9 landscape, flat front view (no strong perspective). Same art style as the attached character (thick dark-brown outlines on big shapes, soft cel shading, bright warm palette). Layout, strictly:\n- TOP 15% of the height: a dense band of leafy tree canopy and branches across the whole width (game UI will be drawn over it).\n- LEFT 11% of the width, below the canopy: a cozy animal home: big tree trunk roots with a round burrow door, moss and small mushrooms.\n- CENTER (from 11% to 81% of the width, from 15% to 92% of the height): one open flat lawn of short bright grass with very gentle horizontal stripes, EMPTY - no flowers, rocks or objects on it, because a 9x5 grid of tiles is drawn on top by the game.\n- RIGHT 19% of the width: a winding dirt path coming out of darker, slightly mysterious woods, where monsters will enter.\n- BOTTOM 8%: a strip of mossy ground with roots and pebbles.\nNo characters, no text, no UI.",
       "flatten_rows": [
         0.16,
         0.825,

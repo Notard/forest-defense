@@ -1,0 +1,44 @@
+{
+  "character": "magpie",
+  "anchor": [
+    188.1,
+    267.6
+  ],
+  "actions": {
+    "idle": {
+      "frames": 12,
+      "fps": 12,
+      "loop": true
+    },
+    "call": {
+      "frames": 8,
+      "fps": 12,
+      "loop": false,
+      "event": 4
+    },
+    "hit": {
+      "frames": 4,
+      "fps": 12,
+      "loop": false
+    },
+    "death": {
+      "frames": 8,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "muzzle": [
+    256.0,
+    143.5
+  ],
+  "frame": [
+    320,
+    301
+  ],
+  "bbox": [
+    45,
+    65,
+    262,
+    274
+  ]
+}

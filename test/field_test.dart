@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:forest_defense/game/config.dart';
 import 'package:forest_defense/game/grid.dart';
 
 import 'support.dart';
@@ -15,7 +16,7 @@ void main() {
       for (final cell in [
         (row: 0, col: 0),
         (row: 2, col: 4),
-        (row: 4, col: 8),
+        (row: 4, col: GameConfig.cols - 1),
       ]) {
         await tester.tapAt(toScreen(Grid.center(cell)));
         await tester.pump(const Duration(milliseconds: 100));

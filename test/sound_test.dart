@@ -1,6 +1,7 @@
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/components/acorn.dart';
+import 'package:forest_defense/game/components/monster.dart';
 import 'package:forest_defense/game/forest_game.dart';
 import 'package:forest_defense/game/grid.dart';
 import 'package:forest_defense/game/hud/layout.dart';
@@ -53,8 +54,12 @@ void main() {
       await real(game, tester, 1.6);
       expect(game.sfx.played, contains(Sfx.boom));
 
-      game.logs[0]!.roll();
-      expect(game.sfx.played.last, Sfx.log);
+      await tester.runAsync(() async {
+        await game.addMonster(MonsterType.slime, row: 0, x: Monster.reachedHomeX - 1); // 둥지 바로 안쪽
+        game.update(1 / 60);
+        game.update(1 / 60);
+      });
+      expect(game.sfx.played.last, Sfx.nest);
     },
   );
 

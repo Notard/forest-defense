@@ -1,7 +1,6 @@
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forest_defense/game/components/fireball.dart';
-import 'package:forest_defense/game/components/log.dart';
 import 'package:forest_defense/game/components/monster.dart';
 import 'package:forest_defense/game/components/unit.dart';
 import 'package:forest_defense/game/config.dart';
@@ -41,7 +40,7 @@ void main() {
         }
       });
 
-  ForestGame noLogs() => ForestGame(skyAcorns: false, waves: false, sound: false, intro: false, logsOn: false);
+  ForestGame noLogs() => ForestGame(nestAcorns: false, waves: false, sound: false, intro: false);
 
   GameTester(noLogs).testGameWidget(
     '돌 골렘은 칸당 8초로 느리고 HP 900',
@@ -120,24 +119,16 @@ void main() {
     },
   );
 
-  GameTester(() => ForestGame(stage: stageById('2-5'), skyAcorns: false, waves: false, sound: false, intro: false)).testGameWidget(
-    '밤 숲 슬라임 왕은 HP 4500, 통나무는 1000만 주고 부서진다',
+  GameTester(() => ForestGame(stage: stageById('2-5'), nestAcorns: false, waves: false, sound: false, intro: false)).testGameWidget(
+    '밤 숲 슬라임 왕은 HP 4500, 둥지에 닿으면 하트 둘',
     setUp: waitForLoad,
     verify: (game, tester) async {
-      final boss = await add(game, tester, MonsterType.bossSlime, 0, RollingLog.triggerX + 300);
+      final boss = await add(game, tester, MonsterType.bossSlime, 0, Monster.reachedHomeX + 10);
       expect(boss.maxHp, 4500);
-      final log = game.logs[0]!;
-      await tester.runAsync(() async {
-        boss.position.x = RollingLog.triggerX + 40; // 몸 앞쪽이 통나무에 닿는 자리
-        for (var i = 0; i < 30; i++) {
-          game.update(1 / 60);
-          await Future<void>.delayed(Duration.zero);
-        }
-      });
-      expect(log.isMounted, isFalse, reason: '통나무가 부서졌다');
-      expect(boss.alive, isTrue);
-      expect(boss.hp, 4500 - MonsterType.logDamageToBoss);
-      expect(boss.summons, 0, reason: '4500 중 1000은 25% 미만');
+      await run(game, tester, 1.5);
+      expect(boss.alive, isFalse);
+      expect(game.hearts, ForestGame.startHearts - 2);
+      expect(game.defeated, 0);
     },
   );
 

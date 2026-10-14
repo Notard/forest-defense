@@ -87,8 +87,8 @@ class _ForestAppState extends State<ForestApp> {
       onSettings: _saveSettings,
       onFinish: stage == demoStage
           ? null
-          : ({required won, required usedLog, required lostUnit}) {
-              final r = p.record(stage, won: won, usedLog: usedLog, lostUnit: lostUnit);
+          : ({required won, required lostHeart, required lostUnit}) {
+              final r = p.record(stage, won: won, lostHeart: lostHeart, lostUnit: lostUnit);
               p.save();
               return r;
             },

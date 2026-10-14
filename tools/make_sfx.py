@@ -119,12 +119,12 @@ def boom():  # 스컨크 폭발: 낮은 "펑" + "푸슈우"
     return low * 1.2 + crack + hiss
 
 
-def log_roll():  # 통나무 굴러감: "드르르르"
-    x = t(0.9)
-    rumble = lowpass(noise(0.9), 300) * (0.6 + 0.4 * np.sin(2 * np.pi * 11 * x))
-    knock = lowpass(noise(0.9), 900) * (np.sin(2 * np.pi * 7 * x) > 0.85) * 0.8
-    fade = np.clip((0.9 - x) / 0.25, 0, 1) * np.clip(x / 0.04, 0, 1)
-    return (rumble * 2.2 + knock) * fade
+def nest():  # 몬스터가 둥지에 닿음 (하트 하나): 낮은 "쿵" + 내려가는 두 음 (14-1단계)
+    n = int(RATE * 0.5)
+    thud = (sweep(120, 50, 0.5) * 1.2 + lowpass(noise(0.5), 400)) * env(n, 0.002, 12)
+    m = int(RATE * 0.2)
+    drop = np.concatenate([tone(659.25, 0.2) * env(m, 0.003, 9), tone(493.88, 0.2) * env(m, 0.003, 9)])
+    return thud + pad(drop, 0.5) * 0.6
 
 
 def warning():  # 큰 무리 경고: 두 음 뿔피리 두 번
@@ -200,7 +200,7 @@ SOUNDS = {
     "slime_die": (slime_die, "몬스터 쓰러짐"),
     "bite": (bite, "갉아먹기"),
     "boom": (boom, "스컨크 폭발"),
-    "log": (log_roll, "통나무 굴러감"),
+    "nest": (nest, "둥지에 닿음"),
     "warning": (warning, "큰 무리 경고"),
     "win": (win, "클리어"),
     "lose": (lose, "게임오버"),

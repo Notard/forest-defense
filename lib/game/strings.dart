@@ -17,7 +17,7 @@ abstract final class Strings {
   static String waveBanner(int number) => '웨이브 $number';
 
   /// 마지막 큰 무리 웨이브 경고.
-  static const bigWave = '큰 무리가 몰려와요!';
+  static const bigWave = '숲이 술렁여요! 마지막 무리!';
 
   /// 보스가 있는 마지막 웨이브 경고 (13단계).
   static const bossWave = '슬라임 왕이 나타났어요!';
@@ -48,6 +48,7 @@ abstract final class Strings {
         UnitType.hedgehog => '고슴도치',
         UnitType.owl => '부엉이',
         UnitType.bear => '곰',
+        UnitType.magpie => '까치',
       };
 
   // ── 도움말 (12-4단계) ──
@@ -62,12 +63,12 @@ abstract final class Strings {
 
   /// 놀이 방법: (제목, 설명) 여섯 줄. 아이콘 순서는 help_panel.dart와 같다.
   static const howTo = [
-    ('도토리 모으기', '떨어지는 도토리를 눌러요. 다람쥐도 도토리를 만들어요'),
+    ('도토리 모으기', '다람쥐, 몬스터, 둥지에서 나온 도토리를 눌러요. 까치는 대신 주워요'),
     ('친구 놓기', '위 카드를 고르고 잔디 칸을 눌러요. 카드마다 도토리가 들어요'),
     ('레벨업', '놓인 친구를 누르고 말풍선을 누르면 도토리로 Lv2, Lv3'),
     ('삽', '삽을 고르고 친구를 누르면 치워요. 도토리는 돌아오지 않아요'),
-    ('통나무', '몬스터가 둥지에 닿으면 그 줄 통나무가 굴러가요. 또 닿으면 끝!'),
-    ('별 세 개', '깨면 하나, 통나무를 안 쓰면 하나, 친구를 안 잃으면 하나'),
+    ('둥지 하트', '몬스터가 둥지에 닿으면 하트가 하나 줄어요. 셋 다 잃으면 끝!'),
+    ('별 세 개', '깨면 하나, 하트를 안 잃으면 하나, 친구를 안 잃으면 하나'),
     ('솔방울과 강화', '처음 얻는 별마다 솔방울. 지도의 강화 상점에서 친구를 세게'),
   ];
 
@@ -76,10 +77,11 @@ abstract final class Strings {
         UnitType.squirrel => '도토리를 만들어요',
         UnitType.fox => '여우불을 쏴요',
         UnitType.turtle => '튼튼하게 막아요',
-        UnitType.skunk => '펑! 둘레 한꺼번에',
+        UnitType.skunk => '앞쪽에 방귀 구름!',
         UnitType.hedgehog => '깨물면 가시로 콕',
         UnitType.owl => '줄 전체를 느리게',
         UnitType.bear => '앞 칸을 내려쳐요',
+        UnitType.magpie => '도토리를 물어 와요',
       };
 
   static String monsterName(MonsterType m) => switch (m) {
@@ -133,6 +135,6 @@ abstract final class Strings {
   static const resume = '계속하기';
 
   /// 결과 화면 아랫줄. 숫자만 바뀐다.
-  static String result({required int defeated, required int logsLeft}) =>
-      '쓰러뜨린 몬스터 $defeated마리, 남은 통나무 $logsLeft개';
+  static String result({required int defeated, required int hearts}) =>
+      '쓰러뜨린 몬스터 $defeated마리, 남은 하트 $hearts개';
 }

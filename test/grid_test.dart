@@ -13,8 +13,10 @@ void main() {
       expect(Grid.cellAt(Vector2(x0, y0)), (row: 0, col: 0));
     });
 
-    test('필드 오른쪽 아래 끝 바로 안쪽은 (4, 8) 칸', () {
-      expect(Grid.cellAt(Vector2(right - 0.1, bottom - 0.1)), (row: 4, col: 8));
+    test('필드 오른쪽 아래 끝 바로 안쪽은 마지막 칸 (4, 7) — 5 × 8 판 (14-1단계)', () {
+      expect(Grid.cellAt(Vector2(right - 0.1, bottom - 0.1)), (row: 4, col: GameConfig.cols - 1));
+      expect(GameConfig.cols, 8);
+      expect(GameConfig.cellWidth, GameConfig.cellHeight, reason: '정사각 칸');
     });
 
     test('칸 경계는 오른쪽·아래쪽 칸에 속한다', () {
@@ -34,7 +36,7 @@ void main() {
   group('Grid 좌표', () {
     test('칸 가운데', () {
       expect(Grid.center((row: 0, col: 0)), Vector2(x0 + w / 2, y0 + h / 2));
-      expect(Grid.center((row: 4, col: 8)), Vector2(x0 + 8.5 * w, y0 + 4.5 * h));
+      expect(Grid.center((row: 4, col: 7)), Vector2(x0 + 7.5 * w, y0 + 4.5 * h));
     });
 
     test('필드가 배경 잔디밭(x 207~1055, y 110~646)과 거의 겹친다', () {

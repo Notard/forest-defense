@@ -103,14 +103,16 @@ void main() {
     },
   );
 
-  test('새 친구는 1-2 고슴도치, 1-4 부엉이, 1-5 곰을 처음 깼을 때 열린다', () {
+  test('새 친구는 1-2 고슴도치, 1-3 까치, 1-4 부엉이, 1-5 곰, 2-1 스컨크 (14-1단계 순서)', () {
     final p = Progress();
-    for (final id in ['1-1', '1-2', '1-3', '1-4', '1-5']) {
-      p.record(stageById(id), won: true, usedLog: false, lostUnit: false);
+    for (final id in ['1-1', '1-2', '1-3', '1-4', '1-5', '2-1']) {
+      p.record(stageById(id), won: true, lostHeart: false, lostUnit: false);
     }
     expect(p.unlockedUnits, UnitType.values);
     expect(stageById('1-2').unlocks, UnitType.hedgehog);
     expect(stageById('1-4').unlocks, UnitType.owl);
     expect(stageById('1-5').unlocks, UnitType.bear);
+    expect(stageById('1-3').unlocks, UnitType.magpie);
+    expect(stageById('2-1').unlocks, UnitType.skunk);
   });
 }

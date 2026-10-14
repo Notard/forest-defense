@@ -40,7 +40,7 @@ void main() {
     expect({for (final t in UnitType.values) t.name: ForestGame.costToLevel(t, 1)},
         {for (final t in UnitType.values) t.name: t.cost});
     expect({for (final t in UnitType.values) t.name: ForestGame.costToLevel(t, 2)},
-        {'squirrel': 75, 'fox': 150, 'turtle': 75, 'skunk': 225, 'hedgehog': 115, 'owl': 190, 'bear': 265});
+        {'squirrel': 75, 'fox': 150, 'turtle': 75, 'skunk': 225, 'hedgehog': 115, 'owl': 190, 'bear': 265, 'magpie': 75});
   });
 
   GameTester(testGame).testGameWidget(
