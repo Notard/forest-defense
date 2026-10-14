@@ -30,6 +30,9 @@ abstract final class Strings {
   // ── 메인 화면·카운트다운 ──
   static const subtitle = '숲속 친구들과 함께 둥지를 지켜요';
 
+  /// 휴대폰을 세워 들었을 때 게임 위에 덮는 글 (15단계).
+  static const rotate = '휴대폰을 가로로\n돌려 주세요';
+
   // ── 난이도 (14-4단계) ──
   static String difficultyName(Difficulty d) => switch (d) {
         Difficulty.easy => '쉬움',

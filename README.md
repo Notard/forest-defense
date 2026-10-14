@@ -71,6 +71,14 @@ flutter build web --release --base-href /forest-defense/ --no-web-resources-cdn 
 - `?enemy=golem,bat,mushroom,bossSlime` 연습 상대 종류 (`?practice=1`과 함께, 레인 순서대로)
 - 둘 다: `?acorns=1000&practice=1`
 
+### 한 번에 빌드 (15단계)
+
+```bash
+bash tools/build_all.sh
+```
+
+`flutter clean` 뒤 Windows exe(`build/windows/x64/runner/Release/forest_defense.exe`)와 웹(`build/web`, `/forest-defense/`)을 만든다. Android SDK가 있으면 APK도. exe를 소리 없이 띄우려면 `forest_defense.exe --mute`.
+
 ## 조작
 
 - 메인 화면에서 난이도(쉬움 · 보통 · 어려움)를 고르고 **게임 시작** → 숲 지도에서 스테이지를 골라요. 3 · 2 · 1 뒤에 시작해요.

@@ -442,13 +442,13 @@ y   0 ┌───────────────────────�
 |---|---|---|
 | Windows | `flutter build windows` | `build/windows/x64/runner/Release/` (exe) |
 | 웹 | `flutter build web --base-href /forest-defense/` | `build/web/` → GitHub Pages |
-| Android | `flutter build apk --release` | `build/app/outputs/flutter-apk/app-release.apk` |
+| Android | `flutter build apk --release` | `build/app/outputs/flutter-apk/app-release.apk` — **15단계에서 뺌**: 안드로이드는 PWA로 (사용자 결정) |
 
 - `tools/build_all.sh`로 한 번에 빌드
 - 확인: 16:9, 4:3(태블릿), 19.5:9(폰 가로)에서 레터박스와 터치 위치가 맞는지
 - 앱 이름 "숲 지키기", 아이콘은 Codex로 생성. 이때 스토어·PWA용 크기까지 한 번에 만든다 (16단계 참고)
 
-**완료 기준:** 세 플랫폼 결과물이 모두 로컬에서 실행된다.
+**완료 기준:** Windows exe와 웹이 로컬에서 실행된다 (APK는 PWA로 대신). 세로 화면은 "가로로 돌려 주세요" 덮개.
 
 ---
 

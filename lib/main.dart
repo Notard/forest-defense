@@ -9,9 +9,11 @@ import 'game/music.dart';
 import 'game/progress.dart';
 import 'game/stages.dart';
 import 'menu/menu_game.dart';
+import 'portrait_guard.dart';
 
-void main() {
-  runApp(const ForestApp());
+/// Windows·Android 실행 인자: `--mute`면 소리·음악 없이 (자동 확인용, 15단계). 저장된 소리 설정은 바꾸지 않는다.
+void main(List<String> args) {
+  runApp(ForestApp(mute: args.contains('--mute')));
 }
 
 /// 앱 루트: 저장된 진행을 읽고, 메뉴(메인 화면·숲 지도)와 판(ForestGame)을 오간다.
@@ -27,7 +29,10 @@ void main() {
 ///   ?level=easy   난이도 (easy·normal·hard, 없으면 메인 화면에서 고른 것)
 ///   ?fresh=1      처음 하는 사람처럼: 몬스터 소개 창·"새로!" 꼬리표가 나온다 (저장하지 않음)
 class ForestApp extends StatefulWidget {
-  const ForestApp({super.key});
+  const ForestApp({super.key, this.mute = false});
+
+  /// 소리·음악을 모두 끈 채로 (실행 인자 `--mute`).
+  final bool mute;
 
   @override
   State<ForestApp> createState() => _ForestAppState();
@@ -50,7 +55,7 @@ class _ForestAppState extends State<ForestApp> {
     super.initState();
     Progress.load().then((p) {
       _progress = p;
-      _music.muted = !p.musicOn;
+      _music.muted = widget.mute || !p.musicOn;
       if (_devPlay) {
         _play(stageById(_query['stage'] ?? 'demo'), dev: true);
       } else {
@@ -64,7 +69,8 @@ class _ForestAppState extends State<ForestApp> {
         _screen = game;
       });
 
-  void _menu(MenuPage page) => _show(MenuGame(progress: _progress!, onPlay: _play, startPage: page, music: _music));
+  void _menu(MenuPage page) =>
+      _show(MenuGame(progress: _progress!, onPlay: _play, startPage: page, sound: !widget.mute, music: widget.mute ? null : _music));
 
   void _saveSettings({required bool sound, required bool music}) {
     final p = _progress!;
@@ -85,7 +91,8 @@ class _ForestAppState extends State<ForestApp> {
       timeScale: (double.tryParse(_query['speed'] ?? '') ?? 1).clamp(1.0, 4.0),
       intro: _query['intro'] != '0',
       boosts: p.boosts,
-      music: _music,
+      music: widget.mute ? null : _music,
+      sound: !widget.mute,
       muted: !p.soundOn,
       onSettings: _saveSettings,
       // 처음 보는 몬스터 소개·새 친구 안내 (14단계). 확인용 판은 `?fresh=1`일 때만 (저장하지 않는 빈 기록으로)
@@ -108,6 +115,12 @@ class _ForestAppState extends State<ForestApp> {
     ));
   }
 
+  /// 판 도중에 휴대폰을 세우면 일시정지 (돌아와서 "이어 하기"를 누른다).
+  void _pauseForPortrait() {
+    final s = _screen;
+    if (s is ForestGame && s.state == GameState.playing) s.togglePause();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screen = _screen;
@@ -116,7 +129,7 @@ class _ForestAppState extends State<ForestApp> {
       debugShowCheckedModeBanner: false,
       home: screen == null
           ? const ColoredBox(color: GameConfig.backgroundColor)
-          : GameWidget(key: ValueKey(_round), game: screen),
+          : PortraitGuard(onPortrait: _pauseForPortrait, child: GameWidget(key: ValueKey(_round), game: screen)),
     );
   }
 }

@@ -1238,3 +1238,40 @@ MP3 112 kbps, 4곡 합계 약 2 MB. 사람이 들어 볼 수 있는 악보 MIDI�
 1. 쉬움 하트 다섯이 "몬스터가 오기까지" 글자와 겹칠 자리 → 하트 간격을 줄이고(38 → 30), 하트를 x 232 → 220, 막대 묶음을 x 372 → 396으로
 2. 미리보기 창 화면 찍기가 판에 들어간 뒤 일부만 찍혀(창 배율 문제) 아래 띠는 진짜 글꼴 그림 테스트로 확인
 
+## 15. 플랫폼 빌드 (2026-10-14)
+
+> 사용자: "좋아. 다음 단계로 가자" / Android APK: "APK는 빼기" (안드로이드는 PWA로)
+
+### 결과 요약
+- **`tools/build_all.sh`**: `flutter clean` → Windows exe → 웹(`/forest-defense/` + 오프라인 목록) → Android SDK가 있으면 APK. 결과 크기와 실행 방법을 끝에 알려 준다 (Windows 36 MB, 웹 49 MB)
+- **Windows exe 확인**: `--mute`로 소리 없이 띄우고 그 창만 찍었다(PrintWindow). 175% 배율 화면에서 글자·그림이 또렷하고 WebP 그림이 모두 보인다. 창 메시지로 눌러 메인 → 숲 지도 → 1-1 → 다람쥐를 둘째 줄 첫 칸에 놓기까지 됨 (누른 자리가 맞음, 도토리 200 → 150)
+- **실행 인자 `--mute`**: 소리·음악 없이 (저장된 소리 설정은 그대로). 자동 확인용
+- **세로 화면 안내**: 화면이 세로로 길면 "휴대폰을 가로로 돌려 주세요" 덮개, 판 도중이면 일시정지 (설치한 PWA는 매니페스트가 가로로 고정하지만 브라우저 탭은 아님)
+- **Android APK는 뺌**: 이 PC에 Android SDK·Java가 없고(받으면 약 1 GB + 라이선스 동의), 안드로이드는 이미 PWA로 설치·오프라인 플레이가 된다. 플레이스토어 계획도 없다
+
+![Windows exe 메인 화면 (175%)](preview/15_windows_title.jpg)
+![Windows exe 1-1에 다람쥐를 놓은 모습](preview/15_windows_play.jpg)
+
+### 진행 방식
+| 파일 | 내용 |
+|---|---|
+| `tools/build_all.sh` | 세 플랫폼 빌드 (Git Bash, `MSYS_NO_PATHCONV=1`) |
+| `lib/main.dart` | `main(args)`: `--mute`면 메뉴·판 모두 소리 끔, 음악 없음. `PortraitGuard`로 감싸고 세로가 되면 판 일시정지 |
+| `lib/portrait_guard.dart` | 세로 화면 덮개 (회전 아이콘 + 글) |
+| `lib/game/strings.dart` | `rotate` |
+| (확인용, 저장소 밖) PowerShell | exe를 `--mute`로 띄우고 DPI 인식으로 창 크기를 재 PrintWindow로 찍기, 클릭은 PostMessage(WM_LBUTTON…)라 사용자 마우스를 움직이지 않음 |
+
+### 검증
+- `flutter analyze` 문제 없음, `flutter test` **292/292** (새 `test/screens_test.dart`: 19.5:9 폰 가로·16:9에서 카드와 오른쪽 아래 끝 칸을 눌러 놓기, 세로 덮개와 세로가 될 때마다 알림. 4:3은 기존 테스트 화면 800 × 600이 모두 그 비율)
+- `bash tools/build_all.sh` 통과 (Android는 "SDK가 없어 건너뜀")
+- Windows exe: 위 그림. 창 제목 "숲 지키기", DPI 168(175%), 5초 넘게 떠 있음
+- 웹 릴리스 빌드: 폰 세로(375 × 812)에서 덮개, 폰 가로(812 × 375)에서 좌우 여백과 함께 메인 화면. 저장소에 남은 것 없음
+
+![폰 세로: 가로로 돌려 주세요](preview/15_portrait.jpg)
+![폰 가로](preview/15_phone_landscape.jpg)
+
+### 발생한 문제와 해결
+1. 처음 찍은 exe 창이 왼쪽 위만 나왔다 → PowerShell이 DPI를 모르는 프로세스라 창 크기를 100% 기준(1280 × 720)으로 받음. `SetThreadDpiAwarenessContext(PER_MONITOR_AWARE_V2)` 뒤 실제 2240 × 1260으로 찍힘
+2. 플러터 화면 창을 클래스 이름(FLUTTERVIEW)으로 못 찾음 → 첫 자식 창(`GetWindow(GW_CHILD)`)으로
+3. 남은 확인: **배율이 다른 모니터로 창을 옮길 때** (2단계 문제 3). 미리보기 창에서 배율(DPR)이 도중에 바뀌면 캔버스가 확대된 채 멈추는 일이 여러 번 있었다(14·14-4단계 화면 찍기). 미리보기 창의 흉내 기능 때문인지 실제로도 생기는지는 모니터가 둘 있어야 확인할 수 있어 사용자 확인으로 남김
+
