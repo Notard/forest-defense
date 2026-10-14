@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 15:49</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 16:29</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -3004,6 +3004,52 @@ article td img{margin:0 auto}
 <li>도움말 테스트가 메인 화면 버튼이 하나(도움말)라고 가정 → 이름으로 찾게</li>
 <li>설정 테스트가 멈춤: <code>GameTester</code>의 <code>setUp</code>은 기다려 주지 않아 버튼이 붙기 전에 찾았고, 가짜 시계 안의 <code>Future.delayed</code>는 끝나지 않는다 → 기다림을 <code>verify</code> 안으로, <code>runAsync</code> 안에서 기다리기</li>
 <li>테스트는 Windows에서 돌아 <code>Platform.isWindows</code>가 참이라 창 플러그인을 부를 뻔함 → <code>FLUTTER_TEST</code> 환경이면 창 기능을 끈다</li>
+</ol>
+<h2>16-3. 웹으로 먼저 알리기: 링크 미리보기 (2026-10-14)</h2>
+<blockquote>
+<p>사용자: "일단 ms store 보다 바로 웹부터 홍보할 수 있겠네? … 사람들에게 시켜보는 게 좋을지도 모르겠다." → "응 링크 미리보기부터 해 줘"</p>
+</blockquote>
+<h3>결과 요약</h3>
+<p>카카오톡·페이스북·디스코드·X에 주소를 붙이면 메인 화면 그림과 제목·소개가 카드로 뜬다.
+- 제목: "숲 지키기 - 숲속 친구들과 둥지를 지키는 디펜스 게임"
+- 소개: "설치 없이 PC·폰 브라우저에서 바로, 무료. “작고 쓸모 있는 코딩 딴짓” 저자가 만든 게임"
+- 그림: <code>web/og.jpg</code> 1200 × 630 (메인 화면을 진짜 글꼴로 그려 높이에 맞추고 양옆은 숲색)</p>
+<p><img alt="링크 미리보기 그림" src="preview/16-3_og.jpg" /></p>
+<h3>진행 방식</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>web/index.html</code></td>
+<td><code>og:*</code>(제목·소개·주소·그림·크기·대체 글·ko_KR/en_US), <code>twitter:card</code> summary_large_image. 그림 주소는 전체 주소, <code>?v=1</code> (카카오톡은 미리보기를 오래 기억해서 그림을 바꾸면 v를 올린다)</td>
+</tr>
+<tr>
+<td><code>web/og.jpg</code></td>
+<td><code>test/shots/lang_ko_title.png</code>에서 만듦</td>
+</tr>
+<tr>
+<td><code>tools/make_sw.py</code></td>
+<td>og.jpg는 게임에 필요 없어 오프라인 저장 목록에서 뺌 (150 KB 아낌)</td>
+</tr>
+<tr>
+<td><code>test/lang_shots_test.dart</code></td>
+<td>메인 화면 그림이 비어 찍히던 것: 버튼(설정·도움말)이 붙을 때까지 기다리고 찍게</td>
+</tr>
+</tbody>
+</table>
+<h3>검증</h3>
+<ul>
+<li>실제 사이트 <code>curl</code>: 주소의 HTML에 og 제목·소개·그림 태그, <code>og.jpg?v=1</code> 200 OK image/jpeg 150 KB</li>
+<li><code>sw.js</code>에 og.jpg 없음</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>16-2단계 한국어 메인 화면 그림이 비어 있었다 → 캐릭터 그림을 다 읽기 전에 찍음. 버튼이 붙는 것(그림을 다 읽은 뒤)을 기다리게</li>
 </ol></article>
 </div>
 </body>
