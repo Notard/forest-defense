@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 16:37</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 17:51</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -3116,7 +3116,16 @@ article td img{margin:0 auto}
 <ol>
 <li>설정 창 테스트가 버튼을 하나(닫기)로 가정 → 이름으로 찾게</li>
 <li>처리방침 연락처: 사용자 이메일을 공개 페이지에 올리지 않고 GitHub 이슈로 (바꾸려면 사용자가 정한다)</li>
-</ol></article>
+</ol>
+<h3>받는 주소 연결 (2026-10-14)</h3>
+<blockquote>
+<p>사용자가 시트에 배포한 웹 앱 주소를 알려 줌 → <code>telemetryUrl</code>에 넣고 올림 (커밋 e6db92a)</p>
+</blockquote>
+<ul>
+<li>주소를 GET으로 열면 <code>ok</code> (배포 확인)</li>
+<li>게임과 같은 형식으로 시험 줄을 보냄 (<code>id</code>가 <code>test-claude</code>, 시트에서 지워도 된다): 터미널 POST → 302 뒤 스크립트 답 <code>ok</code>. 실제 사이트(notard.github.io) 페이지에서 XMLHttpRequest <code>text/plain</code> POST → <strong>200 <code>ok</code></strong> (브라우저의 다른 사이트 규칙(CORS)에 막히지 않음)</li>
+<li>게임 화면은 일부러 열지 않았다 (열면 내 방문이 진짜 기록으로 쌓인다)</li>
+</ul></article>
 </div>
 </body>
 </html>
