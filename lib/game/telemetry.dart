@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 /// 플레이 기록을 받는 곳: 구글 시트에 붙인 Apps Script 웹 앱 주소 (`…/exec`, 16-4단계).
 /// 비어 있으면 아무것도 보내지 않는다. 받는 쪽 스크립트와 배포 방법은 `tools/sheets/`.
-const telemetryUrl = '';
+const telemetryUrl = 'https://script.google.com/macros/s/AKfycbzi4ToQoEjZmZW7yC-Y4y7NPmqrrq9r78u6Hfsu3VLl1UKroibdEx8zlryp09N8rxdoxA/exec';
 
 /// 개인정보 처리방침 (설정 창 버튼, 스토어 등록에도 쓴다).
 const privacyUrl = 'https://notard.github.io/forest-defense/privacy.html';
