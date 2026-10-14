@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 16:29</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 16:37</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -3050,6 +3050,72 @@ article td img{margin:0 auto}
 <h3>발생한 문제와 해결</h3>
 <ol>
 <li>16-2단계 한국어 메인 화면 그림이 비어 있었다 → 캐릭터 그림을 다 읽기 전에 찍음. 버튼이 붙는 것(그림을 다 읽은 뒤)을 기다리게</li>
+</ol>
+<h2>16-4. 플레이 기록: 구글 시트 (2026-10-14)</h2>
+<blockquote>
+<p>사용자: "로그 수집 할 방법은 없을까?" → (구글 시트 + Apps Script 추천) "응 구글 시트로 진행해 줘"</p>
+</blockquote>
+<h3>결과 요약</h3>
+<ul>
+<li>게임이 사건마다 JSON 한 줄을 구글 시트에 붙인 Apps Script 웹 앱으로 보낸다: <strong>open</strong>(앱을 켬), <strong>start</strong>(판 시작), <strong>end</strong>(판 끝: won · lost · quit-retry · quit-map)</li>
+<li>담는 것: 스테이지, 난이도, 실제로 판이 돈 초, 웨이브, 남은 하트, 쓰러뜨린 수, 별, 친구별로 놓은 수, 레벨업 수, 버전, 플랫폼(web-android · windows …), 언어, 그리고 기기마다 처음 켤 때 만든 <strong>무작위 번호</strong>. 이름·기기 고유값·쿠키는 없다</li>
+<li>설정 창(메인 화면)에 <strong>기록 보내기 켜기/끄기</strong>와 <strong>개인정보</strong> 버튼 (처리방침 페이지, 영어면 영어 쪽으로)</li>
+<li>보내지 않는 실행: 확인용 주소 옵션(<code>?stage=</code> 등), <code>--mute</code>, 내 컴퓨터에서 띄운 웹(localhost)</li>
+<li>받는 주소가 아직 없어서(사용자가 시트에 배포해야 함) <strong>지금은 아무것도 보내지 않는다</strong>. 주소를 받으면 <code>lib/game/telemetry.dart</code>의 <code>telemetryUrl</code>에 넣는다</li>
+</ul>
+<p><img alt="설정 창: 기록 보내기, 개인정보" src="preview/16-4_settings.png" /></p>
+<h3>진행 방식</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/telemetry.dart</code></td>
+<td><code>Telemetry.send(event, data)</code>: <code>text/plain</code> POST (브라우저의 다른 사이트 확인 요청을 피해 Apps Script가 받을 수 있게), 8초 제한, 실패하면 버림. 받는 주소·처리방침 주소·버전</td>
+</tr>
+<tr>
+<td><code>lib/game/forest_game.dart</code></td>
+<td><code>playTime</code>(멈춘 시간 빼고), <code>placed</code>, <code>levelUps</code>, <code>playSummary()</code>, <code>finished</code></td>
+</tr>
+<tr>
+<td><code>lib/main.dart</code></td>
+<td>처음 켤 때 기기 번호 만들어 저장, open·start·end 보내기, 도중에 나가면 quit-…</td>
+</tr>
+<tr>
+<td><code>lib/game/progress.dart</code></td>
+<td><code>playerId</code>, <code>statsOn</code> 저장</td>
+</tr>
+<tr>
+<td><code>lib/game/hud/settings_panel.dart</code></td>
+<td>기록 보내기 줄, 개인정보 버튼 (닫기 옆)</td>
+</tr>
+<tr>
+<td><code>tools/sheets/Code.gs</code></td>
+<td><code>doPost</code>: 아는 사건만, 4 KB 이하, 칸마다 200자, 모르는 키는 extra 칸에 JSON. <code>setup()</code>: plays 머리줄 + summary 탭(기기 수, 스테이지별 시작·끝(이김/짐/나감), 이긴 판 평균 초, 난이도별, 기기별, 언어별 QUERY 수식)</td>
+</tr>
+<tr>
+<td><code>tools/sheets/README.md</code></td>
+<td>시트 만들기 → 스크립트 붙이기 → setup 실행 → 웹 앱 배포(나로 실행, 모든 사용자) → 주소 확인(ok)</td>
+</tr>
+<tr>
+<td><code>web/privacy.html</code></td>
+<td>개인정보 처리방침 (한국어·영어): 보내는 것·보내지 않는 것·이유·저장 위치·끄는 법·기기에만 남는 것·서점 링크·문의(GitHub 이슈)</td>
+</tr>
+</tbody>
+</table>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>304/304</strong> (새 <code>test/telemetry_test.dart</code>: 기기 번호, 보내도 될 때만 text/plain JSON POST·끄면 안 보냄·실패해도 괜찮음·주소가 비면 꺼짐, 저장, 판 요약, 설정 창 기록 보내기·개인정보 버튼)</li>
+<li>진짜 글꼴 그림: 설정 창 다섯 줄 + 개인정보·닫기 (한국어·영어)</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>설정 창 테스트가 버튼을 하나(닫기)로 가정 → 이름으로 찾게</li>
+<li>처리방침 연락처: 사용자 이메일을 공개 페이지에 올리지 않고 GitHub 이슈로 (바꾸려면 사용자가 정한다)</li>
 </ol></article>
 </div>
 </body>

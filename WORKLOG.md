@@ -1368,3 +1368,36 @@ MP3 112 kbps, 4곡 합계 약 2 MB. 사람이 들어 볼 수 있는 악보 MIDI�
 ### 발생한 문제와 해결
 1. 16-2단계 한국어 메인 화면 그림이 비어 있었다 → 캐릭터 그림을 다 읽기 전에 찍음. 버튼이 붙는 것(그림을 다 읽은 뒤)을 기다리게
 
+## 16-4. 플레이 기록: 구글 시트 (2026-10-14)
+
+> 사용자: "로그 수집 할 방법은 없을까?" → (구글 시트 + Apps Script 추천) "응 구글 시트로 진행해 줘"
+
+### 결과 요약
+- 게임이 사건마다 JSON 한 줄을 구글 시트에 붙인 Apps Script 웹 앱으로 보낸다: **open**(앱을 켬), **start**(판 시작), **end**(판 끝: won · lost · quit-retry · quit-map)
+- 담는 것: 스테이지, 난이도, 실제로 판이 돈 초, 웨이브, 남은 하트, 쓰러뜨린 수, 별, 친구별로 놓은 수, 레벨업 수, 버전, 플랫폼(web-android · windows …), 언어, 그리고 기기마다 처음 켤 때 만든 **무작위 번호**. 이름·기기 고유값·쿠키는 없다
+- 설정 창(메인 화면)에 **기록 보내기 켜기/끄기**와 **개인정보** 버튼 (처리방침 페이지, 영어면 영어 쪽으로)
+- 보내지 않는 실행: 확인용 주소 옵션(`?stage=` 등), `--mute`, 내 컴퓨터에서 띄운 웹(localhost)
+- 받는 주소가 아직 없어서(사용자가 시트에 배포해야 함) **지금은 아무것도 보내지 않는다**. 주소를 받으면 `lib/game/telemetry.dart`의 `telemetryUrl`에 넣는다
+
+![설정 창: 기록 보내기, 개인정보](preview/16-4_settings.png)
+
+### 진행 방식
+| 파일 | 내용 |
+|---|---|
+| `lib/game/telemetry.dart` | `Telemetry.send(event, data)`: `text/plain` POST (브라우저의 다른 사이트 확인 요청을 피해 Apps Script가 받을 수 있게), 8초 제한, 실패하면 버림. 받는 주소·처리방침 주소·버전 |
+| `lib/game/forest_game.dart` | `playTime`(멈춘 시간 빼고), `placed`, `levelUps`, `playSummary()`, `finished` |
+| `lib/main.dart` | 처음 켤 때 기기 번호 만들어 저장, open·start·end 보내기, 도중에 나가면 quit-… |
+| `lib/game/progress.dart` | `playerId`, `statsOn` 저장 |
+| `lib/game/hud/settings_panel.dart` | 기록 보내기 줄, 개인정보 버튼 (닫기 옆) |
+| `tools/sheets/Code.gs` | `doPost`: 아는 사건만, 4 KB 이하, 칸마다 200자, 모르는 키는 extra 칸에 JSON. `setup()`: plays 머리줄 + summary 탭(기기 수, 스테이지별 시작·끝(이김/짐/나감), 이긴 판 평균 초, 난이도별, 기기별, 언어별 QUERY 수식) |
+| `tools/sheets/README.md` | 시트 만들기 → 스크립트 붙이기 → setup 실행 → 웹 앱 배포(나로 실행, 모든 사용자) → 주소 확인(ok) |
+| `web/privacy.html` | 개인정보 처리방침 (한국어·영어): 보내는 것·보내지 않는 것·이유·저장 위치·끄는 법·기기에만 남는 것·서점 링크·문의(GitHub 이슈) |
+
+### 검증
+- `flutter analyze` 문제 없음, `flutter test` **304/304** (새 `test/telemetry_test.dart`: 기기 번호, 보내도 될 때만 text/plain JSON POST·끄면 안 보냄·실패해도 괜찮음·주소가 비면 꺼짐, 저장, 판 요약, 설정 창 기록 보내기·개인정보 버튼)
+- 진짜 글꼴 그림: 설정 창 다섯 줄 + 개인정보·닫기 (한국어·영어)
+
+### 발생한 문제와 해결
+1. 설정 창 테스트가 버튼을 하나(닫기)로 가정 → 이름으로 찾게
+2. 처리방침 연락처: 사용자 이메일을 공개 페이지에 올리지 않고 GitHub 이슈로 (바꾸려면 사용자가 정한다)
+

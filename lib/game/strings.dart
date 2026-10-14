@@ -236,4 +236,8 @@ abstract final class Strings {
   static String get screen => _t('화면', 'Screen');
   static String get windowed => _t('창', 'Window');
   static String get fullscreen => _t('전체화면', 'Full');
+
+  /// 플레이 기록 보내기 (16-4단계).
+  static String get sendStats => _t('기록 보내기', 'Send stats');
+  static String get privacy => _t('개인정보', 'Privacy');
 }

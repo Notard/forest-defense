@@ -13,6 +13,7 @@ import '../game/book.dart' as book;
 import '../game/config.dart';
 import '../game/hud/panel.dart';
 import '../game/hud/settings_panel.dart';
+import '../game/telemetry.dart' show privacyUrl;
 import '../game/hud/title.dart';
 import '../game/music.dart';
 import '../game/progress.dart';
@@ -99,6 +100,12 @@ class MenuGame extends FlameGame {
       onLang: onLang,
       fullscreen: full == null ? null : progress.fullscreen,
       onFullscreen: full,
+      stats: progress.statsOn,
+      onStats: (on) {
+        progress.statsOn = on;
+        progress.save();
+      },
+      onPrivacy: () => openLink(Strings.ko ? privacyUrl : '$privacyUrl#en'),
       onClose: () {},
     ));
   }

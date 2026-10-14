@@ -37,6 +37,8 @@ class Progress {
     this.difficulty = Difficulty.normal,
     this.lang,
     this.fullscreen = false,
+    this.playerId,
+    this.statsOn = true,
   })  : stars = stars ?? {},
         upgrades = upgrades ?? {},
         seenMonsters = seenMonsters ?? {},
@@ -69,6 +71,12 @@ class Progress {
 
   /// Windows exe 전체화면 (16-2단계).
   bool fullscreen;
+
+  /// 플레이 기록에 붙이는 무작위 번호 (16-4단계). 처음 켤 때 만든다.
+  String? playerId;
+
+  /// 설정 창 "기록 보내기" (16-4단계).
+  bool statsOn;
 
   int levelOf(Upgrade u) => upgrades[u.name] ?? 0;
 
@@ -137,6 +145,8 @@ class Progress {
         'difficulty': difficulty.name,
         if (lang != null) 'lang': lang!.name,
         'fullscreen': fullscreen,
+        'player': ?playerId,
+        'stats': statsOn,
       };
 
   /// 14단계 전 저장에는 'seen'·'used'가 없다: 깬 스테이지의 몬스터는 본 것으로, 열린 친구는 써 본 것으로 친다
@@ -151,6 +161,8 @@ class Progress {
       difficulty: Difficulty.values.where((d) => d.name == j['difficulty']).firstOrNull ?? Difficulty.normal,
       lang: Lang.values.where((l) => l.name == j['lang']).firstOrNull,
       fullscreen: j['fullscreen'] as bool? ?? false,
+      playerId: j['player'] as String?,
+      statsOn: j['stats'] as bool? ?? true,
     );
     final seen = j['seen'] as List?;
     if (seen != null) {

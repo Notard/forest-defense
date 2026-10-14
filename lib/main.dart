@@ -12,6 +12,7 @@ import 'game/music.dart';
 import 'game/progress.dart';
 import 'game/stages.dart';
 import 'game/strings.dart';
+import 'game/telemetry.dart';
 import 'menu/menu_game.dart';
 import 'platform/window.dart' as window;
 import 'portrait_guard.dart';
@@ -53,6 +54,13 @@ class _ForestAppState extends State<ForestApp> {
   int _round = 0;
 
   static final _query = Uri.base.queryParameters;
+
+  /// 플레이 기록 (16-4단계). 진행을 읽은 뒤에 만든다.
+  Telemetry? _telemetry;
+
+  /// 기록을 보내지 않는 실행: 확인용 주소 옵션, `--mute`(자동 확인), 내 컴퓨터에서 띄운 웹.
+  bool get _quietRun =>
+      _devPlay || widget.mute || (Uri.base.host == 'localhost' || Uri.base.host == '127.0.0.1');
   static const _devKeys = ['acorns', 'practice', 'wave', 'speed', 'intro', 'stage', 'enemy'];
   bool get _devPlay => _devKeys.any(_query.containsKey);
 
@@ -64,6 +72,13 @@ class _ForestAppState extends State<ForestApp> {
       _progress = p;
       Strings.lang = Lang.values.where((l) => l.name == _query['lang']).firstOrNull ?? p.lang ?? _deviceLang();
       window.setupWindow(fullscreen: p.fullscreen, title: Strings.title);
+      final firstRun = p.playerId == null;
+      if (firstRun) {
+        p.playerId = Telemetry.newPlayerId();
+        p.save();
+      }
+      _telemetry = Telemetry(playerId: p.playerId!, allowed: () => p.statsOn && !_quietRun, lang: () => Strings.lang.name)
+        ..send('open', {'first': firstRun, 'stars': p.totalStars, 'diff': p.difficulty.name});
       _music.muted = widget.mute || !p.musicOn;
       if (_devPlay) {
         _play(stageById(_query['stage'] ?? 'demo'), dev: true);
@@ -137,7 +152,8 @@ class _ForestAppState extends State<ForestApp> {
 
   void _play(StageDef stage, {bool dev = false}) {
     final p = _progress!;
-    _show(ForestGame(
+    late final ForestGame game;
+    _show(game = ForestGame(
       stage: stage,
       units: dev ? null : p.unlockedUnits,
       startAcorns: int.tryParse(_query['acorns'] ?? ''),
@@ -163,14 +179,24 @@ class _ForestAppState extends State<ForestApp> {
           : ({required won, required lostHeart, required lostUnit}) {
               final r = p.record(stage, won: won, lostHeart: lostHeart, lostUnit: lostUnit);
               p.save();
+              _telemetry?.send('end', {...game.playSummary(), 'result': won ? 'won' : 'lost', 'stars': r.stars});
               return r;
             },
-      onExit: (to) => switch (to) {
-        GameExit.retry => _play(stage, dev: dev),
-        GameExit.next => _play(nextStage(stage) ?? stage, dev: dev),
-        GameExit.map => dev ? _play(stage, dev: dev) : _menu(MenuPage.map),
+      onExit: (to) {
+        // 끝나기 전에 나감: 어디서 그만두는지 (다시 하기·지도로)
+        if (!game.finished) _telemetry?.send('end', {...game.playSummary(), 'result': 'quit-${to.name}'});
+        switch (to) {
+          case GameExit.retry:
+            _play(stage, dev: dev);
+          case GameExit.next:
+            _play(nextStage(stage) ?? stage, dev: dev);
+          case GameExit.map:
+            dev ? _play(stage, dev: dev) : _menu(MenuPage.map);
+        }
       },
     ));
+    // 판 시작: 끝 기록이 없는 판은 창을 닫은 것 (시트 요약에서 시작 수 - 끝 수)
+    _telemetry?.send('start', {'stage': stage.id, 'diff': game.difficulty.name});
   }
 
   /// 판 도중에 휴대폰을 세우면 일시정지 (돌아와서 "이어 하기"를 누른다).

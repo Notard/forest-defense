@@ -80,7 +80,7 @@ void main() {
         onLang: langs.add,
         onFullscreen: screens.add,
       )).testGameWidget(
-    '메인 화면 설정: 언어·효과음·배경음악·화면 네 줄, 누르면 바로 바뀌고 진행에 남는다',
+    '메인 화면 설정: 언어·효과음·배경음악·화면·기록 보내기, 누르면 바로 바뀌고 진행에 남는다',
     verify: (game, tester) async {
       // GameTester의 setUp은 기다려 주지 않아 여기서 버튼이 붙을 때까지 기다린다
       await waitFor(tester, () => game.world.children.whereType<TitleScreen>().any((t) => t.children.whereType<PanelButton>().length >= 2));
@@ -89,7 +89,7 @@ void main() {
       await tapWorld(tester, settingsButton.position + settingsButton.size / 2);
       await waitFor(tester, () => game.world.children.whereType<SettingsPanel>().any((p) => p.isMounted));
       final panel = game.world.children.whereType<SettingsPanel>().single;
-      expect(panel.rows.map((r) => r.label), [Strings.language, Strings.soundFx, Strings.music, Strings.screen]);
+      expect(panel.rows.map((r) => r.label), [Strings.language, Strings.soundFx, Strings.music, Strings.screen, Strings.sendStats]);
       for (final r in panel.rows) {
         for (final pill in r.pills) {
           expect(pill.absolutePosition.x + pill.size.x, lessThanOrEqualTo(1280 - 40));
@@ -112,7 +112,7 @@ void main() {
       expect(langs, [Lang.en]);
       expect(panel.rows[0].selected(), 1);
 
-      final close = panel.children.first.children.whereType<PanelButton>().single;
+      final close = panel.children.first.children.whereType<PanelButton>().singleWhere((b) => b.label == Strings.close);
       await tapWorld(tester, close.absolutePosition + close.size / 2);
       await tester.pump();
       expect(panel.isMounted, isFalse);
@@ -132,7 +132,7 @@ void main() {
       await tester.pump();
       await waitFor(tester, () => game.world.children.whereType<SettingsPanel>().any((p) => p.isMounted));
       final rows = game.world.children.whereType<SettingsPanel>().single.rows;
-      expect(rows.map((r) => r.label), ['Language', 'Sound', 'Music']);
+      expect(rows.map((r) => r.label), ['Language', 'Sound', 'Music', 'Send stats']);
     },
   );
 

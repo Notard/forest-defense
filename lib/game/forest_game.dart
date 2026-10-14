@@ -131,6 +131,28 @@ class ForestGame extends FlameGame {
   /// 쓰러뜨린 몬스터 수 (결과 화면).
   int defeated = 0;
 
+  // ── 플레이 기록 (16-4단계, 구글 시트로 보낸다) ──
+  /// 실제로 판이 돈 시간 (초, 카운트다운·일시정지·소개 창 빼고).
+  double playTime = 0;
+
+  /// 친구별로 놓은 수.
+  final Map<UnitType, int> placed = {};
+
+  /// 레벨업 한 수.
+  int levelUps = 0;
+
+  /// 한 판 요약 (끝났을 때·도중에 나갈 때 보낸다). 개인 정보는 없다.
+  Map<String, Object?> playSummary() => {
+        'stage': stage.id,
+        'diff': difficulty.name,
+        'sec': playTime.round(),
+        'wave': waveRunner?.director.displayWave ?? 0,
+        'hearts': hearts,
+        'defeated': defeated,
+        'placed': [for (final e in placed.entries) '${e.key.name}:${e.value}'].join(','),
+        'levelups': levelUps,
+      };
+
   /// 몬스터에게 동물을 잃었는지 (★★★ 조건, 삽으로 치운 것은 빼고).
   bool lostUnit = false;
 
@@ -140,6 +162,9 @@ class ForestGame extends FlameGame {
   /// 지금 판 상태. 카운트다운·일시정지·클리어·게임오버면 게임 시계가 멈춘다.
   GameState state = GameState.playing;
   bool get frozen => state != GameState.playing;
+
+  /// 이기거나 져서 끝났는지.
+  bool get finished => state == GameState.won || state == GameState.lost;
 
   /// 판 밖으로 나가기 (다시 하기·지도로·다음 스테이지). 앱이 새 화면을 만든다.
   final void Function(GameExit)? onExit;
@@ -475,6 +500,7 @@ class ForestGame extends FlameGame {
       return;
     }
     final scaled = dt * timeScale;
+    playTime += scaled;
     super.update(scaled);
     garden.tick(scaled);
     if (_cleared) win();
@@ -496,6 +522,7 @@ class ForestGame extends FlameGame {
     if (!u.canLevel || garden.acorns < levelCost(u)) return false;
     garden.acorns -= levelCost(u);
     u.levelUp();
+    levelUps++;
     sfx.play(Sfx.levelUp);
     closeBubble();
     return true;
@@ -553,6 +580,7 @@ class ForestGame extends FlameGame {
     selectedUnit = null;
     sfx.play(Sfx.place);
     if (usedUnits?.add(type) ?? false) onLearned?.call();
+    placed.update(type, (n) => n + 1, ifAbsent: () => 1);
     final unit = UnitComponent(type: type, cell: cell, art: await CharacterArt.load(this, type.sheet), boosts: boosts);
     unitComponents[cell] = unit;
     await world.add(unit);

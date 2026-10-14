@@ -31,6 +31,9 @@ class SettingsPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen
     this.onLang,
     this.fullscreen,
     this.onFullscreen,
+    this.stats,
+    this.onStats,
+    this.onPrivacy,
   }) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 4500);
 
   bool sound, music;
@@ -40,6 +43,13 @@ class SettingsPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen
   final void Function(Lang)? onLang;
   final void Function(bool)? onFullscreen;
   final void Function() onClose;
+
+  /// 플레이 기록 보내기 (16-4단계, 메인 화면에서만).
+  bool? stats;
+  final void Function(bool)? onStats;
+
+  /// 개인정보 처리방침 열기. 있으면 닫기 옆에 버튼.
+  final void Function()? onPrivacy;
 
   static const double boxWidth = 660, titleY = 62, firstRowY = 128, rowGap = 74, padX = 52;
   static const double pillWidth = 168, pillHeight = 54, pillGap = 14;
@@ -65,11 +75,14 @@ class SettingsPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen
       if (onFullscreen != null && fullscreen != null)
         ChoiceRow(Strings.screen, [Strings.windowed, Strings.fullscreen], () => fullscreen! ? 1 : 0,
             (i) => onFullscreen!(fullscreen = i == 1)),
+      if (onStats != null && stats != null)
+        ChoiceRow(Strings.sendStats, [Strings.on, Strings.off], () => stats! ? 0 : 1, (i) => onStats!(stats = i == 0)),
     ];
     final close = PanelButton(Strings.close, () {
       removeFromParent();
       onClose();
     });
+    final privacy = onPrivacy == null ? null : PanelButton(Strings.privacy, onPrivacy!);
     final height = firstRowY + rows.length * rowGap + 18 + PanelButton.buttonSize.y + 32;
     final box = _Box(Vector2(boxWidth, height));
     box.add(TextComponent(text: Strings.settings, textRenderer: _title, anchor: Anchor.center, position: Vector2(boxWidth / 2, titleY)));
@@ -81,7 +94,14 @@ class SettingsPanel extends PositionComponent with TapCallbacks, RunsWhileFrozen
         box.add(row.pills[c]..position = Vector2(x, y));
       }
     }
-    box.add(close..position = Vector2((boxWidth - close.size.x) / 2, firstRowY + rows.length * rowGap + 18));
+    final buttonY = firstRowY + rows.length * rowGap + 18;
+    if (privacy == null) {
+      box.add(close..position = Vector2((boxWidth - close.size.x) / 2, buttonY));
+    } else {
+      final w = privacy.size.x + 24 + close.size.x;
+      box.add(privacy..position = Vector2((boxWidth - w) / 2, buttonY));
+      box.add(close..position = Vector2((boxWidth - w) / 2 + privacy.size.x + 24, buttonY));
+    }
     add(box);
   }
 
