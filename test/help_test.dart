@@ -33,7 +33,8 @@ void main() {
     verify: (game, tester) async {
       // 메인 화면은 캐릭터 그림 7종을 읽은 뒤에 버튼을 붙인다
       await waitFor(tester, () => game.world.children.whereType<TitleScreen>().any((t) => t.children.whereType<PanelButton>().isNotEmpty));
-      final button = game.world.children.whereType<TitleScreen>().single.children.whereType<PanelButton>().single;
+      // 16-2단계부터 도움말 왼쪽에 설정 버튼이 있다
+      final button = game.world.children.whereType<TitleScreen>().single.children.whereType<PanelButton>().singleWhere((b) => b.label == Strings.help);
       expect(button.label, Strings.help);
       expect(button.position.x + button.size.x, lessThanOrEqualTo(GameConfig.width - 20));
       await tapWorld(tester, button.position + button.size / 2);

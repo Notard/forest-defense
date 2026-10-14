@@ -35,18 +35,18 @@ class _PortraitGuardState extends State<PortraitGuard> {
         children: [
           widget.child,
           if (portrait)
-            const ColoredBox(
-              color: Color(0xF21F3A1A),
+            ColoredBox(
+              color: const Color(0xF21F3A1A),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.screen_rotation, size: 72, color: Color(0xFFFFE6A8)),
-                    SizedBox(height: 20),
+                    const Icon(Icons.screen_rotation, size: 72, color: Color(0xFFFFE6A8)),
+                    const SizedBox(height: 20),
                     Text(
                       Strings.rotate,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: GameConfig.fontFamily,
                         fontWeight: FontWeight.w700,
                         fontSize: 30,

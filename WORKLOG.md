@@ -1298,3 +1298,46 @@ MP3 112 kbps, 4곡 합계 약 2 MB. 사람이 들어 볼 수 있는 악보 MIDI�
 ### 발생한 문제와 해결
 1. 처음 투구 HP를 `late final`로 두어, 투구를 먼저 맞으면 그때의 (줄어든) 값이 최대로 잡힐 수 있었다 → 만들 때 바로 정하도록
 
+## 16-2. 한국어·영어, 설정 창, 전체화면 (2026-10-14)
+
+> 사용자: "책 홍보용 무료 게임으로 만들기에 충분히 가치가 있겠지? 그런데 스토어에 올리기 위해선 다국어도 지원해야겠다. 환경설정 팝업도 만들고 윈도우 exe 경우에 전체화면, 윈도우 옵션도 넣자."
+> 고른 것: 한국어 · 영어 / 영어에서는 책 소개 띠 숨기기 / 설정은 메인 화면 + 일시정지 창
+
+### 결과 요약
+- **한국어·영어**: 모든 화면 글을 두 벌로 (영어 이름 **Forest Keepers**). 처음 켜면 기기 언어(한국어가 아니면 영어), 설정에서 고르면 저장. 글꼴은 Gaegu 그대로 (영문도 있음). 영어 화면에서는 한국어 책 소개 띠를 숨긴다
+- **설정 창**: 언어 · 효과음 · 배경음악 · (Windows) 화면 창/전체화면. 메인 화면 오른쪽 위 "설정"(도움말 왼쪽), 판에서는 일시정지 창의 "설정". 판 안에서는 언어 줄이 없다 (그려진 글을 바꾸려면 판을 새로 만들어야 해서). 바꾸는 즉시 적용·저장
+- **Windows 전체화면**: 설정 창, **F11**, **Alt+Enter**. 다음 실행에도 그대로. 창 제목도 언어대로 ("숲 지키기" / "Forest Keepers")
+
+![영어 메인 화면](preview/16-2_en_title.jpg)
+![영어 설정 창](preview/16-2_en_settings.jpg)
+![영어 판: 새 친구 말풍선, Monsters in 30s](preview/16-2_en_play.jpg)
+![영어 놀이 방법](preview/16-2_en_help_howTo.jpg)
+![영어 클리어](preview/16-2_en_win.jpg)
+![Windows exe 설정 창 (한국어)](preview/16-2_windows_settings.jpg)
+
+### 진행 방식
+| 파일 | 내용 |
+|---|---|
+| `lib/game/strings.dart` | `Lang`(ko·en), `Strings.lang`. 모든 글을 `const` → getter로 (`_t(한국어, 영어)`). 책 소개만 한국어 한 벌. 설정 글 추가 |
+| `lib/game/hud/settings_panel.dart` | `SettingsPanel`: 줄마다 이름 + 알약 둘(고른 것 노랑), 함수가 없는 줄은 숨김, 긴 글은 알약에 맞춰 줄임 |
+| `lib/game/hud/title.dart` | "설정" 버튼 |
+| `lib/menu/menu_game.dart` | `openSettings`, 언어를 바꾸면 앱에 알림(`onLang`), 영어면 책 띠 없음, `settingsOpen`(다시 그린 뒤 설정 창 그대로) |
+| `lib/game/forest_game.dart` | 일시정지 창 "설정" → `openSettings` (효과음·음악은 기존 토글, 화면) |
+| `lib/game/progress.dart` | `lang`(없으면 기기 언어), `fullscreen` 저장 |
+| `lib/platform/window*.dart` | Windows에서만 `window_manager`: 시작 때 제목·전체화면, 바꾸기. 웹은 빈 구현, 테스트에서는 꺼짐 |
+| `lib/main.dart` | 언어 정하기(`?lang=en` 확인용), 창 준비, F11·Alt+Enter, 언어 바꾸면 메인 화면을 새로 그리고 설정 창은 연 채로 |
+| `pubspec.yaml` | `window_manager` |
+
+### 검증
+- `flutter analyze` 문제 없음, `flutter test` **299/299**
+  - 새 `test/settings_test.dart`: 영어 글에 한글이 없고 한국어와 다름(+ Gaegu에 없는 기호 없음), 언어·전체화면 저장, 메인 화면 설정 네 줄을 눌러 소리·음악·화면·언어가 바로 바뀜, 영어 메인 화면에 책 띠 없음, 일시정지 창 설정(언어 줄 없음, 효과음 끄기, 화면)
+- 진짜 글꼴 그림(`test/lang_shots_test.dart`, `--tags shots`): 영어 메인·설정·지도·상점·도움말 세 쪽·판·일시정지·소개 창·클리어, 한국어 설정. 모두 칸·판 안에 들어감
+- `bash tools/build_all.sh` (새 플러그인이라 처음부터) 통과
+- Windows exe `--mute`: 메인 화면 "설정" → "전체화면"을 누르니 창이 2240 × 1260 → **2880 × 1800(화면 전체)**, F11(창 메시지)로 **2240 × 1260 원래 자리**로 돌아옴. 저장값도 창으로 끝남
+
+### 발생한 문제와 해결
+1. 글을 getter로 바꾸니 `const Text(Strings.rotate)` 한 곳만 컴파일 오류 → 그 줄만 `const`를 풂
+2. 도움말 테스트가 메인 화면 버튼이 하나(도움말)라고 가정 → 이름으로 찾게
+3. 설정 테스트가 멈춤: `GameTester`의 `setUp`은 기다려 주지 않아 버튼이 붙기 전에 찾았고, 가짜 시계 안의 `Future.delayed`는 끝나지 않는다 → 기다림을 `verify` 안으로, `runAsync` 안에서 기다리기
+4. 테스트는 Windows에서 돌아 `Platform.isWindows`가 참이라 창 플러그인을 부를 뻔함 → `FLUTTER_TEST` 환경이면 창 기능을 끈다
+

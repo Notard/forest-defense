@@ -34,7 +34,7 @@ TextPaint _text(double size, Color color, {double shadow = 4}) => TextPaint(
 
 /// 메인 화면: 숲 배경, 제목, 마주 선 동물과 몬스터, 게임 시작 버튼 (7-2단계).
 class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<FlameGame> {
-  TitleScreen({required this.onStart, this.onHelp, this.onBook, this.difficulty, this.onDifficulty}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
+  TitleScreen({required this.onStart, this.onHelp, this.onBook, this.difficulty, this.onDifficulty, this.onSettings}) : super(size: Vector2(GameConfig.width, GameConfig.height), priority: 3000);
 
   /// 게임 시작 버튼 (숲 지도로).
   final void Function() onStart;
@@ -44,6 +44,9 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
 
   /// 아래 책 소개 띠를 눌렀을 때 (14-3단계). 없으면 띠를 두지 않는다.
   final void Function()? onBook;
+
+  /// 설정 창 (16-2단계). 있으면 도움말 왼쪽에 버튼.
+  final void Function()? onSettings;
 
   /// 지금 난이도와 바꿀 때 (14-4단계). 둘 다 있어야 고르는 줄을 둔다.
   final Difficulty? difficulty;
@@ -88,6 +91,11 @@ class TitleScreen extends PositionComponent with TapCallbacks, HasGameReference<
     if (help != null) {
       final button = PanelButton(Strings.help, help);
       add(button..position = Vector2(GameConfig.width - 24 - button.size.x, 26));
+      final settings = onSettings;
+      if (settings != null) {
+        final s = PanelButton(Strings.settings, settings);
+        add(s..position = Vector2(button.position.x - 14 - s.size.x, 26));
+      }
       add(InstallButton());
     }
     final book = onBook;

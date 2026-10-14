@@ -72,7 +72,7 @@ article td img{margin:0 auto}
 </head>
 <body>
 <div class="wrap">
-  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 15:08</p>
+  <p class="muted"><a href="todo.html">← 할 일 목록</a> · <a href="plan.html">계획서</a> · <a href="preview.html">게임 미리보기</a> · <a href="art_preview.html">아트 미리보기</a> · <a href="worklog.html">작업 기록</a> · <a href="report.html">결과 보고서</a> · 마지막 갱신 2026-10-14 15:49</p>
   <article><h1>작업 기록 — 숲 지키기 디펜스</h1>
 <blockquote>
 <p>단계별 결과, 검증, 문제와 해결, 결정 이유를 기록한다. 체크리스트: <a href="todo.html">TODO.md</a> · 계획: <a href="plan.html">plan.md</a></p>
@@ -2925,6 +2925,85 @@ article td img{margin:0 auto}
 <h3>발생한 문제와 해결</h3>
 <ol>
 <li>처음 투구 HP를 <code>late final</code>로 두어, 투구를 먼저 맞으면 그때의 (줄어든) 값이 최대로 잡힐 수 있었다 → 만들 때 바로 정하도록</li>
+</ol>
+<h2>16-2. 한국어·영어, 설정 창, 전체화면 (2026-10-14)</h2>
+<blockquote>
+<p>사용자: "책 홍보용 무료 게임으로 만들기에 충분히 가치가 있겠지? 그런데 스토어에 올리기 위해선 다국어도 지원해야겠다. 환경설정 팝업도 만들고 윈도우 exe 경우에 전체화면, 윈도우 옵션도 넣자."
+고른 것: 한국어 · 영어 / 영어에서는 책 소개 띠 숨기기 / 설정은 메인 화면 + 일시정지 창</p>
+</blockquote>
+<h3>결과 요약</h3>
+<ul>
+<li><strong>한국어·영어</strong>: 모든 화면 글을 두 벌로 (영어 이름 <strong>Forest Keepers</strong>). 처음 켜면 기기 언어(한국어가 아니면 영어), 설정에서 고르면 저장. 글꼴은 Gaegu 그대로 (영문도 있음). 영어 화면에서는 한국어 책 소개 띠를 숨긴다</li>
+<li><strong>설정 창</strong>: 언어 · 효과음 · 배경음악 · (Windows) 화면 창/전체화면. 메인 화면 오른쪽 위 "설정"(도움말 왼쪽), 판에서는 일시정지 창의 "설정". 판 안에서는 언어 줄이 없다 (그려진 글을 바꾸려면 판을 새로 만들어야 해서). 바꾸는 즉시 적용·저장</li>
+<li><strong>Windows 전체화면</strong>: 설정 창, <strong>F11</strong>, <strong>Alt+Enter</strong>. 다음 실행에도 그대로. 창 제목도 언어대로 ("숲 지키기" / "Forest Keepers")</li>
+</ul>
+<p><img alt="영어 메인 화면" src="preview/16-2_en_title.jpg" />
+<img alt="영어 설정 창" src="preview/16-2_en_settings.jpg" />
+<img alt="영어 판: 새 친구 말풍선, Monsters in 30s" src="preview/16-2_en_play.jpg" />
+<img alt="영어 놀이 방법" src="preview/16-2_en_help_howTo.jpg" />
+<img alt="영어 클리어" src="preview/16-2_en_win.jpg" />
+<img alt="Windows exe 설정 창 (한국어)" src="preview/16-2_windows_settings.jpg" /></p>
+<h3>진행 방식</h3>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lib/game/strings.dart</code></td>
+<td><code>Lang</code>(ko·en), <code>Strings.lang</code>. 모든 글을 <code>const</code> → getter로 (<code>_t(한국어, 영어)</code>). 책 소개만 한국어 한 벌. 설정 글 추가</td>
+</tr>
+<tr>
+<td><code>lib/game/hud/settings_panel.dart</code></td>
+<td><code>SettingsPanel</code>: 줄마다 이름 + 알약 둘(고른 것 노랑), 함수가 없는 줄은 숨김, 긴 글은 알약에 맞춰 줄임</td>
+</tr>
+<tr>
+<td><code>lib/game/hud/title.dart</code></td>
+<td>"설정" 버튼</td>
+</tr>
+<tr>
+<td><code>lib/menu/menu_game.dart</code></td>
+<td><code>openSettings</code>, 언어를 바꾸면 앱에 알림(<code>onLang</code>), 영어면 책 띠 없음, <code>settingsOpen</code>(다시 그린 뒤 설정 창 그대로)</td>
+</tr>
+<tr>
+<td><code>lib/game/forest_game.dart</code></td>
+<td>일시정지 창 "설정" → <code>openSettings</code> (효과음·음악은 기존 토글, 화면)</td>
+</tr>
+<tr>
+<td><code>lib/game/progress.dart</code></td>
+<td><code>lang</code>(없으면 기기 언어), <code>fullscreen</code> 저장</td>
+</tr>
+<tr>
+<td><code>lib/platform/window*.dart</code></td>
+<td>Windows에서만 <code>window_manager</code>: 시작 때 제목·전체화면, 바꾸기. 웹은 빈 구현, 테스트에서는 꺼짐</td>
+</tr>
+<tr>
+<td><code>lib/main.dart</code></td>
+<td>언어 정하기(<code>?lang=en</code> 확인용), 창 준비, F11·Alt+Enter, 언어 바꾸면 메인 화면을 새로 그리고 설정 창은 연 채로</td>
+</tr>
+<tr>
+<td><code>pubspec.yaml</code></td>
+<td><code>window_manager</code></td>
+</tr>
+</tbody>
+</table>
+<h3>검증</h3>
+<ul>
+<li><code>flutter analyze</code> 문제 없음, <code>flutter test</code> <strong>299/299</strong></li>
+<li>새 <code>test/settings_test.dart</code>: 영어 글에 한글이 없고 한국어와 다름(+ Gaegu에 없는 기호 없음), 언어·전체화면 저장, 메인 화면 설정 네 줄을 눌러 소리·음악·화면·언어가 바로 바뀜, 영어 메인 화면에 책 띠 없음, 일시정지 창 설정(언어 줄 없음, 효과음 끄기, 화면)</li>
+<li>진짜 글꼴 그림(<code>test/lang_shots_test.dart</code>, <code>--tags shots</code>): 영어 메인·설정·지도·상점·도움말 세 쪽·판·일시정지·소개 창·클리어, 한국어 설정. 모두 칸·판 안에 들어감</li>
+<li><code>bash tools/build_all.sh</code> (새 플러그인이라 처음부터) 통과</li>
+<li>Windows exe <code>--mute</code>: 메인 화면 "설정" → "전체화면"을 누르니 창이 2240 × 1260 → <strong>2880 × 1800(화면 전체)</strong>, F11(창 메시지)로 <strong>2240 × 1260 원래 자리</strong>로 돌아옴. 저장값도 창으로 끝남</li>
+</ul>
+<h3>발생한 문제와 해결</h3>
+<ol>
+<li>글을 getter로 바꾸니 <code>const Text(Strings.rotate)</code> 한 곳만 컴파일 오류 → 그 줄만 <code>const</code>를 풂</li>
+<li>도움말 테스트가 메인 화면 버튼이 하나(도움말)라고 가정 → 이름으로 찾게</li>
+<li>설정 테스트가 멈춤: <code>GameTester</code>의 <code>setUp</code>은 기다려 주지 않아 버튼이 붙기 전에 찾았고, 가짜 시계 안의 <code>Future.delayed</code>는 끝나지 않는다 → 기다림을 <code>verify</code> 안으로, <code>runAsync</code> 안에서 기다리기</li>
+<li>테스트는 Windows에서 돌아 <code>Platform.isWindows</code>가 참이라 창 플러그인을 부를 뻔함 → <code>FLUTTER_TEST</code> 환경이면 창 기능을 끈다</li>
 </ol></article>
 </div>
 </body>

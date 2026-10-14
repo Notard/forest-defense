@@ -12,6 +12,7 @@ import '../game/art.dart';
 import '../game/book.dart' as book;
 import '../game/config.dart';
 import '../game/hud/panel.dart';
+import '../game/hud/settings_panel.dart';
 import '../game/hud/title.dart';
 import '../game/music.dart';
 import '../game/progress.dart';
@@ -25,7 +26,17 @@ enum MenuPage { title, map, shop }
 
 /// 판 밖의 화면: 메인 화면, 숲 지도, 강화 상점 (plan.md 확장). 판은 ForestGame이 따로 그린다.
 class MenuGame extends FlameGame {
-  MenuGame({required this.progress, required this.onPlay, this.startPage = MenuPage.title, bool sound = true, this.music, this.openLink = book.openLink})
+  MenuGame({
+    required this.progress,
+    required this.onPlay,
+    this.startPage = MenuPage.title,
+    bool sound = true,
+    this.music,
+    this.openLink = book.openLink,
+    this.onLang,
+    this.onFullscreen,
+    this.settingsOpen = false,
+  })
       : sfx = SoundBoard(enabled: sound)..muted = !progress.soundOn,
         super(camera: CameraComponent.withFixedResolution(width: GameConfig.width, height: GameConfig.height));
 
@@ -38,6 +49,15 @@ class MenuGame extends FlameGame {
 
   /// 앱 전체의 배경음악. 메뉴 화면은 모두 '숲속 아침'.
   final Jukebox? music;
+
+  /// 언어를 바꿨을 때 (16-2단계): 앱이 진행에 저장하고 창 제목을 바꾼 뒤, 설정 창을 연 채로 메뉴를 새로 그린다.
+  final void Function(Lang)? onLang;
+
+  /// Windows 전체화면 바꾸기 (16-2단계). 없으면(웹·Android) 설정 창에 화면 줄이 없다.
+  final void Function(bool)? onFullscreen;
+
+  /// 처음부터 설정 창을 띄울지 (언어를 바꾼 뒤 다시 그릴 때).
+  final bool settingsOpen;
 
   /// 서점 페이지 열기 (테스트에서는 바꿔 끼운다).
   final Future<bool> Function(String url) openLink;
@@ -53,6 +73,34 @@ class MenuGame extends FlameGame {
     camera.viewfinder.anchor = Anchor.topLeft;
     await sfx.load();
     await show(startPage);
+    if (settingsOpen) openSettings();
+  }
+
+  /// 설정 창 (16-2단계). 소리·음악은 바로 진행에 저장한다.
+  void openSettings() {
+    if (world.children.whereType<SettingsPanel>().isNotEmpty) return;
+    sfx.play(Sfx.place);
+    final full = onFullscreen;
+    world.add(SettingsPanel(
+      sound: progress.soundOn,
+      music: progress.musicOn,
+      onSound: (on) {
+        progress.soundOn = on;
+        sfx.muted = !on;
+        sfx.play(Sfx.place);
+        progress.save();
+      },
+      onMusic: (on) {
+        progress.musicOn = on;
+        music?.muted = !on;
+        progress.save();
+      },
+      lang: Strings.lang,
+      onLang: onLang,
+      fullscreen: full == null ? null : progress.fullscreen,
+      onFullscreen: full,
+      onClose: () {},
+    ));
   }
 
   /// 도움말을 띄운다 (이미 떠 있으면 그대로).
@@ -86,7 +134,9 @@ class MenuGame extends FlameGame {
     await world.add(switch (p) {
       MenuPage.title => TitleScreen(
           onHelp: openHelp,
-          onBook: openBook,
+          onSettings: openSettings,
+          // 한국어 책이라 한국어 화면에서만 (16-2단계)
+          onBook: Strings.ko ? openBook : null,
           difficulty: progress.difficulty,
           onDifficulty: (d) {
             sfx.play(Sfx.place);

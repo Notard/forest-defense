@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'difficulty.dart';
 import 'monsters.dart';
 import 'stages.dart';
+import 'strings.dart';
 import 'units.dart';
 import 'upgrades.dart';
 
@@ -34,6 +35,8 @@ class Progress {
     Set<MonsterType>? seenMonsters,
     Set<UnitType>? usedUnits,
     this.difficulty = Difficulty.normal,
+    this.lang,
+    this.fullscreen = false,
   })  : stars = stars ?? {},
         upgrades = upgrades ?? {},
         seenMonsters = seenMonsters ?? {},
@@ -60,6 +63,12 @@ class Progress {
 
   /// 메인 화면에서 고른 난이도.
   Difficulty difficulty;
+
+  /// 설정 창에서 고른 언어. null이면 기기 언어를 따른다 (16-2단계).
+  Lang? lang;
+
+  /// Windows exe 전체화면 (16-2단계).
+  bool fullscreen;
 
   int levelOf(Upgrade u) => upgrades[u.name] ?? 0;
 
@@ -126,6 +135,8 @@ class Progress {
         'seen': [for (final m in seenMonsters) m.name],
         'used': [for (final u in usedUnits) u.name],
         'difficulty': difficulty.name,
+        if (lang != null) 'lang': lang!.name,
+        'fullscreen': fullscreen,
       };
 
   /// 14단계 전 저장에는 'seen'·'used'가 없다: 깬 스테이지의 몬스터는 본 것으로, 열린 친구는 써 본 것으로 친다
@@ -138,6 +149,8 @@ class Progress {
       soundOn: j['sound'] as bool? ?? true,
       musicOn: j['music'] as bool? ?? true,
       difficulty: Difficulty.values.where((d) => d.name == j['difficulty']).firstOrNull ?? Difficulty.normal,
+      lang: Lang.values.where((l) => l.name == j['lang']).firstOrNull,
+      fullscreen: j['fullscreen'] as bool? ?? false,
     );
     final seen = j['seen'] as List?;
     if (seen != null) {

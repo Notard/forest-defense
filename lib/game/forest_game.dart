@@ -22,6 +22,7 @@ import 'grid.dart';
 import 'hud/frozen.dart';
 import 'hud/hud.dart';
 import 'hud/panel.dart';
+import 'hud/settings_panel.dart';
 import 'hud/title.dart';
 import 'monsters.dart';
 import 'progress.dart';
@@ -72,6 +73,8 @@ class ForestGame extends FlameGame {
     this.usedUnits,
     this.onLearned,
     this.difficulty = Difficulty.normal,
+    this.fullscreen = false,
+    this.onFullscreen,
   })  : units = units ?? UnitType.values,
         _random = random ?? Random(),
         garden = Garden(acorns: startAcorns ?? stage.startAcorns + boosts.extraAcorns + difficulty.extraAcorns, cooldownOf: boosts.cooldownOf),
@@ -121,6 +124,10 @@ class ForestGame extends FlameGame {
   /// 난이도: 몬스터 HP·빠르기, 시작 도토리, 하트 수.
   final Difficulty difficulty;
 
+  /// Windows 전체화면인지와 바꾸기 (16-2단계). [onFullscreen]이 없으면 설정 창에 화면 줄이 없다.
+  bool fullscreen;
+  final void Function(bool)? onFullscreen;
+
   /// 쓰러뜨린 몬스터 수 (결과 화면).
   int defeated = 0;
 
@@ -169,6 +176,31 @@ class ForestGame extends FlameGame {
 
   /// 소리·음악 버튼을 눌렀을 때 앱이 설정을 저장한다.
   final SettingsHandler? onSettings;
+
+  /// 일시정지 창의 설정 (16-2단계): 효과음·배경음악·(Windows) 화면. 언어는 메인 화면에서만 바꾼다 (판의 글은 이미 그려져 있다).
+  void openSettings() {
+    if (world.children.whereType<SettingsPanel>().isNotEmpty) return;
+    final full = onFullscreen;
+    world.add(SettingsPanel(
+      sound: !sfx.muted,
+      music: !(music?.muted ?? true),
+      onSound: (on) {
+        if (on == sfx.muted) toggleSound();
+        sfx.play(Sfx.place);
+      },
+      onMusic: (on) {
+        if (music != null && on == music!.muted) toggleMusic();
+      },
+      fullscreen: full == null ? null : fullscreen,
+      onFullscreen: full == null
+          ? null
+          : (on) {
+              fullscreen = on;
+              full(on);
+            },
+      onClose: () {},
+    ));
+  }
 
   void toggleSound() {
     sfx.muted = !sfx.muted;
@@ -333,6 +365,7 @@ class ForestGame extends FlameGame {
           PanelButton(Strings.resume, togglePause),
           PanelButton(Strings.retry, restart),
           PanelButton(Strings.toMap, () => exit(GameExit.map)),
+          PanelButton(Strings.settings, openSettings),
         ],
       ));
     } else if (state == GameState.paused) {
